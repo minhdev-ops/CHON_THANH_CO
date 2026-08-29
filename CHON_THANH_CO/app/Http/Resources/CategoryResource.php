@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class CategoryResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        $translation = $this->translation();
+
+        return [
+            'slug' => $this->slug,
+            'name' => $translation?->name,
+            'description' => $translation?->description,
+            'products_count' => $this->whenCounted('products'),
+        ];
+    }
+}

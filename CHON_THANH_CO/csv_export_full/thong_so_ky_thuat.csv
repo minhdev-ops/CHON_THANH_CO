@@ -1,0 +1,59 @@
+﻿Nha cung cap,Nhom san pham,Ma SP,Cuong do chiu keo (kN/m),Do dan dai (%),CBR / Khang thung (N),He so tham,Kich thuoc lo O95,Kho rong (m),Do day (mm),Trong luong (g/m2),Tieu chuan
+Aritex,Vai KDT khong det,ART 7,7.0,40-75,1200,210 L/m2/s,150 um,4,,100-120,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 9,9.0,40-75,1500,170 L/m2/s,120 um,4,,130-150,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 11,11.0,40-75,1700,150 L/m2/s,115 um,4,,150-170,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 12,12.0,40-75,1900,140 L/m2/s,110 um,4,,170-190,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 14,14.0,40-75,2100,125 L/m2/s,100 um,4,,200-220,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 15,15.0,40-75,2400,120 L/m2/s,90 um,4,,220-240,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 17,17.0,>50,2700,90 L/m2/s,80 um,4,,250-280,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 20,20.0,>50,2900,80 L/m2/s,75 um,4,,300-340,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 22,22.0,>50,3200,75 L/m2/s,75 um,4,,340-380,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 24,24.0,>50,3800,70 L/m2/s,70 um,4,,380-420,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 25,25.0,>50,4000,60 L/m2/s,70 um,4,,400-440,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det,ART 28,28.0,>50,4500,50 L/m2/s,60 um,4,,440-480,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT khong det (D),ART 9D,9.5,>40,1500,30x10-4 m/s,180 um,,1.2,150-170,ASTM D4595
+Aritex,Vai KDT khong det (D),ART 11D,11.5,>40,1800,30x10-4 m/s,150 um,,1.5,180-200,ASTM D4595
+Aritex,Vai KDT khong det (D),ART 15D,15.0,>40,2400,30x10-4 m/s,110 um,,1.9,250-280,ASTM D4595
+Aritex,Vai KDT khong det (D),ART 22D,22.0,>40,3300,30x10-4 m/s,85 um,,2.5,380-420,ASTM D4595
+Aritex,Vai KDT khong det (D),ART 28D,28.0,>40,4500,30x10-4 m/s,60 um,,3.2,440-480,ASTM D4595
+Aritex,Vai KDT det,GET 10,>=100/50,<=15,>=4500,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT det,GET 15,>=150/50,<=15,>=5500,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT det,GET 20,>=200/50,<=15,>=7000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT det,GET 40,>=400/50,<=15,>=12000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT det,GET 100,>=100/100,<=15,>=6000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT det,GET 200,>=200/200,<=15,>=15000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,,ASTM D4595 / TCVN 8485
+Aritex,Vai KDT det,GET 300,>=300/300,<=15,>=18000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,,ASTM D4595 / TCVN 8485
+Aritex,Mang HDPE,HSE 0.3,8,600,105 (xuyen thung),,,8,0.3,,ASTM D5199 / D6693
+Aritex,Mang HDPE,HSE 0.5,14,700,176 (xuyen thung),,,8,0.5,,ASTM D5199 / D6693
+Aritex,Mang HDPE,HSE 0.75,21,700,264 (xuyen thung),,,8,0.75,,ASTM D5199 / D6693
+Aritex,Mang HDPE,HSE 1.0,28,700,352 (xuyen thung),,,8,1.0,,ASTM D5199 / D6693
+Aritex,Mang HDPE,HSE 1.5,43,700,540 (xuyen thung),,,8,1.5,,ASTM D5199 / D6693
+Aritex,Mang HDPE,HSE 2.0,57,700,705 (xuyen thung),,,7,2.0,,ASTM D5199 / D6693
+Aritex,Mang set tong hop,ART 3000,,,,<=5x10-11 m/s,,,,2700+180+110,ASTM D5084
+Aritex,Mang set tong hop,ART 4000,,,,<=3x10-11 m/s,,,,3700+180+110,ASTM D5084
+Aritex,Mang set tong hop,ART 4700,,,,<=5x10-11 m/s,,,,4700+180+110,ASTM D5084
+Aritex,Bac tham dung,VID 75,>1.6,>20,,>=1.4x10-4 m/s,<0.075 mm,100mm,,,ASTM D4595 / D4491
+Aritex,Bac tham dung,RID 75,>1.7,>20,,>=1.4x10-4 m/s,<0.075 mm,100mm,,,ASTM D4595 / D4491
+Aritex,Bac tham dung,RID 4.0,>1.9,>20,,>=1.4x10-4 m/s,<0.075 mm,100mm,,,ASTM D4595 / D4491
+Aritex,Bac tham ngang,RID 200,,<25,>250 (nen),>1.4x10-4 m/s,<0.075 mm,200mm,8.0,,ASTM D4595 / D4491
+Aritex,Bac tham ngang,RID 300,,<25,>250 (nen),>1.4x10-4 m/s,<0.075 mm,300mm,8.0,,ASTM D4595 / D4491
+Aritex,O dia ky thuat,Acel,,,>=1000 (moi han),,,,1.5,>=1.41,ASTM D1603 / D1505
+Hung Phu,Vai KDT khong det,ART 7,7,40-75,1200,,150 um,4,,,
+Hung Phu,Vai KDT khong det,ART 9,9,40-75,1500,,120 um,4,,,
+Hung Phu,Vai KDT khong det,ART 12,12,40-75,1900,,110 um,4,,,
+Hung Phu,Vai KDT khong det,ART 15,15,40-75,2400,,90 um,4,,,
+Hung Phu,Vai KDT khong det,ART 25,25,>50,4000,,70 um,4,,,
+Hung Phu,Vai KDT det,GET 10,100/50,<=15,>=4500,,,,,,
+Hung Phu,Vai KDT det,GET 15,150/50,<=15,>=5500,,,,,,
+Hung Phu,Vai KDT det,GET 20,200/50,<=15,>=7000,,,,,,
+Hung Phu,Vai KDT det,GET 100,100/100,<=15,>=6000,,,,,,
+Hung Phu,Vai KDT det,GET 200,200/200,<=15,>=15000,,,,,,
+Hung Phu,Vai KDT det,GET 300,300/300,<=15,>=18000,,,,,,
+Hung Phu,Mang HDPE,HSE 0.5,14,700,176,,,8,0.5,,ASTM
+Hung Phu,Mang HDPE,HSE 0.75,21,700,264,,,8,0.75,,ASTM
+Hung Phu,Mang HDPE,HSE 1.0,28,700,352,,,8,1.0,,ASTM
+Hung Phu,Mang HDPE,HSE 1.5,43,700,540,,,8,1.5,,ASTM
+Hung Phu,Mang HDPE,HSE 2.0,57,700,705,,,7,2.0,,ASTM
+Hung Phu,Ro da,Gabion 8x10,,,,,Mat luoi 8x10cm,,,,TCVN 2053
+Hung Phu,Ro da,Gabion 6x8,,,,,Mat luoi 6x8cm,,,,TCVN 2053
+Hung Phu,Ro da,Gabion 10x12,,,,,Mat luoi 10x12cm,,,,TCVN 2053

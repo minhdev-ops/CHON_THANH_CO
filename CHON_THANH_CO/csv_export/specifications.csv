@@ -1,0 +1,45 @@
+﻿Supplier,Category,Code,Tensile (kN/m),Elongation (%),CBR/Puncture (N),Permeability,Opening O95,Width (m),Thickness (mm),Standard
+Aritex,Nonwoven Geotextile,ART 7,7.0,40-75,1200,210 L/m2/s,150 um,4,,ASTM D4595 / TCVN 8485
+Aritex,Nonwoven Geotextile,ART 9,9.0,40-75,1500,170 L/m2/s,120 um,4,,ASTM D4595 / TCVN 8485
+Aritex,Nonwoven Geotextile,ART 12,12.0,40-75,1900,140 L/m2/s,110 um,4,,ASTM D4595 / TCVN 8485
+Aritex,Nonwoven Geotextile,ART 15,15.0,40-75,2400,120 L/m2/s,90 um,4,,ASTM D4595 / TCVN 8485
+Aritex,Nonwoven Geotextile,ART 20,20.0,>50,2900,80 L/m2/s,75 um,4,,ASTM D4595 / TCVN 8485
+Aritex,Nonwoven Geotextile,ART 25,25.0,>50,4000,60 L/m2/s,70 um,4,,ASTM D4595 / TCVN 8485
+Aritex,Nonwoven Geotextile,ART 28,28.0,>50,4500,50 L/m2/s,60 um,4,,ASTM D4595 / TCVN 8485
+Aritex,Nonwoven Geotextile (D),ART 9D,9.5,>40,1500,30x10-4 m/s,180 um,,1.2,ASTM D4595
+Aritex,Nonwoven Geotextile (D),ART 15D,15.0,>40,2400,30x10-4 m/s,110 um,,1.9,ASTM D4595
+Aritex,Nonwoven Geotextile (D),ART 28D,28.0,>40,4500,30x10-4 m/s,60 um,,3.2,ASTM D4595
+Aritex,Woven Geotextile,GET 10,>=100/50,<=15,>=4500,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,ASTM D4595 / TCVN 8485
+Aritex,Woven Geotextile,GET 15,>=150/50,<=15,>=5500,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,ASTM D4595 / TCVN 8485
+Aritex,Woven Geotextile,GET 20,>=200/50,<=15,>=7000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,ASTM D4595 / TCVN 8485
+Aritex,Woven Geotextile,GET 100,>=100/100,<=15,>=6000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,ASTM D4595 / TCVN 8485
+Aritex,Woven Geotextile,GET 200,>=200/200,<=15,>=15000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,ASTM D4595 / TCVN 8485
+Aritex,Woven Geotextile,GET 300,>=300/300,<=15,>=18000,0.02-0.6 s-1,0.075-0.34 mm,3.5 / 5.4,,ASTM D4595 / TCVN 8485
+Aritex,HDPE Liner,HSE 0.3,8,600,105 (puncture),,,8,0.3,ASTM D5199 / D6693
+Aritex,HDPE Liner,HSE 0.5,14,700,176 (puncture),,,8,0.5,ASTM D5199 / D6693
+Aritex,HDPE Liner,HSE 0.75,21,700,264 (puncture),,,8,0.75,ASTM D5199 / D6693
+Aritex,HDPE Liner,HSE 1.0,28,700,352 (puncture),,,8,1.0,ASTM D5199 / D6693
+Aritex,HDPE Liner,HSE 1.5,43,700,540 (puncture),,,8,1.5,ASTM D5199 / D6693
+Aritex,HDPE Liner,HSE 2.0,57,700,705 (puncture),,,7,2.0,ASTM D5199 / D6693
+Aritex,GCL Bentonite,ART 3000,,,,<=5x10-11 m/s,,,,ASTM D5084
+Aritex,GCL Bentonite,ART 4000,,,,<=3x10-11 m/s,,,,ASTM D5084
+Aritex,GCL Bentonite,ART 4700,,,,<=5x10-11 m/s,,,,ASTM D5084
+Aritex,Wick Drain (Vertical),VID 75,>1.6,>20,,>=1.4x10-4 m/s,<0.075 mm,100mm,,ASTM D4595 / D4491
+Aritex,Wick Drain (Vertical),RID 75,>1.7,>20,,>=1.4x10-4 m/s,<0.075 mm,100mm,,ASTM D4595 / D4491
+Aritex,Wick Drain (Horizontal),RID 200,,<25,>250 (compression),>1.4x10-4 m/s,<0.075 mm,200mm,8.0,ASTM D4595 / D4491
+Aritex,Wick Drain (Horizontal),RID 300,,<25,>250 (compression),>1.4x10-4 m/s,<0.075 mm,300mm,8.0,ASTM D4595 / D4491
+Hung Phu,Nonwoven Geotextile,ART 7,7,40-75,1200,,150 um,4,,
+Hung Phu,Nonwoven Geotextile,ART 12,12,40-75,1900,,110 um,4,,
+Hung Phu,Nonwoven Geotextile,ART 15,15,40-75,2400,,90 um,4,,
+Hung Phu,Nonwoven Geotextile,ART 25,25,>50,4000,,70 um,4,,
+Hung Phu,Woven Geotextile,GET 10,100/50,<=15,>=4500,,,,,
+Hung Phu,Woven Geotextile,GET 15,150/50,<=15,>=5500,,,,,
+Hung Phu,Woven Geotextile,GET 20,200/50,<=15,>=7000,,,,,
+Hung Phu,Woven Geotextile,GET 100,100/100,<=15,>=6000,,,,,
+Hung Phu,Woven Geotextile,GET 200,200/200,<=15,>=15000,,,,,
+Hung Phu,HDPE Liner,HSE 0.5,14,700,176,,,8,0.5,ASTM
+Hung Phu,HDPE Liner,HSE 1.0,28,700,352,,,8,1.0,ASTM
+Hung Phu,HDPE Liner,HSE 1.5,43,700,540,,,8,1.5,ASTM
+Hung Phu,Gabion,Gabion 8x10,,,,,Mesh 8x10cm,,,TCVN 2053
+Hung Phu,Gabion,Gabion 6x8,,,,,Mesh 6x8cm,,,TCVN 2053
+Hung Phu,Gabion,Gabion 10x12,,,,,Mesh 10x12cm,,,TCVN 2053
