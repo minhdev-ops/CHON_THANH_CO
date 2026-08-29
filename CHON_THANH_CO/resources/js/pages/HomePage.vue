@@ -230,29 +230,33 @@ const displayStats = computed(() =>
       </div>
     </section>
 
-    <!-- ── 6. Services (Bento grid) ──────────────────── -->
-    <section class="w-full py-16 md:py-20 bg-surface-bright relative overflow-hidden">
-      <div class="absolute inset-0 dot-pattern opacity-[0.02] pointer-events-none"></div>
+    <!-- ── 6. Services ───────────────────────────────── -->
+    <section class="w-full py-16 md:py-24 bg-surface-bright relative overflow-hidden">
+      <div class="absolute inset-0 mesh-bg opacity-50"></div>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
-        <div class="text-center max-w-2xl mx-auto mb-14 reveal">
+        <div class="text-center max-w-2xl mx-auto mb-16 reveal">
           <SectionHeader align="center" kicker="Dịch vụ của chúng tôi" title="Giải pháp trọn gói từ tư vấn đến thi công" />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 stagger-grid">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 stagger-grid">
           <div v-for="(s, i) in services" :key="i"
-            class="service-item relative group reveal cursor-default" :class="`reveal-delay-${(i%4)+1}`">
-            <div class="service-img aspect-[4/3]">
-              <img :src="s.image" :alt="s.title" class="w-full h-full object-cover">
+            class="group flex flex-col bg-canvas border border-outline-variant rounded-3xl overflow-hidden hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 reveal" :class="`reveal-delay-${(i%4)+1}`">
+            <div class="relative w-full aspect-[4/3] overflow-hidden shrink-0">
+              <img :src="s.image" :alt="s.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+              <div class="absolute inset-0 bg-gradient-to-t from-text-main/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <!-- Floating Icon -->
+              <div class="absolute -bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:-translate-y-2 transition-transform duration-500 z-10">
+                <span class="material-symbols-outlined text-[28px]">{{ s.icon }}</span>
+              </div>
             </div>
-            <div class="service-content">
-              <div class="service-content-inner">
-                <div class="service-icon">
-                  <span class="material-symbols-outlined">{{ s.icon }}</span>
-                </div>
-                <h4 class="font-extrabold text-text-main text-[19px] mb-3 tracking-tight">{{ s.title }}</h4>
-                <p class="text-text-secondary text-[14px] leading-relaxed mb-4">{{ s.desc }}</p>
-                <router-link to="/contact" class="btn-link font-bold text-[13px] uppercase tracking-[0.12em] inline-flex items-center gap-1.5">
-                  Tư vấn ngay
-                  <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            
+            <div class="p-6 md:p-8 flex flex-col flex-grow relative pt-10">
+              <h4 class="font-extrabold text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug">{{ s.title }}</h4>
+              <p class="text-text-secondary text-[14px] leading-relaxed mb-6 flex-grow">{{ s.desc }}</p>
+              
+              <div class="mt-auto pt-5 border-t border-outline-variant/60">
+                <router-link to="/contact" class="inline-flex items-center gap-2 font-bold text-[13px] text-primary group-hover:text-primary-deep uppercase tracking-[0.12em] transition-colors duration-300">
+                  Tư vấn ngay <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </router-link>
               </div>
             </div>
@@ -277,7 +281,7 @@ const displayStats = computed(() =>
           ]" :key="i" class="relative reveal" :class="`reveal-delay-${(i%4)+1}`">
             <div class="bg-surface-bright border border-outline-variant rounded-3xl p-8 hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 group h-full card-shine glow-card">
               <div class="flex items-start justify-between mb-6">
-                <span class="text-[64px] font-bold text-outline-variant/40 group-hover:text-primary/15 transition-colors duration-500 leading-none tabular-nums">{{ p.num }}</span>
+                <span class="text-[64px] font-bold text-primary/30 group-hover:text-primary transition-colors duration-500 leading-none tabular-nums drop-shadow-sm">{{ p.num }}</span>
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                   <span class="material-symbols-outlined text-[26px] text-primary-deep" style="font-variation-settings: 'FILL' 1;">{{ p.icon }}</span>
                 </div>

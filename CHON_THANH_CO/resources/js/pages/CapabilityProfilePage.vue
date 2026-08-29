@@ -1,39 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { api } from '../api/client'
-import { useApiData } from '../composables/useApiData'
 import { useSettings } from '../composables/useSettings'
-import StatCard from '../components/StatCard.vue'
-import ErrorState from '../components/ErrorState.vue'
 import PageHeader from '../components/PageHeader.vue'
-import SectionHeader from '../components/SectionHeader.vue'
 import CTABanner from '../components/CTABanner.vue'
 import { t } from '../i18n'
-import { getYearsOfExperience } from '../utils/experience'
-import { fallbackStats } from '../types/fallback'
 
-const { data: home, error: statsError, load: loadHome } = useApiData(
-  () => api.home(),
-  () => ({ banners: [], stats: fallbackStats, why_choose_us: [], featured_products: [], latest_projects: [] })
-)
 const { settings, load } = useSettings()
 load()
 
 const capabilityFile = computed(() => settings.value?.['company.capability_file']?.trim() || '')
-
-const capabilities = [
-  { icon: 'factory', title: 'Hai nhà máy sản xuất', desc: 'Rọ đá Á Châu (Hóc Môn, 3.000 tấn/năm) và Lưới thép Tiên Phong (Đà Nẵng, 5.000 tấn/năm), tổng công suất 8.000 tấn/năm.' },
-  { icon: 'inventory_2', title: '35+ mã sản phẩm', desc: 'Vải địa kỹ thuật, lưới địa kỹ thuật, rọ đá, thảm 3D, màng HDPE, GCL, lưới B40, dây kẽm gai — đáp ứng mọi yêu cầu kỹ thuật.' },
-  { icon: 'engineering', title: 'Đội ngũ kỹ sư chuyên môn cao', desc: '12+ kỹ sư địa kỹ thuật, xây dựng, vật liệu — hỗ trợ tư vấn thiết kế và giám sát thi công tại công trường.' },
-  { icon: 'local_shipping', title: 'Giao hàng & xuất khẩu', desc: 'Đội xe tải 2.5–18 tấn giao hàng toàn quốc trong 2–7 ngày. Xuất khẩu sang Campuchia, Lào, Myanmar.' },
-]
-
-const partners = [
-  { label: 'ISO 9001:2015', sub: 'Hệ thống quản lý chất lượng quốc tế', icon: 'verified' },
-  { label: 'TCVN 9844:2013', sub: 'Tiêu chuẩn quốc gia vải địa kỹ thuật', icon: 'workspace_premium' },
-  { label: 'Tiêu chuẩn châu Âu EN', sub: 'EN ISO 14688, EN 13249...', icon: 'public' },
-  { label: 'HOCK Technology', sub: 'Nhà phân phối uỷ quyền ARITEX', icon: 'handshake' },
-]
 
 const breadcrumbs = computed(() => [
   { label: t('nav.home'), to: '/' },
@@ -47,91 +22,6 @@ const breadcrumbs = computed(() => [
     <PageHeader :title="t('cap.title')" :breadcrumbs="breadcrumbs" />
 
     <section class="py-16 md:py-20 bg-surface-bright">
-      <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div class="reveal-left">
-            <span class="kicker mb-4 block">Capability Profile</span>
-            <h2 class="text-[32px] md:text-[42px] text-text-main font-bold tracking-tight leading-[1.15] mb-6">Năng lực toàn diện — Đối tác tin cậy của ngành hạ tầng</h2>
-            <p class="text-text-secondary text-[16px] md:text-[17px] leading-relaxed mb-6">
-              Với hơn {{ getYearsOfExperience() }} năm kinh nghiệm, CHƠN THÀNH tự hào sở hữu hệ thống 2 nhà máy sản xuất hiện đại, đội ngũ kỹ sư chuyên môn cao và hệ thống phân phối rộng khắp 63 tỉnh thành.
-            </p>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">check_circle</span><span class="text-[14px] text-text-main font-bold">2 nhà máy 8.000 tấn/năm</span></div>
-              <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">check_circle</span><span class="text-[14px] text-text-main font-bold">12+ kỹ sư chuyên môn</span></div>
-              <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">check_circle</span><span class="text-[14px] text-text-main font-bold">500+ dự án đã tham gia</span></div>
-              <div class="flex items-start gap-3"><span class="material-symbols-outlined text-primary">check_circle</span><span class="text-[14px] text-text-main font-bold">Xuất khẩu 3 quốc gia</span></div>
-            </div>
-          </div>
-          <div class="reveal-right">
-            <div class="relative rounded-3xl overflow-hidden shadow-xl">
-              <img src="/images/home-distribution.jpg" alt="Nhà máy CHƠN THÀNH" class="w-full aspect-[4/3] object-cover">
-              <div class="absolute bottom-6 left-6 right-6 bg-surface-glass backdrop-blur-md rounded-2xl p-5 border-l-4 border-primary">
-                <div class="font-extrabold text-text-main text-lg">{{ getYearsOfExperience() }}+ năm đồng hành cùng hạ tầng Việt Nam</div>
-                <div class="text-text-secondary text-[13px] mt-1">Hơn 500 công trình từ 2005 đến nay</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-16 md:py-20 bg-canvas">
-      <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
-        <div class="text-center max-w-2xl mx-auto mb-14 reveal">
-          <SectionHeader align="center" kicker="Our Capabilities" title="Năng lực cốt lõi" />
-        </div>
-        <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 stagger-grid">
-          <div v-for="(cap, i) in capabilities" :key="i"
-            class="bg-surface-bright border border-outline-variant rounded-3xl p-9 shadow-sm hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 flex items-start gap-7 group card-shine glow-card">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-[0_4px_16px_rgba(184,155,136,0.2)] transition-all duration-500">
-              <span class="material-symbols-outlined text-[28px] text-primary-deep" style="font-variation-settings: 'FILL' 1;">{{ cap.icon }}</span>
-            </div>
-            <div>
-              <h3 class="font-extrabold text-text-main text-[19px] mb-3 group-hover:text-primary transition-colors duration-300">{{ cap.title }}</h3>
-              <p class="text-[15px] text-text-secondary leading-relaxed">{{ cap.desc }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-20 md:py-28 bg-surface-bright border-b border-outline-variant">
-      <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop text-center">
-        <div class="text-center mb-16 reveal">
-          <span class="kicker mb-4 block">By Numbers</span>
-          <h2 class="text-[32px] md:text-[42px] text-text-main font-bold tracking-tight">Con số ấn tượng</h2>
-        </div>
-        <div v-if="statsError && !home?.stats?.length" class="bg-surface-bright border border-outline-variant rounded-3xl">
-          <ErrorState :message="statsError" @retry="loadHome" />
-        </div>
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-left stagger-grid">
-          <StatCard v-for="(stat, i) in home?.stats ?? fallbackStats" :key="i"
-            :icon="stat.icon" :value="stat.value" :label="stat.label"
-            class="glow-card" />
-        </div>
-      </div>
-    </section>
-
-    <section class="py-20 md:py-28 bg-canvas">
-      <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
-        <div class="text-center mb-16 reveal">
-          <span class="kicker mb-4 block">Standards</span>
-          <h2 class="text-[32px] md:text-[42px] text-text-main font-bold tracking-tight">Tiêu chuẩn & Chứng nhận</h2>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 stagger-grid">
-          <div v-for="(p, i) in partners" :key="i"
-            class="bg-surface-bright border border-outline-variant rounded-3xl p-9 text-center shadow-sm hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine glow-card">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:shadow-[0_4px_16px_rgba(184,155,136,0.2)] transition-all duration-500">
-              <span class="material-symbols-outlined text-[32px] text-primary-deep" style="font-variation-settings: 'FILL' 1;">{{ p.icon }}</span>
-            </div>
-            <h3 class="text-[16px] font-extrabold text-text-main mb-2">{{ p.label }}</h3>
-            <p class="text-[14px] text-text-secondary leading-relaxed">{{ p.sub }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-20 md:py-28 bg-surface-bright">
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="text-center mb-12 reveal">
           <span class="kicker mb-4 block">Documentation</span>
@@ -160,7 +50,7 @@ const breadcrumbs = computed(() => [
               </div>
             </div>
             <div class="p-5 md:p-8 bg-surface-vlm">
-              <iframe :src="capabilityFile" class="w-full h-[70vh] rounded-2xl border border-outline-variant bg-white" title="Hồ sơ năng lực"></iframe>
+              <iframe :src="capabilityFile" class="w-full h-[75vh] rounded-2xl border border-outline-variant bg-white" title="Hồ sơ năng lực"></iframe>
             </div>
           </div>
         </div>
