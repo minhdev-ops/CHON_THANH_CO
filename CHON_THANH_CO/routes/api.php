@@ -26,6 +26,9 @@ Route::middleware('set.locale')->prefix('v1')->group(function () {
 
     Route::get('certificates', [CertificateController::class, 'index']);
 
+    Route::get('profile-book', [\App\Http\Controllers\Api\ProfileBookController::class, 'show']);
+    Route::post('profile-book/upload', [\App\Http\Controllers\Api\ProfileBookController::class, 'upload']);
+
     Route::get('news/categories', [NewsController::class, 'categories']);
     Route::get('news', [NewsController::class, 'index']);
     Route::get('news/{slug}', [NewsController::class, 'show']);

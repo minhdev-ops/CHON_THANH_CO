@@ -479,6 +479,13 @@ export const fallbackFaqs: FaqItem[] = [
 // ============ CERTIFICATES ============
 export const fallbackCertificates: Certificate[] = [
   {
+    slug: 'ho-so-nang-luc-2026',
+    name: 'Hồ sơ năng lực 2026',
+    description: 'Hồ sơ năng lực (Profile Book) công ty CHƠN THÀNH phiên bản 2026, bao gồm các dự án tiêu biểu, năng lực sản xuất và các chứng nhận chất lượng.',
+    image: '/images/certificates/authorization-hock.jpg', // Có thể dùng tạm ảnh này
+    file: '/storage/profile/ho-so-nang-luc.pdf',
+  },
+  {
     slug: 'giay-uy-quyen-hock',
     name: 'Giấy uỷ quyền phân phối HOCK',
     description: 'Giấy uỷ quyền số CTCO-AT-VN04-20220905-01 cấp ngày 30/10/2023. CHƠN THÀNH là nhà phân phối uỷ quyền chính thức của HOCK Technology Co.,Ltd cho dòng sản phẩm vải địa kỹ thuật ARITEX tại thị trường Việt Nam.',

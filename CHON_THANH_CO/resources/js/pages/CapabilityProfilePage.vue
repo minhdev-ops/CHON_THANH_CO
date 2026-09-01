@@ -3,12 +3,13 @@ import { computed } from 'vue'
 import { useSettings } from '../composables/useSettings'
 import PageHeader from '../components/PageHeader.vue'
 import CTABanner from '../components/CTABanner.vue'
+import PdfFlipbook from '../components/PdfFlipbook.vue'
 import { t } from '../i18n'
 
 const { settings, load } = useSettings()
 load()
 
-const capabilityFile = computed(() => settings.value?.['company.capability_file']?.trim() || '')
+const capabilityFile = computed(() => settings.value?.['company.capability_file']?.trim() || '/documents/ho-so-nang-luc-2026.pdf')
 
 const breadcrumbs = computed(() => [
   { label: t('nav.home'), to: '/' },
@@ -39,10 +40,7 @@ const breadcrumbs = computed(() => [
                 Hồ sơ năng lực CHƠN THÀNH
               </span>
               <div class="flex items-center gap-3 flex-shrink-0">
-                <a :href="capabilityFile" target="_blank" rel="noopener noreferrer" class="btn btn-outline py-2.5 px-5 flex items-center justify-center gap-2 group/btn btn-magnetic">
-                  <span class="material-symbols-outlined text-[18px] group-hover/btn:-translate-y-0.5 transition-transform">open_in_new</span>
-                  Xem toàn màn hình
-                </a>
+                <!-- Removed Xem toàn màn hình button -->
                 <a :href="capabilityFile" download="ho-so-nang-luc-chon-thanh.pdf" class="btn btn-primary py-2.5 px-5 flex items-center justify-center gap-2 group/btn btn-magnetic">
                   <span class="material-symbols-outlined text-[18px] group-hover/btn:-translate-y-0.5 transition-transform">download</span>
                   Tải xuống
@@ -50,7 +48,9 @@ const breadcrumbs = computed(() => [
               </div>
             </div>
             <div class="p-5 md:p-8 bg-surface-vlm">
-              <iframe :src="capabilityFile" class="w-full h-[75vh] rounded-2xl border border-outline-variant bg-white" title="Hồ sơ năng lực"></iframe>
+              <div class="w-full h-[75vh] md:h-[85vh] rounded-2xl border border-outline-variant bg-white overflow-hidden relative shadow-inner">
+                <PdfFlipbook :pdf-url="capabilityFile" title="Hồ sơ năng lực CHƠN THÀNH" hide-close hide-header />
+              </div>
             </div>
           </div>
         </div>

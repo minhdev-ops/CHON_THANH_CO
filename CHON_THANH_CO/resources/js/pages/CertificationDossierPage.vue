@@ -3,12 +3,13 @@ import { computed } from 'vue'
 import { useSettings } from '../composables/useSettings'
 import PageHeader from '../components/PageHeader.vue'
 import CTABanner from '../components/CTABanner.vue'
+import PdfFlipbook from '../components/PdfFlipbook.vue'
 import { t } from '../i18n'
 
 const { settings, load } = useSettings()
 load()
 
-const inspectionFile = computed(() => settings.value?.['company.inspection_file']?.trim() || '')
+const inspectionFile = computed(() => settings.value?.['company.inspection_file']?.trim() || '/documents/ho-so-nang-luc-2026.pdf')
 
 const breadcrumbs = computed(() => [
   { label: t('nav.home'), to: '/' },
@@ -39,10 +40,7 @@ const breadcrumbs = computed(() => [
                 Hồ sơ kiểm định CHƠN THÀNH
               </span>
               <div class="flex items-center gap-3 flex-shrink-0">
-                <a :href="inspectionFile" target="_blank" rel="noopener noreferrer" class="btn btn-outline py-2.5 px-5 flex items-center justify-center gap-2 group/btn btn-magnetic">
-                  <span class="material-symbols-outlined text-[18px] group-hover/btn:-translate-y-0.5 transition-transform">open_in_new</span>
-                  Xem toàn màn hình
-                </a>
+                <!-- Removed Xem toàn màn hình button -->
                 <a :href="inspectionFile" download="ho-so-kiem-dinh-chon-thanh.pdf" class="btn btn-primary py-2.5 px-5 flex items-center justify-center gap-2 group/btn btn-magnetic">
                   <span class="material-symbols-outlined text-[18px] group-hover/btn:-translate-y-0.5 transition-transform">download</span>
                   Tải xuống
@@ -50,7 +48,9 @@ const breadcrumbs = computed(() => [
               </div>
             </div>
             <div class="p-5 md:p-8 bg-surface-vlm">
-              <iframe :src="inspectionFile" class="w-full h-[75vh] rounded-2xl border border-outline-variant bg-white" title="Hồ sơ kiểm định"></iframe>
+              <div class="w-full h-[75vh] md:h-[85vh] rounded-2xl border border-outline-variant bg-white overflow-hidden relative shadow-inner">
+                <PdfFlipbook :pdf-url="inspectionFile" title="Hồ sơ kiểm định CHƠN THÀNH" hide-close hide-header />
+              </div>
             </div>
           </div>
         </div>
