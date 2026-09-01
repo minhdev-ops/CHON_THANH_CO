@@ -7,6 +7,7 @@ import type { Certificate } from '../types'
 import PageHeader from '../components/PageHeader.vue'
 import ErrorState from '../components/ErrorState.vue'
 import CTABanner from '../components/CTABanner.vue'
+import PdfFlipbook from '../components/PdfFlipbook.vue'
 import { t } from '../i18n'
 import { fallbackCertificates } from '../types/fallback'
 
@@ -104,13 +105,20 @@ const breadcrumbs = computed(() => [
     </section>
 
     <!-- Viewer Modal -->
-    <div v-if="viewer" ref="viewerEl" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8" @click.self="closeViewer">
-      <div class="absolute inset-0 bg-black/80 backdrop-blur-md animate-fade-in-up"></div>
-      <div class="relative bg-surface rounded-3xl shadow-2xl w-full max-w-5xl max-h-full flex flex-col overflow-hidden border border-outline-variant animate-scale-in">
+    <div v-if="viewer" ref="viewerEl" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-md animate-fade-in-up" @click="closeViewer"></div>
+      
+      <!-- PDF Flipbook View -->
+      <div v-if="viewer.file && viewer.file.toLowerCase().endsWith('.pdf')" class="relative w-full h-[90vh] max-w-6xl rounded-3xl overflow-hidden shadow-2xl animate-scale-in">
+        <PdfFlipbook :pdf-url="viewer.file" :title="viewer.name" @close="closeViewer" />
+      </div>
+
+      <!-- Fallback View for Non-PDFs -->
+      <div v-else class="relative bg-surface rounded-3xl shadow-2xl w-full max-w-5xl max-h-full flex flex-col overflow-hidden border border-outline-variant animate-scale-in">
         <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-5 border-b border-outline-variant bg-surface-bright">
           <h3 class="font-bold text-lg text-text-main truncate">{{ viewer.name }}</h3>
           <div class="flex items-center gap-3 flex-shrink-0">
-            <a :href="viewer.file ?? ''" :download="`${viewer.slug}.pdf`" class="btn bg-primary text-white hover:bg-primary-dark py-2.5 px-5 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300">
+            <a :href="viewer.file ?? ''" :download="`${viewer.slug}`" class="btn bg-primary text-white hover:bg-primary-dark py-2.5 px-5 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300">
               <span class="material-symbols-outlined text-[16px]">download</span> {{ t('certs.download') }}
             </a>
             <button type="button" class="w-11 h-11 rounded-full flex items-center justify-center bg-surface-vlm border border-outline-variant hover:bg-outline-variant hover:text-primary transition-all duration-300" :aria-label="t('common.close')" @click="closeViewer">

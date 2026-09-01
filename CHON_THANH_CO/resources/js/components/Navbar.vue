@@ -115,22 +115,22 @@ const toggleMobileSection = (name: string) => {
         <!-- Logo -->
         <div class="flex shrink-0 justify-start items-center">
           <router-link to="/" class="flex items-center group" aria-label="CHƠN THÀNH Geosynthetics">
-            <img src="/images/logo.svg" alt="Logo" class="h-16 lg:h-20 w-auto object-contain drop-shadow-md -ml-2 xl:-ml-4">
+            <img src="/images/logo.svg" alt="Logo" class="h-[90px] lg:h-[110px] w-auto object-contain drop-shadow-md">
           </router-link>
         </div>
 
         <!-- Center Navigation Container (The "khung" made White to stand out on #B89B88, and LARGE) -->
-        <div class="hidden lg:flex flex-1 mx-6 xl:mx-12 bg-white rounded-[50px] items-center justify-center shadow-xl py-1 transition-all duration-300">
+        <div class="hidden lg:flex shrink-0 bg-white rounded-[50px] items-center justify-center shadow-xl py-1 transition-all duration-300">
 
           <!-- Links -->
-          <div class="flex items-center px-6">
+          <div class="flex items-center px-4">
             <template v-for="item in navItems" :key="item.type === 'link' ? item.to : item.name">
 
               <!-- Simple link -->
               <router-link
                 v-if="item.type === 'link'"
                 :to="item.to"
-                class="px-8 xl:px-10 py-[24px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
+                class="px-6 xl:px-8 py-[22px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
                 :class="isActive(item.to) ? 'text-[#B89B88]' : 'text-[#16243D] hover:text-[#B89B88]'"
               >
                 {{ t(item.labelKey) }}
@@ -145,7 +145,7 @@ const toggleMobileSection = (name: string) => {
               >
                 <router-link
                   :to="item.to"
-                  class="flex items-center gap-1 px-8 xl:px-10 py-[24px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
+                  class="flex items-center gap-1 px-6 xl:px-8 py-[22px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
                   :class="isActive(item.to) || openDropdown === item.name ? 'text-[#B89B88]' : 'text-[#16243D] group-hover/dd:text-[#B89B88]'"
                   @click="closeDropdown()"
                 >

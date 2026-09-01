@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import ParticleBackground from './ParticleBackground.vue'
+import WireframeTerrain from './WireframeTerrain.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -18,8 +19,8 @@ onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 
 const paddingClass = computed(() => {
-  if (props.variant === 'cinematic') return 'pt-[var(--page-header-top,200px)] pb-[var(--page-header-bottom,100px)]'
-  return 'pt-[var(--page-header-top-compact,140px)] pb-[var(--page-header-bottom-compact,60px)]'
+  if (props.variant === 'cinematic') return 'pt-[var(--page-header-top,320px)] pb-[var(--page-header-bottom,120px)]'
+  return 'pt-[var(--page-header-top-compact,280px)] pb-[var(--page-header-bottom-compact,80px)]'
 })
 </script>
 
@@ -28,10 +29,14 @@ const paddingClass = computed(() => {
     class="relative overflow-hidden hero-parallax"
     :class="[paddingClass, variant === 'cinematic' ? 'noise-overlay' : '']"
   >
+    <WireframeTerrain />
+
     <div
-      class="absolute inset-0"
+      class="absolute inset-0 pointer-events-none"
       :style="{
-        background: 'linear-gradient(135deg, #4A403B 0%, #6B4F3A 25%, #5A4035 50%, #3A302B 75%, #2A2420 100%)',
+        background: variant === 'cinematic'
+          ? 'linear-gradient(180deg, rgba(42,36,32,0.4) 0%, rgba(42,36,32,0.1) 40%, rgba(42,36,32,0.4) 100%)'
+          : 'linear-gradient(180deg, rgba(42,36,32,0.4) 0%, rgba(42,36,32,0.1) 50%, rgba(42,36,32,0.4) 100%)',
         transform: variant === 'cinematic' ? `translateY(${scrollY * 0.15 + 20}px) scale(1.1)` : 'none',
       }"
     />
@@ -49,7 +54,7 @@ const paddingClass = computed(() => {
     />
 
     <div
-      class="relative z-10 max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop text-center flex flex-col items-center"
+      class="relative z-10 max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop text-center flex flex-col items-center reveal"
     >
       <div
         v-if="breadcrumbs.length"

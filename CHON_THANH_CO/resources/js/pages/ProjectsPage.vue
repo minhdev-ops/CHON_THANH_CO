@@ -103,138 +103,50 @@ const stats = computed(() => {
 
 const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
 
-// Bento layout: alternating row patterns that always total 12 cols.
-// Row A: [8, 4] (2 items, total = 12)
-// Row B: [4, 4, 4] (3 items, total = 12)
-// Repeat: A, B, A, B, ...
-// Items 0,1 = row A (8,4); 2,3,4 = row B (4,4,4); 5,6 = row A; 7,8,9 = row B; etc.
-// Cumulative offsets: A ends at 1, B ends at 4, A ends at 6, B ends at 9, ...
-// rowEnd[0]=1, rowEnd[1]=4, rowEnd[2]=6, rowEnd[3]=9, rowEnd[4]=11, rowEnd[5]=14
-const bentoRowEnd = [1, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 29, 31, 34, 36, 39]
-const bentoCol = (i: number) => {
-  // Find which row this index falls into
-  for (let r = 0; r < bentoRowEnd.length; r++) {
-    if (i <= bentoRowEnd[r]) {
-      const start = r === 0 ? 0 : bentoRowEnd[r - 1] + 1
-      const offset = i - start
-      const isARow = r % 2 === 0
-      if (isARow) {
-        // Row A: [8, 4]
-        return offset === 0 ? 'md:col-span-8' : 'md:col-span-4'
-      } else {
-        // Row B: [4, 4, 4]
-        return 'md:col-span-4'
-      }
-    }
-  }
-  // Fallback for indices beyond table
-  return 'md:col-span-4'
-}
-
-const bentoSpan = (i: number) => bentoCol(i)
-
-const bentoAspect = (i: number) => {
-  // The first item in each row A is a "feature" (8-col, wider aspect)
-  for (let r = 0; r < bentoRowEnd.length; r++) {
-    if (i <= bentoRowEnd[r]) {
-      const start = r === 0 ? 0 : bentoRowEnd[r - 1] + 1
-      const offset = i - start
-      const isARow = r % 2 === 0
-      if (isARow && offset === 0) return 'aspect-[16/10]'
-      return 'aspect-[4/3]'
-    }
-  }
-  return 'aspect-[4/3]'
-}
+// Standard grid, no bento logic needed
 </script>
 
 <template>
   <div>
     <PageHeader :title="t('nav.projects')" :breadcrumbs="breadcrumbs" />
 
-    <!-- ═══ EDITORIAL MASTHEAD ═══ -->
-    <section class="relative border-b border-outline-variant bg-canvas overflow-hidden">
-      <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16">
-        <div class="grid grid-cols-12 gap-x-6 gap-y-8 items-end">
-          <div class="col-span-12 md:col-span-7 reveal">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="font-mono text-[11px] font-bold text-primary tracking-[0.18em] uppercase">M—02</span>
-              <span class="w-8 h-px bg-primary"></span>
-              <span class="kicker">{{ t('projects.eyebrow') }}</span>
-            </div>
-            <h1 class="font-sans text-[44px] md:text-[68px] lg:text-[80px] text-text-main font-bold leading-[0.92] tracking-[-0.035em] mb-5">
-              {{ t('projects.titlePart1') }}<br>
-              <span class="italic font-normal text-primary">{{ t('projects.titlePart2') }}</span>
-            </h1>
-            <p class="text-text-secondary text-[15px] md:text-[17px] leading-[1.7] max-w-xl">
-              {{ t('projects.subtitle') }}
-            </p>
-          </div>
-
-          <!-- Stats panel (dark) -->
-          <div class="col-span-12 md:col-span-5 reveal reveal-delay-1">
-            <div class="bg-text-main text-canvas px-7 py-7 relative">
-              <div class="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
-              <div class="flex items-center justify-between mb-5">
-                <span class="font-mono text-[10px] font-bold text-primary tracking-[0.25em] uppercase">/AT-A-GLANCE</span>
-                <span class="font-mono text-[10px] font-bold text-canvas/40 tracking-[0.25em] uppercase">2024—25</span>
-              </div>
-              <div class="grid grid-cols-3 gap-4">
-                <div>
-                  <div class="font-sans text-[36px] md:text-[44px] font-bold text-canvas leading-none tabular-nums">{{ String(stats.count).padStart(2, '0') }}</div>
-                  <div class="font-mono text-[10px] text-canvas/50 font-bold tracking-[0.2em] uppercase mt-2">{{ t('projects.statProjects') }}</div>
-                </div>
-                <div class="border-l border-canvas/15 pl-4">
-                  <div class="font-sans text-[36px] md:text-[44px] font-bold text-primary leading-none tabular-nums">{{ String(stats.locations).padStart(2, '0') }}</div>
-                  <div class="font-mono text-[10px] text-canvas/50 font-bold tracking-[0.2em] uppercase mt-2">{{ t('projects.statLocations') }}</div>
-                </div>
-                <div class="border-l border-canvas/15 pl-4">
-                  <div class="font-sans text-[20px] md:text-[24px] font-bold text-canvas leading-none tabular-nums">{{ stats.area }}</div>
-                  <div class="font-mono text-[10px] text-canvas/50 font-bold tracking-[0.2em] uppercase mt-2">{{ t('projects.statArea') }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14">
+    <main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14 animate-fade-in-up">
       <!-- ═══ FILTER BAR ═══ -->
       <div class="mb-10 reveal">
-        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pb-5 border-b border-text-main">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="font-mono text-[10px] font-bold text-primary tracking-[0.2em] mr-1">/FILTER</span>
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 pb-0 border-b border-outline-variant">
+          <div class="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
-              class="px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] border transition-all duration-300 rounded-none"
-              :class="selectedLocation === null
-                ? 'bg-text-main text-canvas border-text-main'
-                : 'bg-transparent text-text-secondary border-outline-variant hover:border-text-main hover:text-text-main'"
+              class="pb-4 text-[14px] font-bold transition-colors relative"
+              :class="selectedLocation === null ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedLocation = null"
-            >{{ t('projects.all') }}</button>
+            >
+              {{ t('projects.all') }}
+              <div v-if="selectedLocation === null" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
+            </button>
             <button
               v-for="loc in locations" :key="loc"
-              class="px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] border transition-all duration-300 rounded-none"
-              :class="selectedLocation === loc
-                ? 'bg-text-main text-canvas border-text-main'
-                : 'bg-transparent text-text-secondary border-outline-variant hover:border-text-main hover:text-text-main'"
+              class="pb-4 text-[14px] font-bold transition-colors relative"
+              :class="selectedLocation === loc ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedLocation = loc"
-            >{{ loc }}</button>
+            >
+              {{ loc }}
+              <div v-if="selectedLocation === loc" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
+            </button>
           </div>
-          <div class="flex items-center gap-3">
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[16px]">search</span>
+          <div class="flex items-center gap-4 mb-4 lg:mb-3">
+            <div class="relative w-full lg:w-72">
+              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
               <input
                 v-model="searchQuery"
                 type="text"
                 :placeholder="t('projects.searchPlaceholder')"
-                class="bg-canvas border border-outline-variant pl-9 pr-3 py-2 text-[12px] text-text-main outline-none focus:border-text-main transition-colors w-56 rounded-none placeholder:text-text-muted/60"
+                class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60"
               >
             </div>
-            <span class="hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] text-text-muted font-bold tracking-[0.2em] uppercase tabular-nums px-3 py-2 bg-canvas border border-outline-variant">
-              <span class="w-1.5 h-1.5 bg-primary"></span>
-              {{ String(projects.length).padStart(2, '0') }} {{ t('projects.results') }}
-            </span>
+            <div class="hidden sm:flex flex-col items-end px-3 border-l border-outline-variant h-full justify-center">
+              <span class="font-black text-[16px] text-text-main leading-none">{{ String(projects.length).padStart(2, '0') }}</span>
+              <span class="text-[9px] font-bold text-text-muted uppercase tracking-widest mt-0.5">Kết quả</span>
+            </div>
           </div>
         </div>
       </div>
@@ -249,75 +161,59 @@ const bentoAspect = (i: number) => {
         <ErrorState :message="loadError" @retry="loadMore(true)" />
       </div>
 
-      <!-- ═══ PROJECT BENTO GRID ═══ -->
-      <div v-else-if="projects?.length" class="grid grid-cols-12 gap-4">
+      <!-- ═══ PROFESSIONAL PROJECT GRID ═══ -->
+      <div v-else-if="projects?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-grid">
         <router-link
           v-for="(project, i) in projects" :key="project.slug"
           :to="`/projects/${project.slug}`"
-          class="group block relative overflow-hidden bg-text-main border border-text-main reveal"
-          :class="bentoSpan(i)"
+          class="group flex flex-col bg-white border border-outline-variant/60 shadow-sm hover:shadow-md transition-all duration-300 reveal rounded-sm overflow-hidden"
+          :class="[`reveal-delay-${(i%3)+1}`]"
         >
-          <!-- Image wrapper — controls card height via aspect ratio -->
-          <div class="relative w-full overflow-hidden" :class="bentoAspect(i)">
+          <!-- Image wrapper -->
+          <div class="relative w-full overflow-hidden bg-canvas shrink-0 aspect-[4/3] border-b border-outline-variant/60">
             <img
               :src="project.hero_image" :alt="project.name"
-              class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-[1400ms] ease-out"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               loading="lazy"
             >
-            <!-- Gradient overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-text-main via-text-main/30 to-text-main/0"></div>
-            <div class="absolute inset-0 bg-text-main/0 group-hover:bg-text-main/20 transition-colors duration-700"></div>
-
-            <!-- Index (giant) -->
-            <div class="absolute top-3 left-3 font-sans text-[64px] md:text-[80px] font-bold text-canvas/15 leading-none select-none pointer-events-none tabular-nums">{{ paddedIndex(i) }}</div>
-
-            <!-- Top right: status + arrow -->
-            <div class="absolute top-4 right-4 flex items-center gap-2">
-              <span class="inline-flex items-center gap-1.5 bg-olive/95 text-canvas px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.2em] uppercase">
-                <span class="w-1 h-1 bg-canvas"></span>
-                <span>{{ t('projects.completed') }}</span>
-              </span>
-              <span class="w-9 h-9 rounded-full border border-canvas/30 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:rotate-[-45deg] transition-all duration-500">
-                <span class="material-symbols-outlined text-canvas text-[14px]">arrow_forward</span>
-              </span>
+            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm">
+              <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
+              <span class="text-[9px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
             </div>
+          </div>
 
-            <!-- Bottom info -->
-            <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="font-mono text-[10px] font-bold text-primary tracking-[0.2em] uppercase">{{ project.period }}</span>
-                <span class="w-6 h-px bg-canvas/30"></span>
-                <span class="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-canvas/70 tracking-[0.2em] uppercase">
-                  <span class="material-symbols-outlined text-[12px]">location_on</span>
-                  <span>{{ project.location }}</span>
-                </span>
-              </div>
-            <h3
-              class="font-sans text-canvas font-bold leading-[1.1] tracking-[-0.025em] group-hover:text-primary transition-colors duration-500"
-              :class="bentoSpan(i).includes('col-span-8') ? 'text-[22px] md:text-[30px] lg:text-[36px]' : 'text-[16px] md:text-[18px]'"
-            >
+          <!-- Content -->
+          <div class="p-6 md:p-8 flex flex-col flex-grow relative">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
+              <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+              <span class="text-[11px] font-bold text-text-muted line-clamp-1 uppercase tracking-wider">{{ project.location }}</span>
+            </div>
+            
+            <h3 class="font-bold text-[18px] md:text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug line-clamp-2">
               {{ project.name }}
             </h3>
-            <div v-if="project.area && bentoSpan(i).includes('col-span-8')" class="flex items-center gap-6 pt-4 mt-4 border-t border-canvas/15">
-                <div>
-                  <div class="font-mono text-[9px] text-canvas/50 font-bold tracking-[0.2em] uppercase mb-1">/AREA</div>
-                  <div class="font-mono text-[14px] font-bold text-canvas tabular-nums">{{ project.area }}</div>
-                </div>
-                <div v-if="project.materials?.length">
-                  <div class="font-mono text-[9px] text-canvas/50 font-bold tracking-[0.2em] uppercase mb-1">/MATERIALS</div>
-                  <div class="font-mono text-[14px] font-bold text-primary tabular-nums">{{ project.materials.length }} {{ t('project.types') }}</div>
-                </div>
-              </div>
+            
+            <p v-if="project.area || project.materials" class="text-text-secondary text-[13.5px] leading-relaxed line-clamp-2 mb-6 flex-grow">
+              <span v-if="project.area">Quy mô: <strong>{{ project.area }}</strong>. </span>
+              <span v-if="project.materials">Sử dụng <strong>{{ project.materials.length }}</strong> loại vật tư.</span>
+            </p>
+            <div v-else class="flex-grow mb-6"></div>
+
+            <div class="mt-auto flex items-center pt-5 border-t border-outline-variant/30">
+              <span class="inline-flex items-center gap-1.5 font-bold text-[12px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
+                Chi tiết dự án <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </span>
             </div>
           </div>
         </router-link>
       </div>
 
       <!-- ═══ LOAD MORE ═══ -->
-      <div v-if="hasMore && !projectsLoading" class="mt-12 flex justify-center">
-        <button type="button" class="group inline-flex items-center gap-3 bg-transparent border border-text-main text-text-main px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-text-main hover:text-canvas transition-all duration-300 rounded-none" :disabled="loadingMore" @click="loadMore()">
+      <div v-if="hasMore && !projectsLoading" class="mt-14 flex justify-center">
+        <button type="button" class="btn btn-outline py-3.5 px-8 flex items-center justify-center gap-2 group btn-magnetic rounded-full font-bold shadow-sm" :disabled="loadingMore" @click="loadMore()">
           <span>{{ loadingMore ? t('common.loading') : t('common.loadMore') }}</span>
-          <span v-if="!loadingMore" class="material-symbols-outlined text-[16px] group-hover:translate-y-0.5 transition-transform duration-300">expand_more</span>
+          <span v-if="!loadingMore" class="material-symbols-outlined text-[20px] group-hover:translate-y-1 transition-transform duration-300">keyboard_double_arrow_down</span>
         </button>
       </div>
     </main>

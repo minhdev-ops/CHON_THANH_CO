@@ -109,10 +109,7 @@ const recentNews = computed(() => {
   return [...fallbackNews].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()).slice(0, 3)
 })
 
-// Editorial layout: HERO, FEATURED, LIST
-const heroArticle = computed(() => news.value[0])
-const featuredArticle = computed(() => news.value[1])
-const listArticles = computed(() => news.value.slice(2))
+// Editorial layout removed in favor of standard grid
 
 const breadcrumbs = computed(() => [
   { label: t('nav.home'), to: '/' },
@@ -123,83 +120,47 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
 
 const activeCategoryName = computed(() => {
   if (!selectedCategory.value) return t('news.allArticles')
-  return categories.value.find((c) => c.slug === selectedCategory.value)?.name || t('news.allArticles')
+  return categories.value?.find((c) => c.slug === selectedCategory.value)?.name || t('news.allArticles')
 })
+
+// Standard layout logic
 </script>
 
 <template>
   <div>
     <PageHeader :title="t('nav.news')" :breadcrumbs="breadcrumbs" />
 
-    <!-- ═══ EDITORIAL MASTHEAD ═══ -->
-    <section class="relative border-b border-outline-variant bg-canvas overflow-hidden">
-      <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16">
-        <div class="grid grid-cols-12 gap-x-6 gap-y-8 items-end">
-          <div class="col-span-12 md:col-span-8 reveal">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="font-mono text-[10px] font-bold text-canvas bg-text-main px-2.5 py-1 tracking-[0.25em]">VOL. 2026</span>
-              <span class="w-8 h-px bg-text-main/30"></span>
-              <span class="font-mono text-[10px] font-bold text-text-muted tracking-[0.2em] uppercase">{{ activeCategoryName }}</span>
-            </div>
-            <h1 class="font-sans text-[44px] md:text-[68px] lg:text-[80px] text-text-main font-bold leading-[0.92] tracking-[-0.035em]">
-              {{ t('news.titlePart1') }}<br>
-              <span class="italic font-normal text-primary">&amp; {{ t('news.titlePart2') }}</span>
-            </h1>
-          </div>
 
-          <div class="col-span-12 md:col-span-4 reveal reveal-delay-1 md:border-l md:border-text-main/15 md:pl-8">
-            <div class="font-mono text-[10px] font-bold text-primary tracking-[0.25em] mb-3">/EDITORIAL</div>
-            <p class="text-text-secondary text-[14px] md:text-[15px] leading-[1.7]">
-              {{ t('news.subtitle') }}
-            </p>
-            <div class="mt-6 pt-5 border-t border-outline-variant grid grid-cols-3 gap-3">
-              <div>
-                <div class="font-sans text-[28px] font-bold text-text-main leading-none tabular-nums">{{ String(news.length).padStart(2, '0') }}</div>
-                <div class="font-mono text-[9px] text-text-muted font-bold tracking-[0.2em] uppercase mt-1.5">{{ t('news.statArticles') }}</div>
-              </div>
-              <div>
-                <div class="font-sans text-[28px] font-bold text-primary leading-none tabular-nums">{{ String(categories.length).padStart(2, '0') }}</div>
-                <div class="font-mono text-[9px] text-text-muted font-bold tracking-[0.2em] uppercase mt-1.5">{{ t('news.statCategories') }}</div>
-              </div>
-              <div>
-                <div class="font-sans text-[28px] font-bold text-olive leading-none tabular-nums">12+</div>
-                <div class="font-mono text-[9px] text-text-muted font-bold tracking-[0.2em] uppercase mt-1.5">{{ t('news.statMonths') }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14">
+    <main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14 animate-fade-in-up">
       <!-- ═══ CATEGORY BAR (editorial filter) ═══ -->
       <div v-if="categoriesError" class="mb-10">
         <ErrorState :message="categoriesError" @retry="loadCategories" />
       </div>
       <div v-else class="mb-10 reveal">
-        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pb-5 border-b border-text-main">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="font-mono text-[10px] font-bold text-primary tracking-[0.2em] mr-1 hidden sm:inline">/SECTION</span>
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 pb-0 border-b border-outline-variant">
+          <div class="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
-              class="px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] border transition-all duration-300 rounded-none"
-              :class="selectedCategory === null
-                ? 'bg-text-main text-canvas border-text-main'
-                : 'bg-transparent text-text-secondary border-outline-variant hover:border-text-main hover:text-text-main'"
+              class="pb-4 text-[14px] font-bold transition-colors relative"
+              :class="selectedCategory === null ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = null"
-            >{{ t('news.all') }}</button>
+            >
+              {{ t('news.all') }}
+              <div v-if="selectedCategory === null" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
+            </button>
             <button v-for="cat in categories" :key="cat.slug"
-              class="px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] border transition-all duration-300 rounded-none"
-              :class="selectedCategory === cat.slug
-                ? 'bg-text-main text-canvas border-text-main'
-                : 'bg-transparent text-text-secondary border-outline-variant hover:border-text-main hover:text-text-main'"
+              class="pb-4 text-[14px] font-bold transition-colors relative"
+              :class="selectedCategory === cat.slug ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = cat.slug"
-            >{{ cat.name }}</button>
+            >
+              {{ cat.name }}
+              <div v-if="selectedCategory === cat.slug" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
+            </button>
           </div>
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[16px]">search</span>
+          <div class="relative w-full lg:w-72 mb-4 lg:mb-3">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
             <input
               v-model="searchQuery" type="text" :placeholder="t('news.searchPlaceholder')"
-              class="bg-canvas border border-outline-variant pl-9 pr-3 py-2 text-[12px] text-text-main outline-none focus:border-text-main transition-colors w-full sm:w-64 rounded-none placeholder:text-text-muted/60"
+              class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60"
             >
           </div>
         </div>
@@ -217,199 +178,95 @@ const activeCategoryName = computed(() => {
             <ErrorState :message="loadError" @retry="loadMore(true)" />
           </div>
 
-          <!-- ═══ EDITORIAL LAYOUT ═══ -->
-          <div v-else-if="news.length" class="space-y-4">
-            <!-- HERO ARTICLE (full-width cover) -->
-            <article v-if="heroArticle" class="group relative bg-text-main text-canvas overflow-hidden border border-text-main reveal">
-              <div class="grid grid-cols-1 lg:grid-cols-12">
-                <!-- Image -->
-                <div class="lg:col-span-7 relative aspect-[16/10] lg:aspect-auto lg:min-h-[480px] overflow-hidden">
-                  <img
-                    :src="heroArticle.image" :alt="heroArticle.title"
-                    class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-[1400ms] ease-out"
-                    loading="lazy"
-                  >
-                  <div class="absolute inset-0 bg-gradient-to-r from-text-main/20 via-transparent to-text-main/80"></div>
-                  <div class="absolute top-5 left-5 inline-flex items-center gap-1.5 bg-primary text-canvas px-3 py-1.5 text-[10px] font-mono font-bold tracking-[0.2em] uppercase">
-                    <span class="material-symbols-outlined text-[12px] fill">auto_awesome</span>
-                    <span>COVER STORY</span>
-                  </div>
-                  <div class="absolute bottom-5 left-5 font-sans text-[80px] md:text-[120px] font-bold text-canvas/15 leading-none select-none tabular-nums">{{ paddedIndex(0) }}</div>
-                </div>
-
-                <!-- Content -->
-                <div class="lg:col-span-5 px-7 py-8 lg:px-10 lg:py-12 flex flex-col justify-between relative">
-                  <div>
-                    <div class="flex items-center gap-3 mb-4">
-                      <span class="font-mono text-[10px] font-bold text-primary tracking-[0.2em] uppercase">/ {{ heroArticle.category?.name || t('news.category') }}</span>
-                      <span class="w-4 h-px bg-canvas/30"></span>
-                      <span class="font-mono text-[10px] font-bold text-canvas/50 tracking-[0.2em] uppercase">{{ formatDateLong(heroArticle.published_at) }}</span>
-                    </div>
-                    <h2 class="font-sans text-[26px] md:text-[32px] lg:text-[36px] font-bold leading-[1.08] tracking-[-0.025em] mb-5 group-hover:text-primary transition-colors duration-500">
-                      {{ heroArticle.title }}
-                    </h2>
-                    <p class="text-canvas/70 text-[14px] leading-[1.7] line-clamp-4">{{ heroArticle.excerpt }}</p>
-                  </div>
-                  <div class="mt-8 pt-6 border-t border-canvas/15">
-                    <router-link
-                      :to="`/news/${heroArticle.slug}`"
-                      class="inline-flex items-center gap-2 text-[11px] font-bold text-primary tracking-[0.2em] uppercase group-hover:gap-3 transition-all duration-300"
-                    >
-                      <span>{{ t('news.readMore') }}</span>
-                      <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                    </router-link>
-                  </div>
-                </div>
+          <!-- ═══ PROFESSIONAL LIST VIEW ═══ -->
+          <div v-else-if="news.length" class="flex flex-col gap-8">
+            <router-link
+              v-for="(n, i) in news" :key="n.slug" :to="`/news/${n.slug}`"
+              class="group flex flex-col md:flex-row bg-white border border-outline-variant/60 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 reveal overflow-hidden"
+              :class="[`reveal-delay-${(i%5)+1}`]"
+            >
+              <div class="w-full md:w-[35%] shrink-0 bg-canvas relative overflow-hidden aspect-[4/3] md:border-r border-outline-variant/60">
+                <img :src="n.image" :alt="n.title" class="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-700 ease-out">
               </div>
-            </article>
-
-            <!-- FEATURED ARTICLE (offset/asymmetric) -->
-            <article v-if="featuredArticle" class="group bg-canvas border border-outline-variant hover:border-text-main transition-colors duration-500 reveal">
-              <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
-                <div class="md:col-span-5 relative aspect-[4/3] md:aspect-auto md:min-h-[320px] overflow-hidden">
-                  <img
-                    :src="featuredArticle.image" :alt="featuredArticle.title"
-                    class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[1000ms] ease-out"
-                    loading="lazy"
-                  >
-                  <div class="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-canvas text-text-main px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.2em] uppercase border border-text-main">
-                    <span>/02 — EDITOR'S PICK</span>
-                  </div>
-                  <div class="absolute bottom-4 left-4 font-sans text-[64px] font-bold text-canvas/15 leading-none select-none tabular-nums">{{ paddedIndex(1) }}</div>
+              <div class="p-6 md:p-8 flex flex-col flex-grow justify-center">
+                <div class="flex items-center gap-3 mb-4">
+                  <span class="text-primary text-[11px] font-bold uppercase tracking-widest">{{ n.category?.name || 'Tin tức' }}</span>
+                  <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                  <span class="text-[12px] font-medium text-text-muted flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">calendar_today</span>{{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
                 </div>
-                <div class="md:col-span-7 p-6 md:p-10 flex flex-col justify-center">
-                  <div class="flex items-center gap-3 mb-4">
-                    <span class="inline-flex items-center gap-1.5 bg-primary/10 text-primary-deep px-2.5 py-1 text-[10px] font-mono font-bold tracking-[0.2em] uppercase">
-                      <span class="w-1 h-1 bg-primary"></span>
-                      <span>{{ featuredArticle.category?.name || t('news.category') }}</span>
-                    </span>
-                    <span class="font-mono text-[10px] text-text-muted font-bold tracking-[0.2em] uppercase">{{ formatDate(featuredArticle.published_at) }}</span>
-                  </div>
-                  <h3 class="font-sans text-[22px] md:text-[26px] font-bold text-text-main leading-[1.15] tracking-[-0.02em] mb-4 group-hover:text-primary transition-colors duration-500">
-                    {{ featuredArticle.title }}
-                  </h3>
-                  <p class="text-text-secondary text-[14px] leading-[1.7] line-clamp-3 mb-5">{{ featuredArticle.excerpt }}</p>
-                  <router-link
-                    :to="`/news/${featuredArticle.slug}`"
-                    class="inline-flex items-center gap-2 text-[11px] font-bold text-primary tracking-[0.2em] uppercase group-hover:gap-3 transition-all duration-300 self-start"
-                  >
+                <h3 class="font-bold text-[22px] md:text-[24px] text-text-main mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
+                <p class="text-text-secondary text-[15px] line-clamp-3 leading-relaxed mb-6">{{ n.excerpt }}</p>
+                
+                <div class="mt-auto">
+                  <span class="inline-flex items-center gap-1.5 font-bold text-[13px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
                     {{ t('news.readMore') }}
-                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-                  </router-link>
+                    <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </span>
                 </div>
               </div>
-            </article>
-
-            <!-- LIST ARTICLES (newspaper table) -->
-            <div v-if="listArticles.length" class="bg-canvas border border-outline-variant">
-              <!-- Sticky table header -->
-              <div class="grid grid-cols-12 gap-3 px-4 md:px-6 py-3 bg-text-main text-canvas font-mono text-[10px] font-bold tracking-[0.2em] uppercase sticky top-28 z-20">
-                <div class="col-span-1 hidden md:block">№</div>
-                <div class="col-span-12 md:col-span-7">{{ t('news.tableTitle') }}</div>
-                <div class="col-span-6 md:col-span-2">{{ t('news.tableCategory') }}</div>
-                <div class="col-span-3 md:col-span-1">{{ t('news.tableDate') }}</div>
-                <div class="col-span-3 md:col-span-1 text-right">→</div>
-              </div>
-              <div class="divide-y divide-outline-variant">
-                <router-link
-                  v-for="(item, i) in listArticles" :key="item.slug"
-                  :to="`/news/${item.slug}`"
-                  class="grid grid-cols-12 gap-3 md:gap-4 items-center px-4 md:px-6 py-4 md:py-5 hover:bg-surface-1 transition-colors duration-200 group reveal"
-                >
-                  <div class="col-span-1 hidden md:block font-mono text-[18px] font-bold text-text-muted group-hover:text-primary transition-colors duration-200 tabular-nums">{{ paddedIndex(i + 2) }}</div>
-                  <div class="col-span-12 md:col-span-7 flex items-start gap-4">
-                    <div class="w-20 h-16 md:w-24 md:h-20 shrink-0 overflow-hidden bg-canvas border border-outline-variant">
-                      <img :src="item.image" :alt="item.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="flex-grow min-w-0">
-                      <h4 class="font-bold text-text-main text-[14px] md:text-[15px] leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-1.5">{{ item.title }}</h4>
-                      <p class="text-[12px] text-text-muted line-clamp-1 hidden md:block">{{ item.excerpt }}</p>
-                    </div>
-                  </div>
-                  <div class="col-span-6 md:col-span-2">
-                    <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-text-secondary font-bold tracking-[0.2em] uppercase">
-                      <span class="w-1 h-1 bg-primary"></span>
-                      <span>{{ item.category?.name || t('news.category') }}</span>
-                    </span>
-                  </div>
-                  <div class="col-span-3 md:col-span-1">
-                    <span class="font-mono text-[10px] text-text-muted font-bold tracking-[0.15em] uppercase tabular-nums">{{ formatDate(item.published_at) }}</span>
-                  </div>
-                  <div class="col-span-3 md:col-span-1 text-right">
-                    <span class="inline-flex items-center justify-center w-8 h-8 border border-outline-variant group-hover:bg-text-main group-hover:text-canvas group-hover:border-text-main transition-all duration-200">
-                      <span class="material-symbols-outlined text-[14px] group-hover:translate-x-0.5 transition-transform duration-200">arrow_forward</span>
-                    </span>
-                  </div>
-                </router-link>
-              </div>
-            </div>
+            </router-link>
           </div>
 
           <!-- ═══ EMPTY ═══ -->
-          <div v-else class="py-20 text-center bg-canvas border border-outline-variant">
-            <div class="font-sans text-[80px] font-bold text-text-muted/30 leading-none mb-4 select-none">∅</div>
-            <p class="text-text-secondary font-medium text-[12px] uppercase tracking-[0.2em]">{{ t('news.empty') }}</p>
+          <div v-else class="py-24 flex flex-col items-center justify-center text-center bg-surface-bright border border-outline-variant rounded-sm shadow-sm">
+            <div class="w-16 h-16 rounded-sm bg-surface-vlm border border-outline-variant/60 flex items-center justify-center mb-6">
+              <span class="material-symbols-outlined text-[32px] text-text-muted">article</span>
+            </div>
+            <h3 class="text-text-main font-bold text-[18px] mb-2 tracking-wide">KHÔNG TÌM THẤY BÀI VIẾT</h3>
+            <p class="text-text-secondary font-medium text-[15px]">{{ t('news.empty') }}</p>
           </div>
 
-          <div v-if="hasMore && !newsLoading" class="mt-12 flex justify-center">
-            <button type="button" class="group inline-flex items-center gap-3 bg-transparent border border-text-main text-text-main px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-text-main hover:text-canvas transition-all duration-300 rounded-none" :disabled="loadingMore" @click="loadMore()">
+          <div v-if="hasMore && !newsLoading" class="mt-14 flex justify-center">
+            <button type="button" class="btn btn-outline py-3.5 px-8 flex items-center justify-center gap-2 group btn-magnetic rounded-full font-bold shadow-sm" :disabled="loadingMore" @click="loadMore()">
               <span>{{ loadingMore ? t('common.loading') : t('common.loadMore') }}</span>
-              <span v-if="!loadingMore" class="material-symbols-outlined text-[16px] group-hover:translate-y-0.5 transition-transform duration-300">expand_more</span>
+              <span v-if="!loadingMore" class="material-symbols-outlined text-[20px] group-hover:translate-y-1 transition-transform duration-300">keyboard_double_arrow_down</span>
             </button>
           </div>
         </div>
 
         <!-- ═══ SIDEBAR (newspaper sidebar) ═══ -->
-        <aside class="col-span-12 lg:col-span-3 space-y-6">
-          <!-- Recent -->
-          <section class="bg-canvas border border-outline-variant reveal">
-            <div class="bg-text-main text-canvas px-5 py-3 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="font-mono text-[10px] font-bold text-primary tracking-[0.25em]">/RECENT</span>
-                <span class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase opacity-70">{{ t('news.latest') }}</span>
-              </div>
-              <span class="material-symbols-outlined text-[14px] text-primary">schedule</span>
-            </div>
-            <div class="p-5 divide-y divide-outline-variant">
-              <router-link v-for="(n, i) in recentNews" :key="n.slug" :to="`/news/${n.slug}`" class="flex items-start gap-3 group py-3 first:pt-0 last:pb-0">
-                <div class="font-mono text-[20px] font-bold text-text-muted/60 group-hover:text-primary transition-colors duration-200 shrink-0 tabular-nums">{{ paddedIndex(i) }}</div>
-                <div class="flex-grow min-w-0">
-                  <h4 class="font-bold text-text-main text-[12px] leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-1">{{ n.title }}</h4>
-                  <span class="font-mono text-[9px] text-text-muted font-bold uppercase tracking-[0.2em]">{{ formatDate(n.published_at) }}</span>
+        <aside class="col-span-12 lg:col-span-3">
+          <div class="lg:sticky lg:top-32 space-y-6">
+            <!-- Recent -->
+            <section class="bg-white border border-outline-variant shadow-sm rounded-md overflow-hidden reveal">
+              <div class="bg-surface-vlm/30 border-b border-outline-variant/60 px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-[12px] text-text-main tracking-widest uppercase">{{ t('news.latest') }}</span>
                 </div>
-              </router-link>
-            </div>
-          </section>
+              </div>
+              <div class="p-5 divide-y divide-outline-variant/60">
+                <router-link v-for="(n, i) in recentNews" :key="n.slug" :to="`/news/${n.slug}`" class="flex items-start gap-3 group py-3.5 first:pt-0 last:pb-0">
+                  <div class="font-mono text-[14px] font-bold text-outline-variant group-hover:text-primary transition-colors duration-200 shrink-0 tabular-nums pt-0.5">{{ paddedIndex(i) }}</div>
+                  <div class="flex-grow min-w-0">
+                    <h4 class="font-medium text-text-main text-[13px] leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-1.5">{{ n.title }}</h4>
+                    <span class="text-[10px] text-text-muted font-medium">{{ formatDate(n.published_at) }}</span>
+                  </div>
+                </router-link>
+              </div>
+            </section>
 
-          <!-- Newsletter / Subscribe -->
-          <section class="relative overflow-hidden bg-text-main text-canvas p-6 reveal">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
-            <div class="relative">
-              <div class="font-mono text-[10px] font-bold text-primary tracking-[0.25em] mb-3">/SUBSCRIBE</div>
-              <span class="material-symbols-outlined text-primary text-[32px] mb-3">campaign</span>
-              <h3 class="font-sans text-[18px] font-bold mb-2 leading-tight">{{ t('news.subscribeTitle') }}</h3>
-              <p class="text-canvas/70 text-[12px] mb-5 leading-[1.7]">{{ t('news.subscribeText') }}</p>
-              <router-link to="/contact" class="group inline-flex items-center justify-center gap-2 bg-primary text-canvas px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-primary-hover transition-colors w-full">
-                <span class="material-symbols-outlined text-[16px]">mail</span>
-                <span>{{ t('news.contactUs') }}</span>
-                <span class="material-symbols-outlined text-[14px] ml-auto group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
-              </router-link>
-            </div>
-          </section>
+            <!-- Newsletter / Subscribe -->
+            <section class="relative overflow-hidden bg-white border border-outline-variant p-6 shadow-sm rounded-md reveal">
+              <div class="relative">
+                <div class="font-bold text-[12px] text-text-main tracking-widest uppercase mb-4">{{ t('news.subscribeTitle') }}</div>
+                <p class="text-text-secondary text-[13px] mb-6 leading-relaxed">{{ t('news.subscribeText') }}</p>
+                <router-link to="/contact" class="group flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 text-[12px] font-bold tracking-wider uppercase hover:bg-primary-hover shadow-sm hover:shadow transition-all rounded-md w-full">
+                  <span>{{ t('news.contactUs') }}</span>
+                </router-link>
+              </div>
+            </section>
 
-          <!-- Tag cloud -->
-          <section class="bg-canvas border border-outline-variant p-5 reveal">
-            <div class="flex items-center gap-2 mb-4">
-              <span class="font-mono text-[10px] font-bold text-primary tracking-[0.25em]">/TAGS</span>
-              <span class="w-full h-px bg-outline-variant"></span>
-            </div>
-            <div class="flex flex-wrap gap-1.5">
-              <span v-for="tag in ['Geotextile', 'Geogrid', 'HDPE', 'GCL', 'Thi công', 'Báo giá', 'ISO 9001', 'Hạ tầng', 'Môi trường']" :key="tag"
-                class="font-mono text-[10px] font-bold text-text-secondary bg-surface-1 border border-outline-variant px-2.5 py-1.5 tracking-[0.1em] uppercase hover:bg-text-main hover:text-canvas hover:border-text-main cursor-pointer transition-colors duration-200">
-                #{{ tag }}
-              </span>
-            </div>
-          </section>
+            <!-- Tag cloud -->
+            <section class="bg-white border border-outline-variant p-6 shadow-sm rounded-md reveal">
+              <div class="font-bold text-[12px] text-text-main tracking-widest uppercase mb-5">TAGS</div>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="tag in ['Geotextile', 'Geogrid', 'HDPE', 'GCL', 'Thi công', 'Báo giá', 'ISO 9001']" :key="tag"
+                  class="text-[11px] font-medium text-text-secondary bg-surface-vlm border border-outline-variant/60 px-3 py-1.5 hover:bg-primary hover:text-white hover:border-primary cursor-pointer transition-colors duration-200 rounded-sm">
+                  {{ tag }}
+                </span>
+              </div>
+            </section>
+          </div>
         </aside>
       </div>
     </main>
