@@ -69,7 +69,7 @@ class ProductService
         return Product::query()
             ->where('slug', $slug)
             ->where('is_active', true)
-            ->with(['translations', 'category.translations', 'applications.translations', 'specs.translations', 'images'])
+            ->with(['translations', 'category.translations', 'applications.translations', 'specs.translations', 'images', 'documents'])
             ->first();
     }
 

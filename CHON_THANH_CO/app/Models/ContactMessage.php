@@ -17,8 +17,10 @@ class ContactMessage extends Model
         'product',
         'products',
         'message',
+        'internal_note',
         'status',
         'handled_at',
+        'ip_address',
     ];
 
     protected function casts(): array

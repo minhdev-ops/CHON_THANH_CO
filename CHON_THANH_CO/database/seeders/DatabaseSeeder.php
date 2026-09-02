@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             NewsSeeder::class,
             FaqSeeder::class,
             ProjectSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
