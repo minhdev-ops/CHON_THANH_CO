@@ -18,6 +18,10 @@ import {
   fallbackProjects,
   fallbackNews,
 } from '../types/fallback'
+import { useSettings } from '../composables/useSettings'
+
+const { settings, load: loadSettings } = useSettings()
+loadSettings()
 
 const { data: home, loading, error, load } = useApiData(() => api.home(), () => ({
   banners: [{ section: 'cta', title: 'Sẵn sàng hợp tác cùng CHƠN THÀNH?', text: 'Liên hệ ngay để được tư vấn kỹ thuật miễn phí và nhận báo giá tốt nhất cho dự án của bạn.', link_to: '/contact', button_text: 'Nhận báo giá ngay' }],
@@ -165,12 +169,15 @@ const displayStats = computed(() =>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div class="reveal-left">
-            <SectionHeader align="left" kicker="About Us" title="Nhà cung cấp địa kỹ thuật hàng đầu" />
+            <SectionHeader align="left" kicker="Về chúng tôi" title="Nhà cung cấp địa kỹ thuật hàng đầu" />
             <p class="text-text-secondary text-[16px] md:text-[18px] leading-relaxed mt-6 mb-4">
-              Với hơn {{ getYearsOfExperience() }} năm hoạt động (thành lập 11/05/2005), CHƠN THÀNH tự hào là đơn vị cung cấp vật liệu địa kỹ thuật uy tín nhất tại Việt Nam, là nhà phân phối uỷ quyền chính thức của HOCK Technology — nhà sản xuất lớn nhất châu Á.
+              {{ settings?.['company.description'] || `Với hơn ${getYearsOfExperience()} năm hoạt động (thành lập 11/05/2005), CHƠN THÀNH tự hào là đơn vị cung cấp vật liệu địa kỹ thuật uy tín nhất tại Việt Nam, là nhà phân phối uỷ quyền chính thức của HOCK Technology — nhà sản xuất lớn nhất châu Á.` }}
             </p>
-            <p class="text-text-secondary text-[16px] leading-relaxed mb-8">
+            <p v-if="!settings?.['company.description']" class="text-text-secondary text-[16px] leading-relaxed mb-8">
               Đồng hành cùng hàng nghìn nhà thầu và chủ đầu tư, chúng tôi mang đến giải pháp tối ưu cho hạ tầng giao thông, thủy lợi với thương hiệu riêng ARITEX.
+            </p>
+            <p v-else class="text-text-secondary text-[16px] leading-relaxed mb-8">
+              {{ settings?.['about.mission_vi'] || 'Đồng hành cùng hàng nghìn nhà thầu và chủ đầu tư, chúng tôi mang đến giải pháp tối ưu cho hạ tầng giao thông, thủy lợi với thương hiệu riêng ARITEX.' }}
             </p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
@@ -215,7 +222,7 @@ const displayStats = computed(() =>
     <section class="w-full py-16 md:py-20 bg-canvas">
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 reveal">
-          <SectionHeader kicker="Our Products" title="Sản phẩm tiêu biểu" />
+          <SectionHeader kicker="Sản phẩm của chúng tôi" title="Sản phẩm tiêu biểu" />
           <router-link to="/products" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold">
             Tất cả sản phẩm <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
           </router-link>
@@ -298,7 +305,7 @@ const displayStats = computed(() =>
     <section class="w-full py-16 md:py-20 bg-surface-bright">
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 reveal">
-          <SectionHeader kicker="Our Projects" title="Công trình hạ tầng tiêu biểu" />
+          <SectionHeader kicker="Dự án của chúng tôi" title="Công trình hạ tầng tiêu biểu" />
           <router-link to="/projects" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold">
             Tất cả dự án <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
           </router-link>
@@ -320,7 +327,7 @@ const displayStats = computed(() =>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div class="reveal-left">
-            <SectionHeader align="left" kicker="FAQs" title="Giải đáp thắc mắc của bạn" />
+            <SectionHeader align="left" kicker="Câu hỏi thường gặp" title="Giải đáp thắc mắc của bạn" />
             <div class="flex flex-col gap-4 mt-8">
               <div v-for="(faq, i) in faqs" :key="i"
                 class="rounded-[10px] overflow-hidden transition-all duration-300 border border-outline-variant"
@@ -388,7 +395,7 @@ const displayStats = computed(() =>
     <section class="w-full py-16 md:py-20 bg-canvas">
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 reveal">
-          <SectionHeader kicker="Latest News" title="Tin tức & Sự kiện" />
+          <SectionHeader kicker="Tin tức mới nhất" title="Tin tức & Sự kiện" />
           <router-link to="/news" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold">
             Xem tất cả <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
           </router-link>

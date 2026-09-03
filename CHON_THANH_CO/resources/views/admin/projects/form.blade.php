@@ -7,26 +7,34 @@
         $projectMaterials = $project?->materials ?? collect();
         $projectGallery = $project?->images ?? collect();
 
-        $projectMaterialsData = [];
-        foreach ($projectMaterials as $m) {
-            $projectMaterialsData[] = [
-                'product_id' => $m->product_id,
-                'image' => $m->image,
-                'sort_order' => $m->sort_order,
-                'name_vi' => $m->translation('vi')?->name ?? '',
-                'detail_vi' => $m->translation('vi')?->detail ?? '',
-                'name_en' => $m->translation('en')?->name ?? '',
-                'detail_en' => $m->translation('en')?->detail ?? '',
-            ];
+        if (old('materials') !== null) {
+            $projectMaterialsData = old('materials');
+        } else {
+            $projectMaterialsData = [];
+            foreach ($projectMaterials as $m) {
+                $projectMaterialsData[] = [
+                    'product_id' => $m->product_id,
+                    'image' => $m->image,
+                    'sort_order' => $m->sort_order,
+                    'name_vi' => $m->translation('vi')?->name ?? '',
+                    'detail_vi' => $m->translation('vi')?->detail ?? '',
+                    'name_en' => $m->translation('en')?->name ?? '',
+                    'detail_en' => $m->translation('en')?->detail ?? '',
+                ];
+            }
         }
 
-        $projectGalleryData = [];
-        foreach ($projectGallery as $img) {
-            $projectGalleryData[] = [
-                'image' => $img->image,
-                'alt' => $img->alt,
-                'sort_order' => $img->sort_order,
-            ];
+        if (old('gallery') !== null) {
+            $projectGalleryData = old('gallery');
+        } else {
+            $projectGalleryData = [];
+            foreach ($projectGallery as $img) {
+                $projectGalleryData[] = [
+                    'image' => $img->image,
+                    'alt' => $img->alt,
+                    'sort_order' => $img->sort_order,
+                ];
+            }
         }
     @endphp
 

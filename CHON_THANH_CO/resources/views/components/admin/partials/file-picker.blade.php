@@ -39,10 +39,10 @@
             <span class="material-symbols-outlined text-[18px]">upload_file</span>
             Chọn file
         </button>
-        @if ($folder)
-            <p class="text-xs text-gray-400 mt-1">File sẽ lưu vào thư mục <code class="text-gray-600">/userfiles/files/{{ $folder }}/</code></p>
-        @endif
     </div>
+    @if ($folder)
+        <p class="text-xs text-gray-400 mt-1">File sẽ lưu vào thư mục <code class="text-gray-600">/userfiles/files/{{ $folder }}/</code></p>
+    @endif
 
     @if ($hint)
         <p class="text-xs text-gray-500 mt-1">{{ $hint }}</p>

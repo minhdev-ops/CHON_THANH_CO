@@ -36,10 +36,10 @@
             <span class="material-symbols-outlined text-[18px]">image</span>
             Chọn ảnh
         </button>
-        @if ($folder)
-            <p class="text-xs text-gray-400 mt-1">Ảnh sẽ lưu vào thư mục <code class="text-gray-600">/userfiles/{{ $resourceType === 'Files' ? 'files' : 'images' }}/{{ $folder }}/</code></p>
-        @endif
     </div>
+    @if ($folder)
+        <p class="text-xs text-gray-400 mt-1">Ảnh sẽ lưu vào thư mục <code class="text-gray-600">/userfiles/{{ $resourceType === 'Files' ? 'files' : 'images' }}/{{ $folder }}/</code></p>
+    @endif
 
     @if ($hint)
         <p class="text-xs text-gray-500 mt-1">{{ $hint }}</p>
