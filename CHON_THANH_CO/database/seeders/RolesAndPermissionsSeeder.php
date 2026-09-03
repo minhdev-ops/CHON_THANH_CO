@@ -22,12 +22,17 @@ class RolesAndPermissionsSeeder extends Seeder
         $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
         $editor = Role::firstOrCreate(['name' => 'Editor']);
 
+        $superAdminPassword = env('SUPER_ADMIN_PASSWORD');
+        if (blank($superAdminPassword) || in_array($superAdminPassword, ['password', 'admin12345'], true)) {
+            throw new \RuntimeException('A strong SUPER_ADMIN_PASSWORD must be configured before seeding.');
+        }
+
         // Create a default admin user if none exists
         $user = User::firstOrCreate(
             ['email' => 'admin@chonthanh.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password'), // Change this in production
+                'password' => Hash::make($superAdminPassword),
             ]
         );
 

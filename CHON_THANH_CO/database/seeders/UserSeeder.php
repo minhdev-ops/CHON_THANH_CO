@@ -10,11 +10,16 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
+        $adminPassword = config('admin.password');
+        if (blank($adminPassword) || in_array($adminPassword, ['password', 'admin12345'], true)) {
+            throw new \RuntimeException('A strong ADMIN_PASSWORD must be configured before seeding.');
+        }
+
+        User::firstOrCreate(
             ['email' => 'admin@chonthanh.vn'],
             [
                 'name' => config('admin.username', 'Administrator'),
-                'password' => Hash::make(config('admin.password', 'admin12345')),
+                'password' => Hash::make($adminPassword),
             ]
         );
     }
