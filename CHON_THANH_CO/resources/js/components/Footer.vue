@@ -3,7 +3,7 @@ import { computed, onMounted } from 'vue'
 import { useSettings } from '../composables/useSettings'
 import { getYearsOfExperience } from '../utils/experience'
 
-const { settings, load } = useSettings()
+const { settings, load, socialSettings } = useSettings()
 
 const phones = computed(() => {
   const raw = settings.value?.['contact.phone']?.trim() || '0909 292 530'
@@ -74,22 +74,14 @@ onMounted(() => load())
         <!-- Social -->
         <div class="flex gap-3">
           <a
-            v-if="settings?.['social.facebook']"
-            :href="settings['social.facebook']"
+            v-for="social in socialSettings" :key="social.name"
+            :href="social.url"
             target="_blank" rel="noopener noreferrer"
             class="w-10 h-10 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white hover:bg-white hover:text-primary transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1"
-            aria-label="Facebook"
+            :aria-label="social.name"
+            :title="social.name"
           >
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
-          </a>
-          <a
-            v-if="settings?.['social.zalo']"
-            :href="settings['social.zalo']"
-            target="_blank" rel="noopener noreferrer"
-            class="w-10 h-10 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white hover:bg-white hover:text-primary transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1"
-            aria-label="Zalo"
-          >
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.1 10.999c0-5.523-4.992-10-11.1-10C3.892.999-.1 5.476-.1 10.999c0 3.12 1.624 5.922 4.148 7.82l-1.077 3.328a.56.56 0 00.707.69l3.856-1.57a11.512 11.512 0 002.466.264c6.108 0 11.1-4.477 11.1-10z"/></svg>
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" v-html="social.icon"></svg>
           </a>
         </div>
       </div>
@@ -133,7 +125,7 @@ onMounted(() => load())
           Liên hệ
         </h3>
         <div class="flex flex-col gap-3.5">
-          <a href="https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8?entry=ttu&g_ep=EgoyMDI2MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" class="flex items-start gap-3 hover:text-white transition-colors">
+          <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8'" target="_blank" rel="noopener noreferrer" class="flex items-start gap-3 hover:text-white transition-colors">
             <span class="material-symbols-outlined text-white text-[22px] mt-0.5 shrink-0">location_on</span>
             <span class="text-white/80 text-[16px] leading-relaxed">
               {{ settings?.['contact.address'] || '416A Đường CC2, Phường Tây Thạnh, Thành Phố Hồ Chí Minh' }}
@@ -152,7 +144,7 @@ onMounted(() => load())
           <div class="flex items-center gap-3">
             <span class="material-symbols-outlined text-white text-[22px] shrink-0">mail</span>
             <span class="text-white/80 text-[16px]">
-              {{ settings?.['contact.email'] || 'chonthanhtco@gmail.com' }}
+              {{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}
             </span>
           </div>
           <div class="flex items-center gap-3">

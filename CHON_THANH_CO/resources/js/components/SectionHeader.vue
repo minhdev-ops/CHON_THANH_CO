@@ -1,7 +1,10 @@
 <script setup lang="ts">
-withDefaults(
+import { computed } from 'vue'
+
+const props = withDefaults(
   defineProps<{
     eyebrow?: string
+    kicker?: string
     title?: string
     subtitle?: string
     align?: 'left' | 'center' | 'right'
@@ -10,6 +13,8 @@ withDefaults(
   }>(),
   { align: 'left', compact: false, inverted: false },
 )
+
+const displayEyebrow = computed(() => props.eyebrow || props.kicker)
 </script>
 
 <template>
@@ -21,26 +26,31 @@ withDefaults(
     ]"
   >
     <div
-      v-if="eyebrow"
-      class="inline-flex items-center gap-3 mb-5"
+      v-if="displayEyebrow"
+      class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5"
     >
-      <span class="w-6 h-px bg-primary" />
-      <span class="text-primary text-[11px] font-bold tracking-[0.22em] uppercase">
-        {{ eyebrow }}
+      <span class="text-primary text-[11px] font-extrabold tracking-[0.15em] uppercase">
+        {{ displayEyebrow }}
       </span>
-      <span v-if="align === 'center'" class="w-6 h-px bg-primary" />
     </div>
 
     <h2
       v-if="title"
-      class="font-bold leading-[1.05] tracking-[-0.02em] mb-0 max-w-3xl"
+      class="font-extrabold leading-[1.15] tracking-[-0.02em] mb-0 max-w-3xl"
       :class="[
-        compact ? 'text-[28px] md:text-[36px]' : 'text-[32px] md:text-[48px]',
-        inverted ? 'text-canvas' : 'text-text-primary',
+        compact ? 'text-[28px] md:text-[36px]' : 'text-[32px] md:text-[44px]',
+        inverted ? 'text-canvas' : 'text-text-main',
       ]"
     >
       {{ title }}
     </h2>
+    <div
+      v-if="title"
+      :class="[
+        'w-12 h-1 bg-primary rounded-full mt-5',
+        align === 'center' ? 'mx-auto' : align === 'right' ? 'ml-auto' : 'mr-auto',
+      ]"
+    ></div>
 
     <p
       v-if="subtitle"

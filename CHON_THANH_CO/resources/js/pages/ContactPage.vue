@@ -7,7 +7,7 @@ import PageHeader from '../components/PageHeader.vue'
 import SectionHeader from '../components/SectionHeader.vue'
 import { t } from '../i18n'
 
-const { settings, load } = useSettings()
+const { settings, load, socialSettings } = useSettings()
 
 const DEFAULT_MAP_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d550.0847160481649!2d106.60798745916034!3d10.810054716844608!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752bb2c658a587%3A0x3362c58ad0f4ce7c!2zQ8OUTkcgVFkgVE5INCBEViBWw4AgVE0gQ0jGoE4gVEjDgE5I!5e1!3m2!1sen!2s!4v1785813190548!5m2!1sen!2s'
 
@@ -348,7 +348,7 @@ const breadcrumbs = computed(() => [
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.headquarters') }}</span>
-                  <a href="https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8?entry=ttu&g_ep=EgoyMDI2MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" class="block text-[15px] text-text-secondary leading-relaxed hover:text-primary transition-colors">{{ settings?.['contact.address'] || '416A Đường CC2, Phường Tây Thạnh, Thành Phố Hồ Chí Minh' }}</a>
+                  <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8'" target="_blank" rel="noopener noreferrer" class="block text-[15px] text-text-secondary leading-relaxed hover:text-primary transition-colors">{{ settings?.['contact.address'] || '416A Đường CC2, Phường Tây Thạnh, Thành Phố Hồ Chí Minh' }}</a>
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
@@ -371,7 +371,7 @@ const breadcrumbs = computed(() => [
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.emailLabel') }}</span>
-                  <span class="block text-[15px] text-text-secondary leading-relaxed">{{ settings?.['contact.email'] || 'chonthanhtco@gmail.com' }}</span>
+                  <span class="block text-[15px] text-text-secondary leading-relaxed">{{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}</span>
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
@@ -386,15 +386,9 @@ const breadcrumbs = computed(() => [
             </ul>
             <div class="mt-10 pt-8 border-t border-outline-variant">
               <span class="block text-[11px] font-bold text-text-muted mb-4 uppercase tracking-[0.15em]">{{ t('contact.connect') }}</span>
-              <div class="flex gap-3">
-                <a v-if="settings?.['social.zalo']" :href="settings['social.zalo']" target="_blank" rel="noopener noreferrer" class="w-13 h-13 rounded-2xl bg-surface-vlm border border-outline-variant text-text-secondary flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1" aria-label="Zalo">
-                  <span class="material-symbols-outlined">forum</span>
-                </a>
-                <a v-if="settings?.['social.facebook']" :href="settings['social.facebook']" target="_blank" rel="noopener noreferrer" class="w-13 h-13 rounded-2xl bg-surface-vlm border border-outline-variant text-text-secondary flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1" aria-label="Facebook">
-                  <span class="material-symbols-outlined">thumb_up</span>
-                </a>
-                <a v-if="settings?.['social.messenger']" :href="settings['social.messenger']" target="_blank" rel="noopener noreferrer" class="w-13 h-13 rounded-2xl bg-surface-vlm border border-outline-variant text-text-secondary flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1" aria-label="Messenger">
-                  <span class="material-symbols-outlined">chat</span>
+              <div class="flex flex-wrap gap-3">
+                <a v-for="social in socialSettings" :key="social.name" :href="social.url" target="_blank" rel="noopener noreferrer" class="w-13 h-13 rounded-2xl bg-surface-vlm border border-outline-variant text-text-secondary flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1" :aria-label="social.name" :title="social.name">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" v-html="social.icon"></svg>
                 </a>
               </div>
             </div>

@@ -26,6 +26,7 @@ class ProductResource extends JsonResource
                 'description' => $translation?->description,
                 'specs' => ProductSpecResource::collection($this->whenLoaded('specs')),
                 'images' => ProductImageResource::collection($this->whenLoaded('images')),
+                'documents' => $this->whenLoaded('documents'),
             ]),
         ];
     }

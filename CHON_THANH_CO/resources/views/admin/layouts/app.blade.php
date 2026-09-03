@@ -11,75 +11,75 @@
     <style>[x-cloak] { display: none !important; }</style>
     @vite(['resources/css/app.css'])
 </head>
-<body class="bg-gray-100 text-gray-900 antialiased">
+<body class="bg-[#f8fafc] text-gray-900 antialiased">
     <div class="min-h-screen flex">
-        <aside class="w-64 bg-slate-900 text-slate-200 flex-shrink-0 hidden md:flex flex-col fixed inset-y-0">
-            <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
-                <img src="/images/logo.svg" alt="Logo" class="h-8 w-auto">
+        <aside class="w-64 bg-white text-gray-600 border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col fixed inset-y-0 shadow-sm z-30">
+            <div class="h-16 flex items-center gap-3 px-6 border-b border-gray-200">
+                <img src="/images/logo.svg" alt="Logo" class="h-10 w-auto object-contain">
             </div>
             <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm font-medium">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.dashboard') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">dashboard</span> Tổng quan
                 </a>
-                <div class="px-3 pt-4 pb-1 text-xs uppercase tracking-wider text-slate-500">Nội dung</div>
-                <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.products.*') ? 'bg-slate-800 text-white' : '' }}">
+                <div class="px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">Nội dung</div>
+                <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.products.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">inventory_2</span> Sản phẩm
                 </a>
-                <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.categories.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.categories.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">category</span> Danh mục
                 </a>
-                <a href="{{ route('admin.applications.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.applications.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.applications.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.applications.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">apps</span> Ứng dụng
                 </a>
-                <a href="{{ route('admin.projects.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.projects.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.projects.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.projects.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">business_center</span> Dự án
                 </a>
-                <a href="{{ route('admin.certificates.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.certificates.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.certificates.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.certificates.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">verified</span> Chứng chỉ
                 </a>
-                <a href="{{ route('admin.news.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.news.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.news.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.news.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">newspaper</span> Tin tức
                 </a>
-                <a href="{{ route('admin.news-categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.news-categories.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.news-categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.news-categories.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">topic</span> Danh mục tin
                 </a>
-                <a href="{{ route('admin.faqs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.faqs.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.faqs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.faqs.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">help</span> FAQ
                 </a>
-                <div class="px-3 pt-4 pb-1 text-xs uppercase tracking-wider text-slate-500">Trang chủ</div>
-                <a href="{{ route('admin.home-stats.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.home-stats.*') ? 'bg-slate-800 text-white' : '' }}">
+                <div class="px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">Trang chủ</div>
+                <a href="{{ route('admin.home-stats.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.home-stats.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">monitoring</span> Số liệu năng lực
                 </a>
-                <a href="{{ route('admin.why-choose-us.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.why-choose-us.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.why-choose-us.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.why-choose-us.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">thumb_up</span> Lý do chọn
                 </a>
-                <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.banners.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.banners.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.banners.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">image</span> Banner & Hero
                 </a>
-                <a href="{{ route('admin.about-timeline.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.about-timeline.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.about-timeline.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.about-timeline.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">timeline</span> Mốc lịch sử
                 </a>
-                <div class="px-3 pt-4 pb-1 text-xs uppercase tracking-wider text-slate-500">Hệ thống</div>
-                <a href="{{ route('admin.contacts.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.contacts.*') ? 'bg-slate-800 text-white' : '' }}">
+                <div class="px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">Hệ thống</div>
+                <a href="{{ route('admin.contacts.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.contacts.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">mail</span> Liên hệ
                 </a>
-                <a href="{{ route('admin.files.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.files.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.files.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.files.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">folder</span> Quản lý file
                 </a>
-                <a href="{{ route('admin.audit-logs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.audit-logs.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.audit-logs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.audit-logs.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">history</span> Nhật ký hoạt động
                 </a>
-                <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 {{ request()->routeIs('admin.settings.*') ? 'bg-slate-800 text-white' : '' }}">
+                <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.settings.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">settings</span> Cấu hình
                 </a>
             </nav>
-            <div class="border-t border-slate-800 p-4">
-                <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800">
+            <div class="border-t border-gray-200 p-4">
+                <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900">
                     <span class="material-symbols-outlined text-[20px]">public</span> Xem website
                 </a>
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
-                    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 rounded hover:bg-slate-800 mt-1">
+                    <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 mt-1">
                         <span class="material-symbols-outlined text-[20px]">logout</span> Đăng xuất
                     </button>
                 </form>

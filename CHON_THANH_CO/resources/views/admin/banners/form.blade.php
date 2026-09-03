@@ -39,7 +39,7 @@
                 <x-admin.partials.image-picker name="image" label="Ảnh nền" :value="$banner?->image" :hint="'Chỉ dùng cho hero trang chủ. Để trống nếu không cần ảnh.'" folder="banners" />
             </div>
 
-            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6" x-show="section !== 'hero'" x-cloak>
+            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
                 <div class="flex gap-2 mb-4">
                     <button type="button" @click="lang = 'vi'" :class="lang === 'vi' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-1.5 rounded text-sm font-semibold">Tiếng Việt</button>
                     <button type="button" @click="lang = 'en'" :class="lang === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-1.5 rounded text-sm font-semibold">English</button>

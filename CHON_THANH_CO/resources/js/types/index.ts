@@ -30,6 +30,14 @@ export interface Product {
   description?: string
   specs?: ProductSpec[]
   images?: ProductImage[]
+  documents?: ProductDocument[]
+}
+
+export interface ProductDocument {
+  id: number
+  title: string
+  file_url: string
+  file_size?: number | null
 }
 
 export interface ProductSpec {

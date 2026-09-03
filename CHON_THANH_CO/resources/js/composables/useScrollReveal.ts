@@ -17,7 +17,6 @@ export function useScrollReveal() {
   }
 
   onMounted(() => {
-    // Safety fallback: force reveal after 1.5s if anything is still hidden
     forceTimer = window.setTimeout(() => {
       const hidden = document.querySelectorAll(
         '.reveal:not(.revealed), .reveal-left:not(.revealed), .reveal-right:not(.revealed), .reveal-scale:not(.revealed), .reveal-up-scale:not(.revealed), .reveal-fade:not(.revealed), .stagger-grid:not(.revealed)',

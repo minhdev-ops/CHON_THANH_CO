@@ -7,24 +7,32 @@
         $productSpecs = $product?->specs ?? collect();
         $productImages = $product?->images ?? collect();
 
-        $productSpecsData = [];
-        foreach ($productSpecs as $s) {
-            $productSpecsData[] = [
-                'value' => $s->value,
-                'icon' => $s->icon,
-                'sort_order' => $s->sort_order,
-                'label_vi' => $s->translation('vi')?->label ?? '',
-                'label_en' => $s->translation('en')?->label ?? '',
-            ];
+        if (old('specs') !== null) {
+            $productSpecsData = old('specs');
+        } else {
+            $productSpecsData = [];
+            foreach ($productSpecs as $s) {
+                $productSpecsData[] = [
+                    'value' => $s->value,
+                    'icon' => $s->icon,
+                    'sort_order' => $s->sort_order,
+                    'label_vi' => $s->translation('vi')?->label ?? '',
+                    'label_en' => $s->translation('en')?->label ?? '',
+                ];
+            }
         }
 
-        $productImagesData = [];
-        foreach ($productImages as $img) {
-            $productImagesData[] = [
-                'image' => $img->image,
-                'alt' => $img->alt,
-                'sort_order' => $img->sort_order,
-            ];
+        if (old('images') !== null) {
+            $productImagesData = old('images');
+        } else {
+            $productImagesData = [];
+            foreach ($productImages as $img) {
+                $productImagesData[] = [
+                    'image' => $img->image,
+                    'alt' => $img->alt,
+                    'sort_order' => $img->sort_order,
+                ];
+            }
         }
     @endphp
 

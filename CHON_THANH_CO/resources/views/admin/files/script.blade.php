@@ -292,6 +292,8 @@
                 const input = opener.document.getElementById(this.inputId);
                 if (!input) { alert('Không tìm thấy ô nhập liệu gốc.'); return; }
                 input.value = file.url;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
                 if (typeof opener.updateImagePreview === 'function') {
                     opener.updateImagePreview(opener.document.getElementById(this.inputId + '_preview'), file.url);
                 }
