@@ -6,7 +6,7 @@ import { getYearsOfExperience } from '../utils/experience'
 const { settings, load, socialSettings } = useSettings()
 
 const phones = computed(() => {
-  const raw = settings.value?.['contact.phone']?.trim() || '0909 292 530'
+  const raw = settings.value?.['contact.phone']?.trim() || '028.22 179 115'
   return raw.split(/\s+[-/;,|]\s+|\s{2,}/).map((p) => p.trim()).filter(Boolean)
     .map((p) => ({ display: p, href: `tel:${p.replace(/[^\d+]/g, '')}` }))
 })
@@ -128,7 +128,7 @@ onMounted(() => load())
           <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8'" target="_blank" rel="noopener noreferrer" class="flex items-start gap-3 hover:text-white transition-colors">
             <span class="material-symbols-outlined text-white text-[22px] mt-0.5 shrink-0">location_on</span>
             <span class="text-white/80 text-[16px] leading-relaxed">
-              {{ settings?.['contact.address'] || '416A Đường CC2, Phường Tây Thạnh, Thành Phố Hồ Chí Minh' }}
+              {{ settings?.['contact.address'] || '416A Đường CC2, Phường Sơn Kỳ, Quận Tân Phú, TP.HCM' }}
             </span>
           </a>
           <div class="flex items-start gap-3">

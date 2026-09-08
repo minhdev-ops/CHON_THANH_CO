@@ -14,7 +14,7 @@ defineProps<{
 const { settings, load } = useSettings()
 load()
 
-const hotline = computed(() => settings.value?.phone || settings.value?.['contact.phone'] || '0909 292 530')
+const hotline = computed(() => settings.value?.phone || settings.value?.['contact.phone'] || '028.22 179 115')
 const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`)
 </script>
 

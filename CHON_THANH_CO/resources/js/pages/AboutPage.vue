@@ -10,6 +10,7 @@ import { getYearsOfExperience } from '../utils/experience'
 import type { Certificate } from '../types'
 import PageHeader from '../components/PageHeader.vue'
 import SectionHeader from '../components/SectionHeader.vue'
+import LazyImage from '../components/LazyImage.vue'
 import { fallbackTimeline, fallbackStats, fallbackCertificates } from '../types/fallback'
 
 const { data: home } = useApiData(() => api.home(), () => ({
@@ -197,9 +198,13 @@ const milestones = [
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 stagger-grid">
           <div class="bg-surface-bright border border-outline-variant rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 group card-shine">
-            <div class="aspect-[16/9] overflow-hidden bg-surface-vlm">
-              <img src="/images/products/gabion-1.jpg" alt="Nhà máy Rọ đá Á Châu" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-            </div>
+            <LazyImage
+              src="/images/products/gabion-1.jpg"
+              alt="Nhà máy Rọ đá Á Châu"
+              fallback-src="/images/products/gabion-1.jpg"
+              aspect-ratio="aspect-[16/9]"
+              image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            />
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
                 <span class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -219,9 +224,13 @@ const milestones = [
             </div>
           </div>
           <div class="bg-surface-bright border border-outline-variant rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 group card-shine">
-            <div class="aspect-[16/9] overflow-hidden bg-surface-vlm">
-              <img src="/images/projects/highway-2.jpg" alt="Nhà máy Lưới thép Tiên Phong" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-            </div>
+            <LazyImage
+              src="/images/projects/highway-2.jpg"
+              alt="Nhà máy Lưới thép Tiên Phong"
+              fallback-src="/images/projects/highway-2.jpg"
+              aspect-ratio="aspect-[16/9]"
+              image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            />
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
                 <span class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -259,7 +268,13 @@ const milestones = [
           <router-link v-for="(cert, i) in certificates?.data ?? []" :key="cert.slug" to="/certificates"
             class="aspect-[3/4] bg-surface-bright border border-outline-variant p-6 flex flex-col items-center justify-center hover:shadow-[0_16px_48px_rgba(184,155,136,0.15)] hover:border-[#B89B88] transition-all duration-500 rounded-2xl group card-shine">
             <div class="w-full h-3/5 mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-              <img :src="cert.image" :alt="cert.name" class="max-w-full max-h-full object-contain" loading="lazy">
+              <LazyImage
+                :src="cert.image"
+                :alt="cert.name"
+                fallback-src="/images/certs/iso-9001.png"
+                container-class="w-full h-full bg-transparent flex items-center justify-center"
+                image-class="max-w-full max-h-full object-contain mx-auto"
+              />
             </div>
             <span class="text-[13px] font-bold text-text-secondary text-center group-hover:text-primary transition-colors duration-300 leading-snug">{{ cert.name }}</span>
           </router-link>

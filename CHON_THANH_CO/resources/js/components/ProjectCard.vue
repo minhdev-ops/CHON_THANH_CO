@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed }   from 'vue'
 import type { Project } from '../types'
+import LazyImage from './LazyImage.vue'
 
 const props = defineProps<{ project: Project }>()
 
@@ -17,13 +18,14 @@ const heroImage = computed(() =>
     class="bg-white rounded-[10px] shadow-sm hover:shadow-xl transition-shadow group overflow-hidden flex flex-col h-full border border-transparent hover:border-[#E4D8D0]"
   >
     <!-- Image with internal text overlay -->
-    <div class="relative overflow-hidden aspect-[4/3] rounded-[10px]">
-      <img
-        :src="heroImage"
-        :alt="project.name"
-        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        loading="lazy"
-      >
+    <LazyImage
+      :src="heroImage"
+      :alt="project.name"
+      fallback-src="/images/projects/highway-1.jpg"
+      aspect-ratio="aspect-[4/3]"
+      container-class="rounded-[10px]"
+      image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+    >
       <!-- Dark gradient for readability -->
       <div class="absolute inset-0 bg-gradient-to-t from-[#16243D]/90 via-[#16243D]/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
       
@@ -48,6 +50,6 @@ const heroImage = computed(() =>
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#B89B88] rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 shadow-xl">
         <span class="material-symbols-outlined text-[24px]">visibility</span>
       </div>
-    </div>
+    </LazyImage>
   </router-link>
 </template>

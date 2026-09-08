@@ -18,7 +18,7 @@ const openDropdown  = ref<string | null>(null)
 const categories    = ref<Category[]>([])
 const { settings, load } = useSettings()
 
-const hotline     = computed(() => settings.value?.phone || settings.value?.['contact.phone'] || '0909 292 530')
+const hotline     = computed(() => settings.value?.phone || settings.value?.['contact.phone'] || '028.22 179 115')
 const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`)
 const email       = computed(() => settings.value?.['contact.email'] || 'chonthanhtco@gmail.com')
 

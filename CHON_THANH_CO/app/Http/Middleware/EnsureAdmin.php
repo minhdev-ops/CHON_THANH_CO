@@ -11,6 +11,9 @@ class EnsureAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (! $request->session()->get('admin_authenticated')) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
+            }
             return redirect()->route('admin.login');
         }
 

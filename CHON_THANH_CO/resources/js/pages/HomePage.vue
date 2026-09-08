@@ -10,6 +10,7 @@ import Carousel from '../components/Carousel.vue'
 import SectionHeader from '../components/SectionHeader.vue'
 import ProjectCard from '../components/ProjectCard.vue'
 import ProductCard from '../components/ProductCard.vue'
+import LazyImage from '../components/LazyImage.vue'
 import { getYearsOfExperience } from '../utils/experience'
 import {
   fallbackStats,
@@ -200,7 +201,13 @@ const displayStats = computed(() =>
           <div class="reveal-right">
             <div class="grid gap-6">
               <div class="rounded-[10px] overflow-hidden bg-surface-vlm shadow-md">
-                <img src="/images/home-distribution.jpg" alt="CHƠN THÀNH nhà máy" class="w-full object-cover aspect-[16/9] hover:scale-105 transition-transform duration-700">
+                <LazyImage
+                  src="/images/home-distribution.jpg"
+                  alt="CHƠN THÀNH nhà máy"
+                  fallback-src="/images/home-distribution.jpg"
+                  aspect-ratio="aspect-[16/9]"
+                  image-class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                />
               </div>
               <div class="grid grid-cols-2 gap-6">
                 <div v-for="(s, i) in displayStats" :key="i" :ref="(el) => setCounterEl(el as HTMLElement | null)"
@@ -247,15 +254,21 @@ const displayStats = computed(() =>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 stagger-grid">
           <div v-for="(s, i) in services" :key="i"
             class="group flex flex-col bg-canvas border border-outline-variant rounded-3xl overflow-hidden hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 reveal" :class="`reveal-delay-${(i%4)+1}`">
-            <div class="relative w-full aspect-[4/3] overflow-hidden shrink-0">
-              <img :src="s.image" :alt="s.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+            <LazyImage
+              :src="s.image"
+              :alt="s.title"
+              fallback-src="/images/products/geotextile-roll.jpg"
+              aspect-ratio="aspect-[4/3]"
+              container-class="shrink-0"
+              image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+            >
               <div class="absolute inset-0 bg-gradient-to-t from-text-main/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
               <!-- Floating Icon -->
               <div class="absolute -bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:-translate-y-2 transition-transform duration-500 z-10">
                 <span class="material-symbols-outlined text-[28px]">{{ s.icon }}</span>
               </div>
-            </div>
+            </LazyImage>
             
             <div class="p-6 md:p-8 flex flex-col flex-grow relative pt-10">
               <h4 class="font-extrabold text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug">{{ s.title }}</h4>
@@ -349,14 +362,21 @@ const displayStats = computed(() =>
           </div>
           <div class="reveal-right">
             <div class="relative rounded-[10px] overflow-hidden shadow-2xl">
-              <img src="/images/projects/highway-1.jpg" alt="Công trình địa kỹ thuật" class="w-full object-cover aspect-[4/5] hover:scale-105 transition-transform duration-700">
-              <div class="absolute inset-0 bg-gradient-to-t from-primary-deep/80 via-primary-deep/20 to-transparent"></div>
-              <div class="absolute bottom-8 left-8 right-8">
-                <div class="bg-surface-glass backdrop-blur-md rounded-[10px] p-6 shadow-xl border-l-4 border-primary">
-                  <div class="text-text-main font-extrabold text-2xl mb-2">{{ getYearsOfExperience() }}+ năm kinh nghiệm</div>
-                  <div class="text-text-secondary text-[15px] font-medium">Đồng hành cùng hàng nghìn công trình hạ tầng từ 2005 đến nay</div>
+              <LazyImage
+                src="/images/projects/highway-1.jpg"
+                alt="Công trình địa kỹ thuật"
+                fallback-src="/images/projects/highway-1.jpg"
+                aspect-ratio="aspect-[4/5]"
+                image-class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              >
+                <div class="absolute inset-0 bg-gradient-to-t from-primary-deep/80 via-primary-deep/20 to-transparent"></div>
+                <div class="absolute bottom-8 left-8 right-8 z-10">
+                  <div class="bg-surface-glass backdrop-blur-md rounded-[10px] p-6 shadow-xl border-l-4 border-primary">
+                    <div class="text-text-main font-extrabold text-2xl mb-2">{{ getYearsOfExperience() }}+ năm kinh nghiệm</div>
+                    <div class="text-text-secondary text-[15px] font-medium">Đồng hành cùng hàng nghìn công trình hạ tầng từ 2005 đến nay</div>
+                  </div>
                 </div>
-              </div>
+              </LazyImage>
             </div>
           </div>
         </div>
@@ -379,7 +399,13 @@ const displayStats = computed(() =>
               </div>
               <p class="text-text-secondary text-[15px] leading-relaxed mb-6 flex-grow italic">"{{ t.text }}"</p>
               <div class="flex items-center gap-3 pt-4 border-t border-outline-variant">
-                <img :src="t.avatar" :alt="t.name" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20">
+                <LazyImage
+                  :src="t.avatar"
+                  :alt="t.name"
+                  fallback-src="/images/projects/highway-1.jpg"
+                  container-class="w-12 h-12 rounded-full shrink-0 border-2 border-primary/20"
+                  image-class="w-full h-full rounded-full object-cover"
+                />
                 <div>
                   <div class="font-extrabold text-text-main text-[15px]">{{ t.name }}</div>
                   <div class="text-text-muted text-[12px] font-medium">{{ t.role }}</div>
@@ -403,9 +429,13 @@ const displayStats = computed(() =>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-grid">
           <router-link v-for="(n, i) in newsPreview" :key="n.slug" :to="`/news/${n.slug}`"
             class="bg-surface-bright border border-outline-variant rounded-3xl overflow-hidden group hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 flex flex-col reveal" :class="`reveal-delay-${(i%3)+1}`">
-            <div class="aspect-[16/10] overflow-hidden bg-surface-vlm">
-              <img :src="n.image" :alt="n.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-            </div>
+            <LazyImage
+              :src="n.image"
+              :alt="n.title"
+              fallback-src="/images/products/industrial-1.jpg"
+              aspect-ratio="aspect-[16/10]"
+              image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            />
             <div class="p-7 flex flex-col flex-grow">
               <span class="text-[11px] font-bold text-primary uppercase tracking-[0.15em] mb-3">{{ n.category?.name || 'Tin tức' }} — {{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
               <h3 class="font-extrabold text-text-main text-[19px] mb-3 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
