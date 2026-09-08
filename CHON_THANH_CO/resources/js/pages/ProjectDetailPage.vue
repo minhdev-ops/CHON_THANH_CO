@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { api } from '../api/client'
 import { useFocusTrap } from '../composables/useFocusTrap'
 import type { Project } from '../types'
+import LazyImage from '../components/LazyImage.vue'
 import { t } from '../i18n'
 import { fallbackProjects } from '../types/fallback'
 
@@ -155,7 +156,13 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
           </div>
         </div>
         <div class="md:col-span-7 rounded-3xl overflow-hidden shadow-[0_12px_40px_rgba(184,155,136,0.12)] hover:shadow-[0_20px_60px_rgba(184,155,136,0.18)] transition-all duration-500 reveal-right group">
-          <img :src="project.desc_image" :alt="project.name" class="w-full aspect-[4/3] md:aspect-video object-cover object-center group-hover:scale-105 transition-transform duration-700" loading="lazy">
+          <LazyImage
+            :src="project.desc_image"
+            :alt="project.name"
+            fallback-src="/images/projects/highway-1.jpg"
+            aspect-ratio="aspect-[4/3] md:aspect-video"
+            image-class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+          />
         </div>
       </div>
     </section>
@@ -171,7 +178,13 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
         <div class="grid md:grid-cols-2 gap-8 stagger-grid">
           <div v-for="prod in project.materials" :key="prod.name" class="bg-surface-bright rounded-3xl border border-outline-variant shadow-sm hover:shadow-[0_16px_48px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 flex flex-col sm:flex-row overflow-hidden group card-shine">
             <div class="w-full sm:w-2/5 shrink-0 bg-surface-vlm p-6 flex items-center justify-center border-b sm:border-b-0 sm:border-r border-outline-variant">
-              <img :src="prod.image" :alt="prod.name" class="w-full h-32 object-contain group-hover:scale-110 transition-transform duration-500" loading="lazy">
+              <LazyImage
+                :src="prod.image"
+                :alt="prod.name"
+                fallback-src="/images/products/geotextile-roll.jpg"
+                container-class="w-full h-32 bg-transparent flex items-center justify-center"
+                image-class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
+              />
             </div>
             <div class="p-8 flex flex-col justify-center">
               <h3 class="font-bold text-[20px] text-primary-deep mb-3">{{ prod.name }}</h3>

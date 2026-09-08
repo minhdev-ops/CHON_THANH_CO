@@ -1,66 +1,45 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { api } from '../api/client'
 import type { Project } from '../types'
 import PageHeader from '../components/PageHeader.vue'
 import ErrorState from '../components/ErrorState.vue'
 import CTABanner from '../components/CTABanner.vue'
+import Pagination from '../components/Pagination.vue'
+import LazyImage from '../components/LazyImage.vue'
 import { t } from '../i18n'
 import { fallbackProjects } from '../types/fallback'
 
-const projects = ref<Project[]>(fallbackProjects)
+const projects = ref<Project[]>([...fallbackProjects])
 const projectsLoading = ref(false)
-const loadingMore = ref(false)
 const loadError = ref<string | null>(null)
-const nextCursor = ref<number | null>(null)
-const hasMore = computed(() => nextCursor.value !== null && nextCursor.value !== undefined)
 
 const selectedLocation = ref<string | null>(null)
 const searchQuery = ref('')
 
-const allProjects = ref<Project[]>([])
+const currentPage = ref(1)
+const pageSize = ref(6)
 
-const loadAllFallback = async () => {
+const loadProjects = async () => {
+  projectsLoading.value = true
+  loadError.value = null
   try {
-    let cursor: number | null | undefined
-    do {
-      const page = await api.projects({ cursor, limit: 50 })
-      allProjects.value.push(...page.data)
-      cursor = page.next_cursor
-    } while (cursor != null)
-  } catch {
-    allProjects.value = [...fallbackProjects]
-  }
-}
-
-const loadMore = async (reset = false) => {
-  if (reset) {
-    nextCursor.value = null
-    loadError.value = null
-    projectsLoading.value = true
-  } else {
-    loadingMore.value = true
-  }
-  try {
-    const res = await api.projects({ limit: 50, cursor: nextCursor.value ?? undefined })
-    let list = res.data ?? []
-    if (reset) {
-      projects.value = list.length ? list : filteredFallback.value
+    const res = await api.projects({ limit: 50 })
+    if (res.data && res.data.length > 0) {
+      projects.value = res.data
     } else {
-      projects.value.push(...list)
+      projects.value = [...fallbackProjects]
     }
-    nextCursor.value = res.next_cursor
   } catch (e) {
-    loadError.value = e instanceof Error ? e.message : t('common.errorGeneric')
-    if (reset) projects.value = filteredFallback.value
+    projects.value = [...fallbackProjects]
+    loadError.value = null
   } finally {
     projectsLoading.value = false
-    loadingMore.value = false
   }
 }
 
-const filteredFallback = computed(() => {
-  let list = [...fallbackProjects]
+const filteredProjects = computed(() => {
+  let list = projects.value.length ? [...projects.value] : [...fallbackProjects]
   if (selectedLocation.value) list = list.filter((p) => p.location?.includes(selectedLocation.value!))
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.trim().toLowerCase()
@@ -69,9 +48,29 @@ const filteredFallback = computed(() => {
   return list
 })
 
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredProjects.value.length / pageSize.value)))
+
+const paginatedProjects = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredProjects.value.slice(start, start + pageSize.value)
+})
+
+const onPageChange = (page: number) => {
+  currentPage.value = page
+  const el = document.getElementById('projects-main-section')
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  } else {
+    window.scrollTo({ top: 250, behavior: 'smooth' })
+  }
+}
+
+watch([selectedLocation, searchQuery], () => {
+  currentPage.value = 1
+})
+
 onMounted(async () => {
-  loadAllFallback()
-  await loadMore(true)
+  await loadProjects()
   await nextTick()
   window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
 })
@@ -144,77 +143,117 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
               >
             </div>
             <div class="hidden sm:flex flex-col items-end px-3 border-l border-outline-variant h-full justify-center">
-              <span class="font-black text-[16px] text-text-main leading-none">{{ String(projects.length).padStart(2, '0') }}</span>
+              <span class="font-black text-[16px] text-text-main leading-none">{{ String(filteredProjects.length).padStart(2, '0') }}</span>
               <span class="text-[9px] font-bold text-text-muted uppercase tracking-widest mt-0.5">Kết quả</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ═══ LOADING ═══ -->
-      <div v-if="projectsLoading" class="grid grid-cols-12 gap-4">
-        <div v-for="i in 6" :key="i" class="col-span-12 sm:col-span-6 lg:col-span-4 h-80 bg-canvas animate-shimmer border border-outline-variant"></div>
-      </div>
+      <!-- ═══ SECTION CONTAINER ═══ -->
+      <div id="projects-main-section" class="scroll-mt-32">
+        <!-- ═══ LOADING ═══ -->
+        <div v-if="projectsLoading" class="grid grid-cols-12 gap-4">
+          <div v-for="i in 6" :key="i" class="col-span-12 sm:col-span-6 lg:col-span-4 h-80 bg-canvas animate-shimmer border border-outline-variant"></div>
+        </div>
 
-      <!-- ═══ ERROR ═══ -->
-      <div v-else-if="loadError && !projects?.length" class="bg-canvas border border-outline-variant p-8">
-        <ErrorState :message="loadError" @retry="loadMore(true)" />
-      </div>
+        <!-- ═══ ERROR ═══ -->
+        <div v-else-if="loadError && !filteredProjects?.length" class="bg-canvas border border-outline-variant p-8">
+          <ErrorState :message="loadError" @retry="loadProjects" />
+        </div>
 
-      <!-- ═══ PROFESSIONAL PROJECT GRID ═══ -->
-      <div v-else-if="projects?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-grid">
-        <router-link
-          v-for="(project, i) in projects" :key="project.slug"
-          :to="`/projects/${project.slug}`"
-          class="group flex flex-col bg-white border border-outline-variant/60 shadow-sm hover:shadow-md transition-all duration-300 reveal rounded-sm overflow-hidden"
-          :class="[`reveal-delay-${(i%3)+1}`]"
-        >
-          <!-- Image wrapper -->
-          <div class="relative w-full overflow-hidden bg-canvas shrink-0 aspect-[4/3] border-b border-outline-variant/60">
-            <img
-              :src="project.hero_image" :alt="project.name"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              loading="lazy"
-            >
-            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm">
-              <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
-              <span class="text-[9px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
+        <!-- ═══ PROFESSIONAL PROJECT GRID ═══ -->
+        <div v-else-if="filteredProjects?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 stagger-grid">
+          <router-link
+            v-for="(project, i) in paginatedProjects" :key="project.slug"
+            :to="`/projects/${project.slug}`"
+            class="group flex flex-col md:flex-row bg-white border border-outline-variant/60 shadow-sm hover:shadow-md transition-all duration-300 reveal rounded-xl md:rounded-sm overflow-hidden"
+            :class="[`reveal-delay-${(i%3)+1}`]"
+          >
+            <!-- Mobile: compact horizontal -->
+            <div class="flex md:hidden items-center gap-3 p-3">
+              <div class="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+                <LazyImage
+                  :src="project.hero_image"
+                  :alt="project.name"
+                  fallback-src="/images/projects/highway-1.jpg"
+                  image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.15em]">{{ project.period }}</span>
+                </div>
+                <h3 class="font-bold text-[14px] text-text-main group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2">
+                  {{ project.name }}
+                </h3>
+                <span class="text-[11px] font-bold text-text-muted line-clamp-1 mt-1 block">{{ project.location }}</span>
+              </div>
+              <span class="material-symbols-outlined text-[18px] text-primary shrink-0">arrow_forward</span>
             </div>
-          </div>
 
-          <!-- Content -->
-          <div class="p-6 md:p-8 flex flex-col flex-grow relative">
-            <div class="flex items-center gap-3 mb-3">
-              <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
-              <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-              <span class="text-[11px] font-bold text-text-muted line-clamp-1 uppercase tracking-wider">{{ project.location }}</span>
+            <!-- Desktop: full vertical card -->
+            <div class="hidden md:flex md:flex-col h-full">
+              <LazyImage
+                :src="project.hero_image"
+                :alt="project.name"
+                fallback-src="/images/projects/highway-1.jpg"
+                aspect-ratio="aspect-[4/3]"
+                container-class="shrink-0 border-b border-outline-variant/60"
+                image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              >
+                <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm z-10">
+                  <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
+                  <span class="text-[9px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
+                </div>
+              </LazyImage>
+
+              <div class="p-6 md:p-8 flex flex-col flex-grow relative">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
+                  <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                  <span class="text-[11px] font-bold text-text-muted line-clamp-1 uppercase tracking-wider">{{ project.location }}</span>
+                </div>
+                
+                <h3 class="font-bold text-[18px] md:text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug line-clamp-2">
+                  {{ project.name }}
+                </h3>
+                
+                <p v-if="project.area || project.materials" class="text-text-secondary text-[13.5px] leading-relaxed line-clamp-2 mb-6 flex-grow">
+                  <span v-if="project.area">Quy mô: <strong>{{ project.area }}</strong>. </span>
+                  <span v-if="project.materials">Sử dụng <strong>{{ project.materials.length }}</strong> loại vật tư.</span>
+                </p>
+                <div v-else class="flex-grow mb-6"></div>
+
+                <div class="mt-auto flex items-center pt-5 border-t border-outline-variant/30">
+                  <span class="inline-flex items-center gap-1.5 font-bold text-[12px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
+                    Chi tiết dự án <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </span>
+                </div>
+              </div>
             </div>
-            
-            <h3 class="font-bold text-[18px] md:text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug line-clamp-2">
-              {{ project.name }}
-            </h3>
-            
-            <p v-if="project.area || project.materials" class="text-text-secondary text-[13.5px] leading-relaxed line-clamp-2 mb-6 flex-grow">
-              <span v-if="project.area">Quy mô: <strong>{{ project.area }}</strong>. </span>
-              <span v-if="project.materials">Sử dụng <strong>{{ project.materials.length }}</strong> loại vật tư.</span>
-            </p>
-            <div v-else class="flex-grow mb-6"></div>
+          </router-link>
+        </div>
 
-            <div class="mt-auto flex items-center pt-5 border-t border-outline-variant/30">
-              <span class="inline-flex items-center gap-1.5 font-bold text-[12px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
-                Chi tiết dự án <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </span>
-            </div>
-          </div>
-        </router-link>
-      </div>
+        <!-- ═══ EMPTY ═══ -->
+        <div v-else class="py-20 text-center bg-canvas border border-outline-variant">
+          <div class="font-sans text-[80px] font-bold text-text-muted/30 leading-none mb-4 select-none">∅</div>
+          <p class="text-text-secondary font-medium mb-6 text-[13px] uppercase tracking-[0.2em]">{{ t('projects.empty') || 'Không tìm thấy dự án phù hợp' }}</p>
+          <button class="bg-primary text-white px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-primary-deep transition-colors duration-300" @click="selectedLocation = null; searchQuery = ''; currentPage = 1">
+            {{ t('products.clearAll') || 'Xóa bộ lọc' }}
+          </button>
+        </div>
 
-      <!-- ═══ LOAD MORE ═══ -->
-      <div v-if="hasMore && !projectsLoading" class="mt-14 flex justify-center">
-        <button type="button" class="btn btn-outline py-3.5 px-8 flex items-center justify-center gap-2 group btn-magnetic rounded-full font-bold shadow-sm" :disabled="loadingMore" @click="loadMore()">
-          <span>{{ loadingMore ? t('common.loading') : t('common.loadMore') }}</span>
-          <span v-if="!loadingMore" class="material-symbols-outlined text-[20px] group-hover:translate-y-1 transition-transform duration-300">keyboard_double_arrow_down</span>
-        </button>
+        <!-- ═══ PAGINATION ═══ -->
+        <Pagination
+          v-if="!projectsLoading && filteredProjects.length > 0"
+          v-model:current-page="currentPage"
+          :total-pages="totalPages"
+          :total-items="filteredProjects.length"
+          :page-size="pageSize"
+          item-name="dự án"
+          @change="onPageChange"
+        />
       </div>
     </main>
 

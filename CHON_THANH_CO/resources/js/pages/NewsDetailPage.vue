@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { api } from '../api/client'
 import type { NewsItem } from '../types'
 import PageHeader from '../components/PageHeader.vue'
+import LazyImage from '../components/LazyImage.vue'
 import { t, locale } from '../i18n'
 import { fallbackNews } from '../types/fallback'
 
@@ -92,8 +93,14 @@ const breadcrumbs = computed(() => [
 
     <article class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14">
       <!-- Hero Image -->
-      <div class="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-3xl bg-surface-vlm border border-outline-variant mb-10">
-        <img :src="item.image" :alt="item.title" class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700">
+      <div class="relative overflow-hidden rounded-3xl border border-outline-variant mb-10">
+        <LazyImage
+          :src="item.image"
+          :alt="item.title"
+          fallback-src="/images/products/industrial-1.jpg"
+          aspect-ratio="aspect-[16/9] md:aspect-[21/9]"
+          image-class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700"
+        />
       </div>
 
       <!-- Article Meta -->
@@ -148,9 +155,13 @@ const breadcrumbs = computed(() => [
         <router-link v-for="(n, i) in related" :key="n.slug" :to="`/news/${n.slug}`"
           class="group bg-surface-bright rounded-3xl border border-outline-variant overflow-hidden card-shine glow-card hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500"
           :class="`reveal-delay-${(i % 3) + 1}`">
-          <div class="aspect-[16/10] overflow-hidden">
-            <img :src="n.image" :alt="n.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-          </div>
+          <LazyImage
+            :src="n.image"
+            :alt="n.title"
+            fallback-src="/images/products/industrial-1.jpg"
+            aspect-ratio="aspect-[16/10]"
+            image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          />
           <div class="p-6">
             <span class="text-[11px] font-bold text-primary uppercase tracking-[0.15em] mb-3 block">{{ n.category?.name || 'Tin tức' }}</span>
             <h3 class="font-extrabold text-text-main text-[16px] leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-3">{{ n.title }}</h3>

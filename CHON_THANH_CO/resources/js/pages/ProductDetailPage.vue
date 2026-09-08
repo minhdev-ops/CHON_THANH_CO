@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import type { Product } from '../types'
 import ProductCard from '../components/ProductCard.vue'
 import PageHeader from '../components/PageHeader.vue'
+import LazyImage from '../components/LazyImage.vue'
 import { t } from '../i18n'
 import { fallbackProducts } from '../types/fallback'
 import { getYearsOfExperience } from '../utils/experience'
@@ -121,10 +122,16 @@ const breadcrumbs = computed(() => [
 
           <div v-if="galleryImages.length > 1" class="grid grid-cols-5 gap-3 mt-4">
             <button v-for="(img, i) in galleryImages" :key="i" type="button"
-              class="aspect-square border-2 rounded-xl overflow-hidden flex items-center justify-center bg-surface-bright transition-all duration-300 p-2"
+              class="aspect-square border-2 rounded-xl overflow-hidden flex items-center justify-center bg-surface-bright transition-all duration-300 p-2 cursor-pointer"
               :class="i === activeImage ? 'border-primary ring-2 ring-primary/20 shadow-md' : 'border-outline-variant hover:border-primary/50'"
               @click="activeImage = i">
-              <img :src="img" :alt="`${product.name} ${i + 1}`" class="w-full h-full object-contain" loading="lazy">
+              <LazyImage
+                :src="img"
+                :alt="`${product.name} ${i + 1}`"
+                fallback-src="/images/products/geotextile-roll.jpg"
+                container-class="w-full h-full bg-transparent flex items-center justify-center"
+                image-class="max-w-full max-h-full object-contain"
+              />
             </button>
           </div>
         </div>

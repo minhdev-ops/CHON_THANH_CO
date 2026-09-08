@@ -6,15 +6,14 @@ import type { NewsItem } from '../types'
 import PageHeader from '../components/PageHeader.vue'
 import ErrorState from '../components/ErrorState.vue'
 import CTABanner from '../components/CTABanner.vue'
+import Pagination from '../components/Pagination.vue'
+import LazyImage from '../components/LazyImage.vue'
 import { t, locale } from '../i18n'
 import { fallbackNews } from '../types/fallback'
 
-const news = ref<NewsItem[]>(fallbackNews)
+const news = ref<NewsItem[]>([...fallbackNews])
 const newsLoading = ref(false)
-const loadingMore = ref(false)
 const loadError = ref<string | null>(null)
-const nextCursor = ref<number | null>(null)
-const hasMore = computed(() => nextCursor.value !== null && nextCursor.value !== undefined)
 
 const { data: categories, error: categoriesError, load: loadCategories } = useApiData(
   () => api.newsCategories(),
@@ -30,49 +29,29 @@ const { data: categories, error: categoriesError, load: loadCategories } = useAp
 const selectedCategory = ref<string | null>(null)
 const searchQuery = ref('')
 
-const allNews = ref<NewsItem[]>([])
+const currentPage = ref(1)
+const pageSize = ref(5)
 
-const loadAllFallback = async () => {
+const loadNews = async () => {
+  newsLoading.value = true
+  loadError.value = null
   try {
-    let cursor: number | null | undefined
-    do {
-      const page = await api.news({ cursor, limit: 50 })
-      allNews.value.push(...page.data)
-      cursor = page.next_cursor
-    } while (cursor != null)
-  } catch {
-    allNews.value = [...fallbackNews]
-  }
-}
-
-const loadMore = async (reset = false) => {
-  if (reset) {
-    nextCursor.value = null
-    loadError.value = null
-    newsLoading.value = true
-  } else {
-    loadingMore.value = true
-  }
-  try {
-    const res = await api.news({ limit: 50, cursor: nextCursor.value ?? undefined, category: selectedCategory.value ?? undefined })
-    let list = res.data ?? []
-    if (reset) {
-      news.value = list.length ? list : filteredFallback.value
+    const res = await api.news({ limit: 50 })
+    if (res.data && res.data.length > 0) {
+      news.value = res.data
     } else {
-      news.value.push(...list)
+      news.value = [...fallbackNews]
     }
-    nextCursor.value = res.next_cursor
   } catch (e) {
-    loadError.value = e instanceof Error ? e.message : t('common.errorGeneric')
-    if (reset) news.value = filteredFallback.value
+    news.value = [...fallbackNews]
+    loadError.value = null
   } finally {
     newsLoading.value = false
-    loadingMore.value = false
   }
 }
 
-const filteredFallback = computed(() => {
-  let list = [...fallbackNews]
+const filteredNews = computed(() => {
+  let list = news.value.length ? [...news.value] : [...fallbackNews]
   if (selectedCategory.value) list = list.filter((n) => n.category?.slug === selectedCategory.value)
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.trim().toLowerCase()
@@ -81,12 +60,29 @@ const filteredFallback = computed(() => {
   return list
 })
 
-watch(selectedCategory, () => loadMore(true))
-watch(searchQuery, () => loadMore(true))
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredNews.value.length / pageSize.value)))
+
+const paginatedNews = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredNews.value.slice(start, start + pageSize.value)
+})
+
+const onPageChange = (page: number) => {
+  currentPage.value = page
+  const el = document.getElementById('news-main-section')
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  } else {
+    window.scrollTo({ top: 250, behavior: 'smooth' })
+  }
+}
+
+watch([selectedCategory, searchQuery], () => {
+  currentPage.value = 1
+})
 
 onMounted(async () => {
-  loadAllFallback()
-  await loadMore(true)
+  await loadNews()
   await nextTick()
   window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
 })
@@ -133,14 +129,14 @@ const activeCategoryName = computed(() => {
 
     <main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14 animate-fade-in-up">
       <!-- ═══ CATEGORY BAR (editorial filter) ═══ -->
-      <div v-if="categoriesError" class="mb-10">
+      <div v-if="categoriesError" class="mb-6 md:mb-10">
         <ErrorState :message="categoriesError" @retry="loadCategories" />
       </div>
-      <div v-else class="mb-10 reveal">
-        <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 pb-0 border-b border-outline-variant">
-          <div class="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+      <div v-else class="mb-6 md:mb-10 reveal">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-4 md:gap-6 pb-0 border-b border-outline-variant">
+          <div class="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
-              class="pb-4 text-[14px] font-bold transition-colors relative"
+              class="pb-3 md:pb-4 text-[13px] md:text-[14px] font-bold transition-colors relative"
               :class="selectedCategory === null ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = null"
             >
@@ -148,7 +144,7 @@ const activeCategoryName = computed(() => {
               <div v-if="selectedCategory === null" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
             </button>
             <button v-for="cat in categories" :key="cat.slug"
-              class="pb-4 text-[14px] font-bold transition-colors relative"
+              class="pb-3 md:pb-4 text-[13px] md:text-[14px] font-bold transition-colors relative"
               :class="selectedCategory === cat.slug ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = cat.slug"
             >
@@ -156,7 +152,7 @@ const activeCategoryName = computed(() => {
               <div v-if="selectedCategory === cat.slug" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
             </button>
           </div>
-          <div class="relative w-full lg:w-72 mb-4 lg:mb-3">
+          <div class="relative w-full lg:w-72 mb-3 lg:mb-3">
             <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
             <input
               v-model="searchQuery" type="text" :placeholder="t('news.searchPlaceholder')"
@@ -167,41 +163,67 @@ const activeCategoryName = computed(() => {
       </div>
 
       <div class="grid grid-cols-12 gap-6 lg:gap-10">
-        <div class="col-span-12 lg:col-span-9">
+        <div id="news-main-section" class="col-span-12 scroll-mt-32">
           <!-- ═══ LOADING ═══ -->
           <div v-if="newsLoading" class="grid grid-cols-12 gap-4">
             <div v-for="i in 4" :key="i" class="col-span-12 sm:col-span-6 h-80 bg-canvas animate-shimmer border border-outline-variant"></div>
           </div>
 
           <!-- ═══ ERROR ═══ -->
-          <div v-else-if="loadError && !news.length" class="bg-canvas border border-outline-variant p-8">
-            <ErrorState :message="loadError" @retry="loadMore(true)" />
+          <div v-else-if="loadError && !filteredNews.length" class="bg-canvas border border-outline-variant p-8">
+            <ErrorState :message="loadError" @retry="loadNews" />
           </div>
 
           <!-- ═══ PROFESSIONAL LIST VIEW ═══ -->
-          <div v-else-if="news.length" class="flex flex-col gap-8">
+          <div v-else-if="filteredNews.length" class="flex flex-col gap-3 md:gap-8">
             <router-link
-              v-for="(n, i) in news" :key="n.slug" :to="`/news/${n.slug}`"
-              class="group flex flex-col md:flex-row bg-white border border-outline-variant/60 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 reveal overflow-hidden"
+              v-for="(n, i) in paginatedNews" :key="n.slug" :to="`/news/${n.slug}`"
+              class="group bg-white border border-outline-variant/60 rounded-xl md:rounded-sm shadow-sm hover:shadow-md transition-all duration-300 reveal overflow-hidden"
               :class="[`reveal-delay-${(i%5)+1}`]"
             >
-              <div class="w-full md:w-[35%] shrink-0 bg-canvas relative overflow-hidden aspect-[4/3] md:border-r border-outline-variant/60">
-                <img :src="n.image" :alt="n.title" class="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-700 ease-out">
-              </div>
-              <div class="p-6 md:p-8 flex flex-col flex-grow justify-center">
-                <div class="flex items-center gap-3 mb-4">
-                  <span class="text-primary text-[11px] font-bold uppercase tracking-widest">{{ n.category?.name || 'Tin tức' }}</span>
-                  <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                  <span class="text-[12px] font-medium text-text-muted flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">calendar_today</span>{{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
+              <!-- Mobile: compact horizontal card -->
+              <div class="flex md:hidden items-center gap-3 p-3">
+                <div class="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+                  <LazyImage
+                    :src="n.image"
+                    :alt="n.title"
+                    fallback-src="/images/products/industrial-1.jpg"
+                    image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
                 </div>
-                <h3 class="font-bold text-[22px] md:text-[24px] text-text-main mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
-                <p class="text-text-secondary text-[15px] line-clamp-3 leading-relaxed mb-6">{{ n.excerpt }}</p>
-                
-                <div class="mt-auto">
-                  <span class="inline-flex items-center gap-1.5 font-bold text-[13px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
-                    {{ t('news.readMore') }}
-                    <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                <div class="flex-1 min-w-0">
+                  <span class="text-[9px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
+                  <h3 class="font-bold text-[14px] text-text-main mt-0.5 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
+                  <span class="inline-flex items-center gap-1 font-bold text-[10px] text-primary mt-1 uppercase tracking-[0.1em]">
+                    {{ t('news.readMore') }} <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
                   </span>
+                </div>
+              </div>
+
+              <!-- Desktop: full horizontal card -->
+              <div class="hidden md:flex flex-row">
+                <LazyImage
+                  :src="n.image"
+                  :alt="n.title"
+                  fallback-src="/images/products/industrial-1.jpg"
+                  aspect-ratio="aspect-[4/3]"
+                  container-class="w-[35%] shrink-0 border-r border-outline-variant/60"
+                  image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div class="p-8 flex flex-col flex-grow justify-center">
+                  <div class="flex items-center gap-3 mb-4">
+                    <span class="text-primary text-[11px] font-bold uppercase tracking-widest">{{ n.category?.name || 'Tin tức' }}</span>
+                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                    <span class="text-[12px] font-medium text-text-muted flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">calendar_today</span>{{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
+                  </div>
+                  <h3 class="font-bold text-[24px] text-text-main mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
+                  <p class="text-text-secondary text-[15px] line-clamp-3 leading-relaxed mb-6">{{ n.excerpt }}</p>
+                  <div class="mt-auto">
+                    <span class="inline-flex items-center gap-1.5 font-bold text-[13px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
+                      {{ t('news.readMore') }}
+                      <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </router-link>
@@ -216,16 +238,20 @@ const activeCategoryName = computed(() => {
             <p class="text-text-secondary font-medium text-[15px]">{{ t('news.empty') }}</p>
           </div>
 
-          <div v-if="hasMore && !newsLoading" class="mt-14 flex justify-center">
-            <button type="button" class="btn btn-outline py-3.5 px-8 flex items-center justify-center gap-2 group btn-magnetic rounded-full font-bold shadow-sm" :disabled="loadingMore" @click="loadMore()">
-              <span>{{ loadingMore ? t('common.loading') : t('common.loadMore') }}</span>
-              <span v-if="!loadingMore" class="material-symbols-outlined text-[20px] group-hover:translate-y-1 transition-transform duration-300">keyboard_double_arrow_down</span>
-            </button>
-          </div>
+          <!-- ═══ PAGINATION ═══ -->
+          <Pagination
+            v-if="!newsLoading && filteredNews.length > 0"
+            v-model:current-page="currentPage"
+            :total-pages="totalPages"
+            :total-items="filteredNews.length"
+            :page-size="pageSize"
+            item-name="bài viết"
+            @change="onPageChange"
+          />
         </div>
 
-        <!-- ═══ SIDEBAR (newspaper sidebar) ═══ -->
-        <aside class="col-span-12 lg:col-span-3">
+        <!-- ═══ SIDEBAR (newspaper sidebar) — desktop only ═══ -->
+        <aside class="hidden lg:block col-span-12 lg:col-span-3">
           <div class="lg:sticky lg:top-32 space-y-6">
             <!-- Recent -->
             <section class="bg-white border border-outline-variant shadow-sm rounded-md overflow-hidden reveal">

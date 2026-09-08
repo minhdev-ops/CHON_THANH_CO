@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         $middleware->alias([
             'set.locale' => \App\Http\Middleware\SetLocale::class,
             'admin.auth' => \App\Http\Middleware\EnsureAdmin::class,

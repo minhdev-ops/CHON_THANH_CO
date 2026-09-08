@@ -10,6 +10,7 @@
   <meta name="theme-color" content="#B89B88">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="canonical" href="{{ url()->current() }}">
+  <link rel="preload" as="image" href="/images/home-hero.jpg" fetchpriority="high">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CHƠN THÀNH CO.">
   <meta property="og:title" content="CHƠN THÀNH — Vật Liệu Địa Kỹ Thuật Chuyên Nghiệp">
