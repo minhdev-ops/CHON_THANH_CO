@@ -50,6 +50,7 @@ const initObserver = () => {
   }
 
   if (containerRef.value) {
+    const isMobile = window.innerWidth <= 768
     observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries
@@ -63,7 +64,7 @@ const initObserver = () => {
         }
       },
       {
-        rootMargin: props.rootMargin,
+        rootMargin: isMobile ? '50px' : props.rootMargin,
         threshold: 0.01,
       }
     )

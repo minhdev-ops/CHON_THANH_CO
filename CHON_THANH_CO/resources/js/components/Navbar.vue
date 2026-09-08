@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { api } from '../api/client'
 import type { Category } from '../types'
-import { useRoute } from 'vue-router'
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useSettings } from '../composables/useSettings'
 import { t, locale, setLocale } from '../i18n'
 
@@ -11,6 +11,7 @@ interface NavDropdownItem { type: 'dropdown'; name: 'about' | 'products'; labelK
 type NavItem = NavLinkItem | NavDropdownItem
 
 const route         = useRoute()
+const router        = useRouter()
 const isScrolled    = ref(false)
 const isMobileOpen  = ref(false)
 const mobileSection = ref<string | null>(null)
@@ -18,7 +19,7 @@ const openDropdown  = ref<string | null>(null)
 const categories    = ref<Category[]>([])
 const { settings, load } = useSettings()
 
-const hotline     = computed(() => settings.value?.phone || settings.value?.['contact.phone'] || '028.22 179 115')
+const hotline     = computed(() => settings.value?.phone || settings.value?.['contact.phone'] || '0909 292 530')
 const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`)
 const email       = computed(() => settings.value?.['contact.email'] || 'chonthanhtco@gmail.com')
 
@@ -56,11 +57,26 @@ const closeDropdown       = () => { openDropdown.value = null }
 const toggleMobileSection = (name: string) => {
   mobileSection.value = mobileSection.value === name ? null : name
 }
+
+// Navigate then close menu — ensures router-link fires before DOM removal
+const navigateAndClose = (to?: string) => {
+  isMobileOpen.value = false
+  if (to) {
+    nextTick(() => {
+      router.push(to)
+    })
+  }
+}
+
+// Lock body scroll when mobile menu is open
+watch(isMobileOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
 </script>
 
 <template>
   <header class="fixed w-full z-50 transition-all duration-300">
-    <!-- Top info bar (Light gray bg like template) -->
+    <!-- ═══ Top info bar (Desktop only) ═══ -->
     <div
       class="hidden lg:block w-full bg-[#F7F3F0] text-[#6B5D55] overflow-hidden transition-all duration-300 border-b border-[#E4D8D0]"
       :class="isScrolled ? 'h-0 opacity-0' : 'h-[44px] opacity-100'"
@@ -79,7 +95,6 @@ const toggleMobileSection = (name: string) => {
         </div>
 
         <div class="flex items-center gap-5">
-          <!-- Socials -->
           <div class="flex items-center gap-3 text-[#B89B88]">
             <a href="#" class="hover:text-[#4A403B] transition-colors" title="WeChat">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/></svg>
@@ -94,7 +109,6 @@ const toggleMobileSection = (name: string) => {
 
           <span class="w-px h-4 bg-[#E4D8D0]"></span>
 
-          <!-- Language Dropdown -->
           <div class="flex items-center gap-1 cursor-pointer hover:text-[#B89B88]">
             <span class="material-symbols-outlined text-[16px] text-[#B89B88]">language</span>
             <span>English</span>
@@ -105,28 +119,28 @@ const toggleMobileSection = (name: string) => {
       </div>
     </div>
 
-    <!-- Main Navigation (Background #B89B88 as explicitly requested) -->
+    <!-- ═══ Main Navigation ═══ -->
     <div
-      class="w-full bg-[#B89B88] transition-all duration-300"
-      :class="isScrolled ? 'shadow-md py-2' : 'py-4 lg:py-6'"
+      class="w-full transition-all duration-300"
+      :class="[
+        isScrolled
+          ? 'bg-[#B89B88]/95 backdrop-blur-xl shadow-lg py-2 lg:py-2'
+          : 'bg-[#B89B88] py-3 lg:py-6'
+      ]"
     >
-      <div class="max-w-[1600px] mx-auto px-[var(--spacing-margin-mobile)] md:px-[var(--spacing-margin-desktop)] flex justify-between items-center h-full">
+      <div class="max-w-[1600px] mx-auto px-4 md:px-[var(--spacing-margin-desktop)] flex justify-between items-center h-full">
 
         <!-- Logo -->
         <div class="flex shrink-0 justify-start items-center">
           <router-link to="/" class="flex items-center group" aria-label="CHƠN THÀNH Geosynthetics">
-            <img src="/images/logo.svg" alt="Logo" class="h-[90px] lg:h-[110px] w-auto object-contain drop-shadow-md">
+            <img src="/images/logo.svg" alt="Logo" class="h-[48px] lg:h-[110px] w-auto object-contain drop-shadow-md">
           </router-link>
         </div>
 
-        <!-- Center Navigation Container (The "khung" made White to stand out on #B89B88, and LARGE) -->
+        <!-- Desktop Nav -->
         <div class="hidden lg:flex shrink-0 bg-white rounded-[50px] items-center justify-center shadow-xl py-1 transition-all duration-300">
-
-          <!-- Links -->
           <div class="flex items-center px-4">
             <template v-for="item in navItems" :key="item.type === 'link' ? item.to : item.name">
-
-              <!-- Simple link -->
               <router-link
                 v-if="item.type === 'link'"
                 :to="item.to"
@@ -136,7 +150,6 @@ const toggleMobileSection = (name: string) => {
                 {{ t(item.labelKey) }}
               </router-link>
 
-              <!-- Dropdown -->
               <div
                 v-else
                 class="relative group/dd flex"
@@ -153,7 +166,6 @@ const toggleMobileSection = (name: string) => {
                   <span class="material-symbols-outlined text-[22px] transition-transform duration-200 group-hover/dd:rotate-180">expand_more</span>
                 </router-link>
 
-                <!-- Dropdown Menu -->
                 <transition name="dropdown">
                   <div v-show="openDropdown === item.name" class="absolute left-0 top-full z-50 pt-2">
                     <div class="bg-white border border-[#E4D8D0] rounded-[10px] shadow-xl p-3 min-w-[240px]">
@@ -186,18 +198,15 @@ const toggleMobileSection = (name: string) => {
           </div>
         </div>
 
-        <!-- Right Action / Hotline -->
-        <div class="flex shrink-0 justify-end items-center">
-          <!-- Right Phone (Desktop only) -->
+        <!-- ═══ Right Action / Hotline ═══ -->
+        <div class="flex shrink-0 justify-end items-center gap-2">
+          <!-- Desktop Hotline -->
           <div class="hidden xl:flex items-center shrink-0 bg-white rounded-[50px] p-2 pe-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group hotline-cluster">
             <a :href="hotlineHref" class="relative flex items-center justify-center shrink-0">
-              <!-- Pulsing background ring -->
               <div class="absolute inset-0 rounded-full bg-[#D84315] opacity-30 animate-ping group-hover:bg-[#D84315]/50"></div>
-              <!-- Icon circle -->
               <div class="w-[64px] h-[64px] rounded-full bg-[#D84315] text-white flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-all duration-300">
                 <span class="material-symbols-outlined text-[30px] animate-ring">call</span>
               </div>
-              <!-- Small dot -->
               <div class="absolute -top-1 -right-1 w-6 h-6 bg-[#B89B88] rounded-full flex items-center justify-center z-20 shadow-sm border-2 border-white group-hover:bg-[#16243D] transition-colors">
                 <span class="material-symbols-outlined text-[14px] text-white">chat</span>
               </div>
@@ -207,63 +216,167 @@ const toggleMobileSection = (name: string) => {
             </div>
           </div>
 
-          <!-- Hamburger (Mobile) -->
+          <!-- ═══ Mobile: Elegant Hamburger ═══ -->
           <button
-            class="lg:hidden w-12 h-12 flex flex-col items-center justify-center gap-[6px] rounded-lg bg-white/10 text-white border border-white/30 shadow-sm"
+            class="lg:hidden relative w-11 h-11 flex items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm border border-white/25 active:bg-white/25 transition-all duration-200"
             @click="isMobileOpen = !isMobileOpen"
+            :aria-label="isMobileOpen ? 'Đóng menu' : 'Mở menu'"
           >
-            <span class="w-6 h-[2px] rounded-full bg-current transition-all duration-300" :style="isMobileOpen ? 'transform: translateY(8px) rotate(45deg)' : ''"></span>
-            <span class="w-6 h-[2px] rounded-full bg-current transition-all duration-300" :style="isMobileOpen ? 'opacity:0' : ''"></span>
-            <span class="w-6 h-[2px] rounded-full bg-current transition-all duration-300" :style="isMobileOpen ? 'transform: translateY(-8px) rotate(-45deg)' : ''"></span>
+            <div class="flex flex-col items-center justify-center w-5 h-5 gap-[5px]">
+              <span
+                class="block w-full h-[2px] bg-white rounded-full origin-center transition-all duration-300"
+                :style="isMobileOpen ? 'transform: translateY(7px) rotate(45deg)' : ''"
+              ></span>
+              <span
+                class="block w-full h-[2px] bg-white rounded-full transition-all duration-300"
+                :class="isMobileOpen ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'"
+              ></span>
+              <span
+                class="block w-full h-[2px] bg-white rounded-full origin-center transition-all duration-300"
+                :style="isMobileOpen ? 'transform: translateY(-7px) rotate(-45deg)' : ''"
+              ></span>
+            </div>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <transition name="page">
-      <div v-if="isMobileOpen" class="lg:hidden absolute top-full left-0 w-full bg-white border-t border-[#E4D8D0] shadow-lg max-h-[calc(100dvh-80px)] overflow-y-auto">
-        <div class="p-4 flex flex-col gap-1">
-          <template v-for="item in navItems" :key="item.type === 'link' ? item.to : item.name">
-            <router-link
-              v-if="item.type === 'link'"
-              :to="item.to"
-              class="px-4 py-3 rounded-xl text-[15px] font-bold text-[#4A403B] hover:bg-[#F7F3F0] hover:text-[#B89B88]"
-              @click="isMobileOpen = false"
-            >{{ t(item.labelKey) }}</router-link>
+    <!-- ═══ Mobile Menu Overlay ═══ -->
+    <transition name="mobile-overlay">
+      <div
+        v-if="isMobileOpen"
+        class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        @click="isMobileOpen = false"
+      ></div>
+    </transition>
 
-            <div v-else>
-              <button
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-[15px] font-bold text-[#4A403B] hover:bg-[#F7F3F0] hover:text-[#B89B88]"
-                @click="toggleMobileSection(item.name)"
-              >
-                <span>{{ t(item.labelKey) }}</span>
-                <span class="material-symbols-outlined transition-transform" :class="mobileSection === item.name ? 'rotate-180' : ''">expand_more</span>
-              </button>
-              <div v-if="mobileSection === item.name" class="px-4 py-2 pl-8 flex flex-col gap-2">
-                <template v-if="item.name === 'about'">
-                  <router-link
-                    v-for="link in aboutSubLinks" :key="link.to" :to="link.to"
-                    class="text-[14px] font-medium text-[#6B5D55] hover:text-[#B89B88]"
-                    @click="isMobileOpen = false"
-                  >{{ t(link.labelKey) }}</router-link>
-                </template>
-                <template v-else>
-                  <router-link
-                    v-for="cat in categories" :key="cat.slug"
-                    :to="{ path: '/products', query: { category: cat.slug } }"
-                    class="text-[14px] font-medium text-[#6B5D55] hover:text-[#B89B88]"
-                    @click="isMobileOpen = false"
-                  >{{ cat.name }}</router-link>
-                </template>
-              </div>
+    <!-- ═══ Mobile Menu Panel ═══ -->
+    <transition name="mobile-menu">
+      <div
+        v-if="isMobileOpen"
+        class="lg:hidden fixed top-0 right-0 z-50 w-[min(88vw,380px)] h-full bg-white shadow-[-8px_0_40px_rgba(0,0,0,0.15)] overflow-y-auto overscroll-contain flex flex-col"
+      >
+        <!-- Mobile menu header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-[#E4D8D0]/60 bg-gradient-to-r from-[#F7F3F0] to-white shrink-0">
+          <a href="/" class="flex items-center gap-3" @click.prevent="navigateAndClose('/')">
+            <img src="/images/logo.svg" alt="Logo" class="h-10 w-auto object-contain">
+            <div>
+              <span class="block font-extrabold text-[17px] text-[#4A403B] leading-tight tracking-tight">CHƠN THÀNH</span>
+              <span class="block text-[8px] font-bold tracking-[0.25em] uppercase text-[#9B8B82] mt-0.5">GEOSYNTHETICS</span>
             </div>
-          </template>
+          </a>
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-xl bg-[#4A403B]/5 text-[#4A403B] active:bg-[#4A403B]/10 transition-colors duration-200"
+            @click="isMobileOpen = false"
+            aria-label="Đóng menu"
+          >
+            <span class="material-symbols-outlined text-[22px]">close</span>
+          </button>
+        </div>
 
-          <div class="border-t border-[#E4D8D0] mt-4 pt-4 flex flex-col gap-3">
-            <router-link to="/contact" class="w-full text-center py-3 bg-[#B89B88] text-white rounded-xl font-bold">
-              Get a Quote
-            </router-link>
+        <!-- Mobile menu links -->
+        <div class="flex-1 overflow-y-auto px-4 py-4">
+          <div class="flex flex-col gap-1">
+            <template v-for="(item, idx) in navItems" :key="item.type === 'link' ? item.to : item.name">
+              <!-- Simple link -->
+              <a
+                v-if="item.type === 'link'"
+                :href="item.to"
+                class="group relative px-4 py-3.5 rounded-xl text-[15px] font-bold min-h-[48px] flex items-center transition-all duration-200 cursor-pointer"
+                :class="isActive(item.to)
+                  ? 'bg-[#B89B88]/10 text-[#B89B88]'
+                  : 'text-[#4A403B] active:bg-[#F7F3F0]'"
+                @click.prevent="navigateAndClose(item.to)"
+              >
+                <span
+                  class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 rounded-full bg-[#B89B88] transition-all duration-300"
+                  :class="isActive(item.to) ? 'h-5' : 'group-hover:h-3'"
+                ></span>
+                {{ t(item.labelKey) }}
+                <span v-if="isActive(item.to)" class="ml-auto material-symbols-outlined text-[18px] text-[#B89B88]">check</span>
+              </a>
+
+              <!-- Dropdown -->
+              <div v-else>
+                <button
+                  class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-[15px] font-bold min-h-[48px] transition-all duration-200"
+                  :class="mobileSection === item.name
+                    ? 'bg-[#B89B88]/10 text-[#B89B88]'
+                    : 'text-[#4A403B] active:bg-[#F7F3F0]'"
+                  @click="toggleMobileSection(item.name)"
+                >
+                  <span>{{ t(item.labelKey) }}</span>
+                  <span
+                    class="material-symbols-outlined text-[20px] transition-transform duration-300"
+                    :class="mobileSection === item.name ? 'rotate-180 text-[#B89B88]' : 'text-[#9B8B82]'"
+                  >expand_more</span>
+                </button>
+
+                <!-- Dropdown content -->
+                <transition name="accordion">
+                  <div v-if="mobileSection === item.name" class="overflow-hidden">
+                    <div class="pl-6 pr-2 py-1.5 flex flex-col gap-0.5">
+                      <template v-if="item.name === 'about'">
+                        <a
+                          v-for="link in aboutSubLinks" :key="link.to" :href="link.to"
+                          class="text-[14px] font-medium py-2.5 px-3 rounded-lg min-h-[42px] flex items-center transition-all duration-200 cursor-pointer"
+                          :class="isActive(link.to) ? 'text-[#B89B88] bg-[#B89B88]/5 font-bold' : 'text-[#6B5D55] active:text-[#B89B88] active:bg-[#F7F3F0]'"
+                          @click.prevent="navigateAndClose(link.to)"
+                        >{{ t(link.labelKey) }}</a>
+                      </template>
+                      <template v-else>
+                        <a
+                          href="/products"
+                          class="text-[14px] font-bold py-2.5 px-3 rounded-lg min-h-[42px] flex items-center transition-all duration-200 cursor-pointer"
+                          :class="route.path === '/products' ? 'text-[#B89B88] bg-[#B89B88]/5' : 'text-[#4A403B] active:text-[#B89B88] active:bg-[#F7F3F0]'"
+                          @click.prevent="navigateAndClose('/products')"
+                        >{{ t('nav.allProducts') }}</a>
+                        <a
+                          v-for="cat in categories" :key="cat.slug"
+                          :href="`/products?category=${cat.slug}`"
+                          class="text-[13px] font-medium py-2.5 px-3 rounded-lg min-h-[40px] flex items-center transition-all duration-200 cursor-pointer"
+                          :class="route.query.category === cat.slug ? 'text-[#B89B88] bg-[#B89B88]/5 font-bold' : 'text-[#6B5D55] active:text-[#B89B88] active:bg-[#F7F3F0]'"
+                          @click.prevent="navigateAndClose(`/products?category=${cat.slug}`)"
+                        >{{ cat.name }}</a>
+                      </template>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- ═══ Mobile menu CTA ═══ -->
+        <div class="px-4 py-4 border-t border-[#E4D8D0]/60 bg-gradient-to-b from-white to-[#F7F3F0]/50 shrink-0 space-y-2.5">
+          <a
+            :href="hotlineHref"
+            class="w-full text-center py-3.5 bg-[#D84315] text-white rounded-xl font-bold text-[15px] min-h-[50px] flex items-center justify-center shadow-lg shadow-[#D84315]/20 active:scale-[0.98] transition-all duration-200 gap-2.5 hover:bg-[#C63A10]"
+          >
+            <span class="material-symbols-outlined text-[20px]">call</span>
+            <span>{{ hotline }}</span>
+          </a>
+          <a
+            href="/contact"
+            class="w-full text-center py-3.5 bg-[#B89B88] text-white rounded-xl font-bold text-[15px] min-h-[50px] flex items-center justify-center shadow-lg shadow-[#B89B88]/20 active:scale-[0.98] transition-all duration-200 gap-2.5 hover:bg-[#A58370] cursor-pointer"
+            @click.prevent="navigateAndClose('/contact')"
+          >
+            <span class="material-symbols-outlined text-[20px]">mail</span>
+            <span>{{ t('product.quote') }}</span>
+          </a>
+        </div>
+
+        <!-- ═══ Mobile menu contact info ═══ -->
+        <div class="px-5 py-3.5 bg-[#F7F3F0]/80 border-t border-[#E4D8D0]/60 shrink-0">
+          <div class="flex flex-col gap-2 text-[12px] text-[#6B5D55]">
+            <div class="flex items-start gap-2">
+              <span class="material-symbols-outlined text-[15px] text-[#B89B88] mt-0.5">location_on</span>
+              <span class="leading-snug">{{ settings?.['contact.address'] || '416A Đường CC2, P. Sơn Kỳ, Q. Tân Phú, TP.HCM' }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[15px] text-[#B89B88]">schedule</span>
+              <span>{{ settings?.['contact.working_hours'] || 'T2–T6: 8:30 AM – 5:30 PM' }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -272,6 +385,7 @@ const toggleMobileSection = (name: string) => {
 </template>
 
 <style scoped>
+/* ═══ Desktop hotline animation ═══ */
 .hotline-cluster {
   animation: hotline-glow 2.5s ease-in-out infinite;
 }
@@ -285,5 +399,43 @@ const toggleMobileSection = (name: string) => {
 }
 .hotline-cluster:hover {
   animation-play-state: paused;
+}
+
+/* ═══ Mobile menu transitions ═══ */
+
+/* Overlay */
+.mobile-overlay-enter-active,
+.mobile-overlay-leave-active {
+  transition: opacity 0.3s ease;
+}
+.mobile-overlay-enter-from,
+.mobile-overlay-leave-to {
+  opacity: 0;
+}
+
+/* Panel slide */
+.mobile-menu-enter-active {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mobile-menu-leave-active {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  transform: translateX(100%);
+}
+
+/* Accordion dropdown */
+.accordion-enter-active {
+  transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  max-height: 500px;
+}
+.accordion-leave-active {
+  transition: max-height 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
+}
+.accordion-enter-from,
+.accordion-leave-to {
+  max-height: 0;
+  opacity: 0;
 }
 </style>

@@ -129,14 +129,14 @@ const activeCategoryName = computed(() => {
 
     <main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14 animate-fade-in-up">
       <!-- ═══ CATEGORY BAR (editorial filter) ═══ -->
-      <div v-if="categoriesError" class="mb-10">
+      <div v-if="categoriesError" class="mb-6 md:mb-10">
         <ErrorState :message="categoriesError" @retry="loadCategories" />
       </div>
-      <div v-else class="mb-10 reveal">
-        <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 pb-0 border-b border-outline-variant">
-          <div class="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+      <div v-else class="mb-6 md:mb-10 reveal">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-4 md:gap-6 pb-0 border-b border-outline-variant">
+          <div class="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
-              class="pb-4 text-[14px] font-bold transition-colors relative"
+              class="pb-3 md:pb-4 text-[13px] md:text-[14px] font-bold transition-colors relative"
               :class="selectedCategory === null ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = null"
             >
@@ -144,7 +144,7 @@ const activeCategoryName = computed(() => {
               <div v-if="selectedCategory === null" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
             </button>
             <button v-for="cat in categories" :key="cat.slug"
-              class="pb-4 text-[14px] font-bold transition-colors relative"
+              class="pb-3 md:pb-4 text-[13px] md:text-[14px] font-bold transition-colors relative"
               :class="selectedCategory === cat.slug ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = cat.slug"
             >
@@ -152,7 +152,7 @@ const activeCategoryName = computed(() => {
               <div v-if="selectedCategory === cat.slug" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
             </button>
           </div>
-          <div class="relative w-full lg:w-72 mb-4 lg:mb-3">
+          <div class="relative w-full lg:w-72 mb-3 lg:mb-3">
             <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
             <input
               v-model="searchQuery" type="text" :placeholder="t('news.searchPlaceholder')"
@@ -163,7 +163,7 @@ const activeCategoryName = computed(() => {
       </div>
 
       <div class="grid grid-cols-12 gap-6 lg:gap-10">
-        <div id="news-main-section" class="col-span-12 lg:col-span-9 scroll-mt-32">
+        <div id="news-main-section" class="col-span-12 scroll-mt-32">
           <!-- ═══ LOADING ═══ -->
           <div v-if="newsLoading" class="grid grid-cols-12 gap-4">
             <div v-for="i in 4" :key="i" class="col-span-12 sm:col-span-6 h-80 bg-canvas animate-shimmer border border-outline-variant"></div>
@@ -175,34 +175,55 @@ const activeCategoryName = computed(() => {
           </div>
 
           <!-- ═══ PROFESSIONAL LIST VIEW ═══ -->
-          <div v-else-if="filteredNews.length" class="flex flex-col gap-8">
+          <div v-else-if="filteredNews.length" class="flex flex-col gap-3 md:gap-8">
             <router-link
               v-for="(n, i) in paginatedNews" :key="n.slug" :to="`/news/${n.slug}`"
-              class="group flex flex-col md:flex-row bg-white border border-outline-variant/60 rounded-sm shadow-sm hover:shadow-md transition-all duration-300 reveal overflow-hidden"
+              class="group bg-white border border-outline-variant/60 rounded-xl md:rounded-sm shadow-sm hover:shadow-md transition-all duration-300 reveal overflow-hidden"
               :class="[`reveal-delay-${(i%5)+1}`]"
             >
-              <LazyImage
-                :src="n.image"
-                :alt="n.title"
-                fallback-src="/images/products/industrial-1.jpg"
-                aspect-ratio="aspect-[4/3]"
-                container-class="w-full md:w-[35%] shrink-0 md:border-r border-outline-variant/60"
-                image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              <div class="p-6 md:p-8 flex flex-col flex-grow justify-center">
-                <div class="flex items-center gap-3 mb-4">
-                  <span class="text-primary text-[11px] font-bold uppercase tracking-widest">{{ n.category?.name || 'Tin tức' }}</span>
-                  <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                  <span class="text-[12px] font-medium text-text-muted flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">calendar_today</span>{{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
+              <!-- Mobile: compact horizontal card -->
+              <div class="flex md:hidden items-center gap-3 p-3">
+                <div class="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+                  <LazyImage
+                    :src="n.image"
+                    :alt="n.title"
+                    fallback-src="/images/products/industrial-1.jpg"
+                    image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
                 </div>
-                <h3 class="font-bold text-[22px] md:text-[24px] text-text-main mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
-                <p class="text-text-secondary text-[15px] line-clamp-3 leading-relaxed mb-6">{{ n.excerpt }}</p>
-                
-                <div class="mt-auto">
-                  <span class="inline-flex items-center gap-1.5 font-bold text-[13px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
-                    {{ t('news.readMore') }}
-                    <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                <div class="flex-1 min-w-0">
+                  <span class="text-[9px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
+                  <h3 class="font-bold text-[14px] text-text-main mt-0.5 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
+                  <span class="inline-flex items-center gap-1 font-bold text-[10px] text-primary mt-1 uppercase tracking-[0.1em]">
+                    {{ t('news.readMore') }} <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
                   </span>
+                </div>
+              </div>
+
+              <!-- Desktop: full horizontal card -->
+              <div class="hidden md:flex flex-row">
+                <LazyImage
+                  :src="n.image"
+                  :alt="n.title"
+                  fallback-src="/images/products/industrial-1.jpg"
+                  aspect-ratio="aspect-[4/3]"
+                  container-class="w-[35%] shrink-0 border-r border-outline-variant/60"
+                  image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div class="p-8 flex flex-col flex-grow justify-center">
+                  <div class="flex items-center gap-3 mb-4">
+                    <span class="text-primary text-[11px] font-bold uppercase tracking-widest">{{ n.category?.name || 'Tin tức' }}</span>
+                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                    <span class="text-[12px] font-medium text-text-muted flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">calendar_today</span>{{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
+                  </div>
+                  <h3 class="font-bold text-[24px] text-text-main mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
+                  <p class="text-text-secondary text-[15px] line-clamp-3 leading-relaxed mb-6">{{ n.excerpt }}</p>
+                  <div class="mt-auto">
+                    <span class="inline-flex items-center gap-1.5 font-bold text-[13px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
+                      {{ t('news.readMore') }}
+                      <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </router-link>
@@ -229,8 +250,8 @@ const activeCategoryName = computed(() => {
           />
         </div>
 
-        <!-- ═══ SIDEBAR (newspaper sidebar) ═══ -->
-        <aside class="col-span-12 lg:col-span-3">
+        <!-- ═══ SIDEBAR (newspaper sidebar) — desktop only ═══ -->
+        <aside class="hidden lg:block col-span-12 lg:col-span-3">
           <div class="lg:sticky lg:top-32 space-y-6">
             <!-- Recent -->
             <section class="bg-white border border-outline-variant shadow-sm rounded-md overflow-hidden reveal">

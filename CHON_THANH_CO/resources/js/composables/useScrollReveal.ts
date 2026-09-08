@@ -17,6 +17,7 @@ export function useScrollReveal() {
   }
 
   onMounted(() => {
+    const isMobile = window.innerWidth <= 768
     forceTimer = window.setTimeout(() => {
       const hidden = document.querySelectorAll(
         '.reveal:not(.revealed), .reveal-left:not(.revealed), .reveal-right:not(.revealed), .reveal-scale:not(.revealed), .reveal-up-scale:not(.revealed), .reveal-fade:not(.revealed), .stagger-grid:not(.revealed)',
@@ -24,7 +25,7 @@ export function useScrollReveal() {
       if (hidden.length > 0) {
         hidden.forEach((el) => el.classList.add('revealed'))
       }
-    }, 1500)
+    }, isMobile ? 800 : 1500)
 
     observer.value = new IntersectionObserver(
       (entries) => {
@@ -35,7 +36,7 @@ export function useScrollReveal() {
           }
         })
       },
-      { threshold: 0.05, rootMargin: '0px 0px -30px 0px' }
+      { threshold: isMobile ? 0.02 : 0.05, rootMargin: isMobile ? '0px 0px 10px 0px' : '0px 0px -30px 0px' }
     )
 
     const observeElements = () => {

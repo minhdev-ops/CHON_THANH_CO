@@ -163,50 +163,73 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
         </div>
 
         <!-- ═══ PROFESSIONAL PROJECT GRID ═══ -->
-        <div v-else-if="filteredProjects?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-grid">
+        <div v-else-if="filteredProjects?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 stagger-grid">
           <router-link
             v-for="(project, i) in paginatedProjects" :key="project.slug"
             :to="`/projects/${project.slug}`"
-            class="group flex flex-col bg-white border border-outline-variant/60 shadow-sm hover:shadow-md transition-all duration-300 reveal rounded-sm overflow-hidden"
+            class="group flex flex-col md:flex-row bg-white border border-outline-variant/60 shadow-sm hover:shadow-md transition-all duration-300 reveal rounded-xl md:rounded-sm overflow-hidden"
             :class="[`reveal-delay-${(i%3)+1}`]"
           >
-            <!-- Image wrapper -->
-            <LazyImage
-              :src="project.hero_image"
-              :alt="project.name"
-              fallback-src="/images/projects/highway-1.jpg"
-              aspect-ratio="aspect-[4/3]"
-              container-class="shrink-0 border-b border-outline-variant/60"
-              image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-            >
-              <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm z-10">
-                <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
-                <span class="text-[9px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
+            <!-- Mobile: compact horizontal -->
+            <div class="flex md:hidden items-center gap-3 p-3">
+              <div class="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+                <LazyImage
+                  :src="project.hero_image"
+                  :alt="project.name"
+                  fallback-src="/images/projects/highway-1.jpg"
+                  image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
               </div>
-            </LazyImage>
-
-            <!-- Content -->
-            <div class="p-6 md:p-8 flex flex-col flex-grow relative">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
-                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                <span class="text-[11px] font-bold text-text-muted line-clamp-1 uppercase tracking-wider">{{ project.location }}</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.15em]">{{ project.period }}</span>
+                </div>
+                <h3 class="font-bold text-[14px] text-text-main group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2">
+                  {{ project.name }}
+                </h3>
+                <span class="text-[11px] font-bold text-text-muted line-clamp-1 mt-1 block">{{ project.location }}</span>
               </div>
-              
-              <h3 class="font-bold text-[18px] md:text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug line-clamp-2">
-                {{ project.name }}
-              </h3>
-              
-              <p v-if="project.area || project.materials" class="text-text-secondary text-[13.5px] leading-relaxed line-clamp-2 mb-6 flex-grow">
-                <span v-if="project.area">Quy mô: <strong>{{ project.area }}</strong>. </span>
-                <span v-if="project.materials">Sử dụng <strong>{{ project.materials.length }}</strong> loại vật tư.</span>
-              </p>
-              <div v-else class="flex-grow mb-6"></div>
+              <span class="material-symbols-outlined text-[18px] text-primary shrink-0">arrow_forward</span>
+            </div>
 
-              <div class="mt-auto flex items-center pt-5 border-t border-outline-variant/30">
-                <span class="inline-flex items-center gap-1.5 font-bold text-[12px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
-                  Chi tiết dự án <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </span>
+            <!-- Desktop: full vertical card -->
+            <div class="hidden md:flex md:flex-col h-full">
+              <LazyImage
+                :src="project.hero_image"
+                :alt="project.name"
+                fallback-src="/images/projects/highway-1.jpg"
+                aspect-ratio="aspect-[4/3]"
+                container-class="shrink-0 border-b border-outline-variant/60"
+                image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              >
+                <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm z-10">
+                  <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
+                  <span class="text-[9px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
+                </div>
+              </LazyImage>
+
+              <div class="p-6 md:p-8 flex flex-col flex-grow relative">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
+                  <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                  <span class="text-[11px] font-bold text-text-muted line-clamp-1 uppercase tracking-wider">{{ project.location }}</span>
+                </div>
+                
+                <h3 class="font-bold text-[18px] md:text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug line-clamp-2">
+                  {{ project.name }}
+                </h3>
+                
+                <p v-if="project.area || project.materials" class="text-text-secondary text-[13.5px] leading-relaxed line-clamp-2 mb-6 flex-grow">
+                  <span v-if="project.area">Quy mô: <strong>{{ project.area }}</strong>. </span>
+                  <span v-if="project.materials">Sử dụng <strong>{{ project.materials.length }}</strong> loại vật tư.</span>
+                </p>
+                <div v-else class="flex-grow mb-6"></div>
+
+                <div class="mt-auto flex items-center pt-5 border-t border-outline-variant/30">
+                  <span class="inline-flex items-center gap-1.5 font-bold text-[12px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
+                    Chi tiết dự án <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </span>
+                </div>
               </div>
             </div>
           </router-link>

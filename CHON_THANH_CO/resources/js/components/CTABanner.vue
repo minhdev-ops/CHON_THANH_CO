@@ -19,10 +19,10 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
 </script>
 
 <template>
-  <section class="relative py-16 md:py-24 overflow-hidden bg-transparent">
-    <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
+  <section class="relative py-12 md:py-24 overflow-hidden bg-transparent">
+    <div class="max-w-max-width mx-auto px-4 md:px-[var(--spacing-margin-desktop)]">
       <!-- Floating CTA Card -->
-      <div class="relative bg-[#B89B88] text-white rounded-[40px] p-10 md:p-16 overflow-hidden shadow-[0_20px_60px_rgba(184,155,136,0.25)] reveal">
+      <div class="relative bg-[#B89B88] text-white rounded-[24px] md:rounded-[40px] p-8 md:p-16 overflow-hidden shadow-[0_20px_60px_rgba(184,155,136,0.25)] reveal">
         
         <!-- Decorative Background inside the card -->
         <div class="absolute inset-0 opacity-15 dot-pattern pointer-events-none"></div>
@@ -35,33 +35,32 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
 
         <div class="relative z-10 text-center">
           <div class="max-w-3xl mx-auto">
-            <div class="inline-flex items-center gap-3 text-[12px] font-bold tracking-[0.18em] uppercase text-white/90 justify-center mb-6">
-              <div class="w-7 h-[2px] bg-white/90 rounded-sm"></div>
+            <div class="inline-flex items-center gap-3 text-[11px] md:text-[12px] font-bold tracking-[0.18em] uppercase text-white/90 justify-center mb-4 md:mb-6">
+              <div class="w-6 md:w-7 h-[2px] bg-white/90 rounded-sm"></div>
               Bước tiếp theo
             </div>
             
-            <h2 class="text-[32px] md:text-[46px] font-extrabold leading-[1.15] tracking-[-0.02em] mb-6 drop-shadow-sm text-white">
+            <h2 class="text-[24px] md:text-[46px] font-extrabold leading-[1.15] tracking-[-0.02em] mb-4 md:mb-6 drop-shadow-sm text-white">
               {{ title || 'CẦN TƯ VẤN? LIÊN HỆ NGAY' }}
             </h2>
             
-            <p class="text-white/90 text-[18px] leading-relaxed mb-10 max-w-2xl mx-auto font-medium">
+            <p class="text-white/90 text-[15px] md:text-[18px] leading-relaxed mb-8 md:mb-10 max-w-2xl mx-auto font-medium">
               {{ text || 'Đội ngũ kỹ sư của chúng tôi sẵn sàng hỗ trợ giải pháp tối ưu cho dự án của bạn.' }}
             </p>
             
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
               <router-link
                 :to="linkTo || '/contact'"
-                class="group inline-flex items-center gap-2 bg-white text-[#B89B88] font-bold text-[14px] uppercase tracking-[0.15em] py-4 px-10 rounded-[50px] shadow-lg shadow-black/10 hover:bg-[#16243D] hover:text-white hover:shadow-xl hover:shadow-[#16243D]/20 transition-all duration-300 hover:-translate-y-1"
+                class="group inline-flex items-center gap-2 bg-white text-[#B89B88] font-bold text-[13px] md:text-[14px] uppercase tracking-[0.15em] py-3.5 md:py-4 px-8 md:px-10 rounded-[50px] shadow-lg shadow-black/10 hover:bg-[#16243D] hover:text-white hover:shadow-xl hover:shadow-[#16243D]/20 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full sm:w-auto justify-center"
               >
                 {{ linkLabel || 'GỬI YÊU CẦU' }}
-                <span class="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+                <span class="material-symbols-outlined text-[18px] md:text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
               </router-link>
               
               <div class="hidden sm:block w-px h-12 bg-white/30"></div>
               
-              <!-- Animated Phone Number -->
-              <!-- Animated Phone Number -->
-              <div class="flex items-center shrink-0 bg-white rounded-[50px] p-2 pe-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group hotline-cluster">
+              <!-- Desktop: Full hotline cluster -->
+              <div class="hidden sm:flex items-center shrink-0 bg-white rounded-[50px] p-2 pe-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group hotline-cluster">
                 <a :href="hotlineHref" class="relative flex items-center justify-center shrink-0">
                   <div class="absolute inset-0 rounded-full bg-[#D84315] opacity-30 animate-ping group-hover:bg-[#D84315]/50"></div>
                   <div class="w-[64px] h-[64px] rounded-full bg-[#D84315] text-white flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-all duration-300">
@@ -75,6 +74,12 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
                   <a :href="hotlineHref" class="text-[28px] font-black text-[#D84315] group-hover:text-[#B89B88] transition-colors leading-none tracking-tight animate-hotline-nudge tabular-nums">{{ hotline }}</a>
                 </div>
               </div>
+
+              <!-- Mobile: Compact hotline button -->
+              <a :href="hotlineHref" class="sm:hidden inline-flex items-center gap-3 bg-white text-[#D84315] font-bold text-[15px] py-3.5 px-8 rounded-[50px] shadow-lg active:scale-[0.97] transition-transform w-full justify-center">
+                <span class="material-symbols-outlined text-[22px]">call</span>
+                {{ hotline }}
+              </a>
             </div>
           </div>
         </div>

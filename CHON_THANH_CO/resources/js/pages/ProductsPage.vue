@@ -172,14 +172,14 @@ const bentoCol = (i: number) => {
 
     <main class="max-w-max-width mx-auto w-full px-margin-mobile md:px-margin-desktop py-10 md:py-14 animate-fade-in-up">
       <!-- Mobile filter trigger -->
-      <div class="lg:hidden mb-6 flex items-center gap-3">
+      <div class="lg:hidden mb-4 flex items-center gap-3">
         <button
-          class="flex-1 inline-flex items-center justify-center gap-2 bg-primary text-white border border-text-main py-3.5 text-[12px] font-bold uppercase tracking-[0.18em] rounded-none"
+          class="flex-1 inline-flex items-center justify-center gap-2 bg-primary text-white py-3 text-[12px] font-bold uppercase tracking-[0.15em] rounded-xl active:scale-[0.98] transition-transform shadow-md"
           @click="mobileFiltersOpen = !mobileFiltersOpen"
         >
           <span class="material-symbols-outlined text-[18px]">tune</span>
           <span>{{ t('products.filter') }}</span>
-          <span v-if="activeFilterCount" class="bg-primary text-canvas text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ml-1">{{ activeFilterCount }}</span>
+          <span v-if="activeFilterCount" class="bg-white text-primary text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ml-1">{{ activeFilterCount }}</span>
         </button>
       </div>
 
@@ -187,8 +187,8 @@ const bentoCol = (i: number) => {
         <!-- ═══ FILTER RAIL ═══ -->
         <aside class="col-span-12 lg:col-span-3">
           <div
-            class="lg:sticky lg:top-36 border border-outline-variant bg-surface-glass backdrop-blur-xl rounded-[24px] shadow-sm overflow-hidden"
-            :class="{ 'hidden lg:block': !mobileFiltersOpen, 'block': mobileFiltersOpen }"
+            class="lg:sticky lg:top-36 border border-outline-variant bg-surface-glass backdrop-blur-xl rounded-2xl lg:rounded-[24px] shadow-sm overflow-hidden"
+            :class="{ 'hidden lg:block': !mobileFiltersOpen, 'block mb-6': mobileFiltersOpen }"
           >
             <!-- Rail header -->
             <div class="px-5 py-4 bg-primary text-white flex items-center justify-between">
@@ -381,8 +381,8 @@ const bentoCol = (i: number) => {
           </div>
 
           <!-- Loading skeleton -->
-          <div v-if="productsLoading" class="grid grid-cols-12 gap-4">
-            <div v-for="i in 6" :key="i" class="col-span-12 sm:col-span-6 lg:col-span-4 h-80 bg-canvas animate-shimmer border border-outline-variant"></div>
+          <div v-if="productsLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+            <div v-for="i in 6" :key="i" class="h-80 bg-canvas animate-shimmer border border-outline-variant rounded-xl"></div>
           </div>
 
           <!-- Error -->
@@ -391,8 +391,8 @@ const bentoCol = (i: number) => {
           </div>
 
           <!-- ═══ BENTO GRID ═══ -->
-          <div v-else-if="filteredProducts.length && viewMode === 'grid'" class="grid grid-cols-12 gap-6 stagger-grid">
-            <div v-for="(p, i) in paginatedProducts" :key="p.slug" class="col-span-12 sm:col-span-6 lg:col-span-4 reveal" :class="[`reveal-delay-${(i%3)+1}`]">
+          <div v-else-if="filteredProducts.length && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 stagger-grid">
+            <div v-for="(p, i) in paginatedProducts" :key="p.slug" class="reveal" :class="[`reveal-delay-${(i%3)+1}`]">
               <ProductCard :product="p" class="h-full" />
             </div>
           </div>
