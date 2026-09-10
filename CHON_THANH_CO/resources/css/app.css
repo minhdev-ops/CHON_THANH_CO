@@ -1136,12 +1136,12 @@
         font-size: 40px;
     }
 
-    .feature-item h4,
+    .feature-item h3,
     .feature-item p {
         transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .feature-item:hover h4,
+    .feature-item:hover h3,
     .feature-item:hover p {
         color: var(--color-on-primary) !important;
     }
@@ -1256,12 +1256,12 @@
         z-index: 9;
     }
 
-    .service-content-inner h4,
+    .service-content-inner h3,
     .service-content-inner p {
         transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .service-item:hover .service-content-inner h4,
+    .service-item:hover .service-content-inner h3,
     .service-item:hover .service-content-inner p {
         color: var(--color-on-primary) !important;
     }

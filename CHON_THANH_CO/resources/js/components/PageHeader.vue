@@ -35,8 +35,8 @@ const paddingClass = computed(() => {
       class="absolute inset-0 pointer-events-none"
       :style="{
         background: variant === 'cinematic'
-          ? 'linear-gradient(180deg, rgba(42,36,32,0.4) 0%, rgba(42,36,32,0.1) 40%, rgba(42,36,32,0.4) 100%)'
-          : 'linear-gradient(180deg, rgba(42,36,32,0.4) 0%, rgba(42,36,32,0.1) 50%, rgba(42,36,32,0.4) 100%)',
+          ? 'linear-gradient(180deg, rgba(42,36,32,0.7) 0%, rgba(42,36,32,0.4) 40%, rgba(42,36,32,0.7) 100%)'
+          : 'linear-gradient(180deg, rgba(42,36,32,0.65) 0%, rgba(42,36,32,0.35) 50%, rgba(42,36,32,0.65) 100%)',
         transform: variant === 'cinematic' ? `translateY(${scrollY * 0.15 + 20}px) scale(1.1)` : 'none',
       }"
     />
@@ -72,7 +72,7 @@ const paddingClass = computed(() => {
         :class="variant === 'cinematic'
           ? 'text-[42px] md:text-[56px] lg:text-[68px]'
           : 'text-[32px] md:text-[44px] lg:text-[52px]'"
-        style="letter-spacing: -0.02em; text-shadow: 0 4px 30px rgba(0,0,0,0.25);"
+        style="letter-spacing: -0.02em; text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 4px 30px rgba(0,0,0,0.3);"
       >
         {{ title }}
       </h1>

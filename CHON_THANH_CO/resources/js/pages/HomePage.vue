@@ -153,7 +153,7 @@ const displayStats = computed(() =>
             <div class="relative z-10 w-[48px] h-[48px] md:w-[72px] md:h-[72px] rounded-2xl bg-gradient-to-br from-surface-vlm to-primary-xlight flex items-center justify-center mb-3 md:mb-6 group-hover:scale-110 group-hover:shadow-lg transition-all duration-500">
               <span class="material-symbols-outlined text-[24px] md:text-[36px] text-primary group-hover:text-primary-dark transition-colors duration-500">{{ f.icon }}</span>
             </div>
-            <h4 class="relative z-10 font-extrabold text-text-main text-[14px] md:text-[18px] mb-2 md:mb-3 tracking-tight leading-tight">{{ f.title }}</h4>
+            <h3 class="relative z-10 font-extrabold text-text-main text-[14px] md:text-[18px] mb-2 md:mb-3 tracking-tight leading-tight">{{ f.title }}</h3>
             <p class="relative z-10 text-text-secondary text-[12px] md:text-[14px] leading-relaxed mb-4 md:mb-6 flex-grow hidden sm:block">{{ f.desc }}</p>
             <router-link to="/about" class="relative z-10 inline-flex items-center gap-1.5 text-primary font-semibold text-[12px] md:text-[14px] group-hover:text-primary-dark transition-colors duration-300">
               Chi tiết
@@ -216,7 +216,7 @@ const displayStats = computed(() =>
                     <span class="text-[40px] font-extrabold text-primary tabular-nums leading-none">{{ formatAnimatedValue(i, s.value) }}</span>
                     <span v-if="s.value.includes('+')" class="text-[32px] font-extrabold text-primary leading-none">+</span>
                   </div>
-                  <h4 class="text-[16px] text-text-main font-bold mt-1 mb-0">{{ s.label }}</h4>
+                  <h3 class="text-[16px] text-text-main font-bold mt-1 mb-0">{{ s.label }}</h3>
                 </div>
               </div>
             </div>
@@ -269,7 +269,7 @@ const displayStats = computed(() =>
               </div>
             </LazyImage>
             <div class="p-6 md:p-8 flex flex-col flex-grow relative pt-10">
-              <h4 class="font-extrabold text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug">{{ s.title }}</h4>
+              <h3 class="font-extrabold text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug">{{ s.title }}</h3>
               <p class="text-text-secondary text-[14px] leading-relaxed mb-6 flex-grow">{{ s.desc }}</p>
               <div class="mt-auto pt-5 border-t border-outline-variant/60">
                 <router-link to="/contact" class="inline-flex items-center gap-2 font-bold text-[13px] text-primary group-hover:text-primary-deep uppercase tracking-[0.12em] transition-colors duration-300">
@@ -287,7 +287,7 @@ const displayStats = computed(() =>
               <span class="material-symbols-outlined text-[24px] text-primary">{{ s.icon }}</span>
             </div>
             <div class="flex-1 min-w-0">
-              <h4 class="font-extrabold text-[15px] text-text-main mb-1 group-hover:text-primary transition-colors duration-300 leading-tight">{{ s.title }}</h4>
+              <h3 class="font-extrabold text-[15px] text-text-main mb-1 group-hover:text-primary transition-colors duration-300 leading-tight">{{ s.title }}</h3>
               <p class="text-text-secondary text-[13px] leading-snug line-clamp-2">{{ s.desc }}</p>
             </div>
             <router-link to="/contact" class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
@@ -320,7 +320,7 @@ const displayStats = computed(() =>
                   <span class="material-symbols-outlined text-[26px] text-primary-deep" style="font-variation-settings: 'FILL' 1;">{{ p.icon }}</span>
                 </div>
               </div>
-              <h4 class="font-extrabold text-text-main text-[19px] mb-3 tracking-tight">{{ p.title }}</h4>
+              <h3 class="font-extrabold text-text-main text-[19px] mb-3 tracking-tight">{{ p.title }}</h3>
               <p class="text-text-secondary text-[14px] leading-relaxed">{{ p.desc }}</p>
             </div>
           </div>
@@ -338,7 +338,7 @@ const displayStats = computed(() =>
               <span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">{{ p.icon }}</span>
             </div>
             <div class="flex-1 min-w-0">
-              <h4 class="font-extrabold text-text-main text-[14px] leading-tight">{{ p.title }}</h4>
+              <h3 class="font-extrabold text-text-main text-[14px] leading-tight">{{ p.title }}</h3>
               <p class="text-text-secondary text-[12px] leading-snug mt-0.5 line-clamp-1">{{ p.desc }}</p>
             </div>
           </div>
@@ -518,7 +518,7 @@ const displayStats = computed(() =>
               />
             </div>
             <div class="flex-1 min-w-0">
-              <span class="text-[10px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
+              <span class="text-[11px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
               <h3 class="font-extrabold text-text-main text-[14px] mt-1 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
               <span class="inline-flex items-center gap-1 font-bold text-[11px] text-primary mt-1.5 uppercase tracking-[0.1em]">
                 Đọc tiếp <span class="material-symbols-outlined text-[14px]">arrow_forward</span>

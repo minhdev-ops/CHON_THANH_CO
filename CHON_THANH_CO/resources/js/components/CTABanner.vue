@@ -22,7 +22,7 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
   <section class="relative py-12 md:py-24 overflow-hidden bg-transparent">
     <div class="max-w-max-width mx-auto px-4 md:px-[var(--spacing-margin-desktop)]">
       <!-- Floating CTA Card -->
-      <div class="relative bg-[#B89B88] text-white rounded-[24px] md:rounded-[40px] p-8 md:p-16 overflow-hidden shadow-[0_20px_60px_rgba(184,155,136,0.25)] reveal">
+      <div class="relative bg-[#B89B88] text-white rounded-[24px] md:rounded-[40px] p-8 md:p-16 overflow-hidden shadow-[0_20px_60px_rgba(184,155,136,0.3)] reveal">
         
         <!-- Decorative Background inside the card -->
         <div class="absolute inset-0 opacity-15 dot-pattern pointer-events-none"></div>
@@ -51,7 +51,7 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
               <router-link
                 :to="linkTo || '/contact'"
-                class="group inline-flex items-center gap-2 bg-white text-[#B89B88] font-bold text-[13px] md:text-[14px] uppercase tracking-[0.15em] py-3.5 md:py-4 px-8 md:px-10 rounded-[50px] shadow-lg shadow-black/10 hover:bg-[#16243D] hover:text-white hover:shadow-xl hover:shadow-[#16243D]/20 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full sm:w-auto justify-center"
+                class="group inline-flex items-center gap-2 bg-white text-[#B89B88] font-bold text-[13px] md:text-[14px] uppercase tracking-[0.15em] py-3.5 md:py-4 px-8 md:px-10 rounded-[50px] shadow-lg shadow-black/10 hover:bg-[#2A2420] hover:text-white hover:shadow-xl hover:shadow-[#2A2420]/20 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full sm:w-auto justify-center"
               >
                 {{ linkLabel || 'GỬI YÊU CẦU' }}
                 <span class="material-symbols-outlined text-[18px] md:text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
@@ -66,7 +66,7 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
                   <div class="w-[64px] h-[64px] rounded-full bg-[#D84315] text-white flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-all duration-300">
                     <span class="material-symbols-outlined text-[30px] animate-ring">call</span>
                   </div>
-                  <div class="absolute -top-1 -right-1 w-6 h-6 bg-[#B89B88] rounded-full flex items-center justify-center z-20 shadow-sm border-2 border-white group-hover:bg-[#16243D] transition-colors">
+                  <div class="absolute -top-1 -right-1 w-6 h-6 bg-[#B89B88] rounded-full flex items-center justify-center z-20 shadow-sm border-2 border-white group-hover:bg-[#2A2420] transition-colors">
                     <span class="material-symbols-outlined text-[14px] text-white">chat</span>
                   </div>
                 </a>

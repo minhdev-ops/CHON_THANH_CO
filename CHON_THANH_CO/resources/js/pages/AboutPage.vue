@@ -74,7 +74,7 @@ const milestones = [
     <PageHeader :title="t('nav.about')" :breadcrumbs="breadcrumbs" />
 
     <!-- History & Timeline -->
-    <section class="py-10 md:py-20 bg-surface-bright relative overflow-hidden">
+    <section class="py-10 md:py-20 bg-surface-bright relative mesh-bg">
       <div class="absolute inset-0 dot-pattern opacity-[0.02] pointer-events-none"></div>
 
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
@@ -194,7 +194,7 @@ const milestones = [
               <span class="material-symbols-outlined text-[18px] md:text-[22px] text-primary-deep group-hover:text-white transition-colors">{{ m.icon }}</span>
             </div>
             <div class="text-[24px] md:text-[32px] font-extrabold text-text-main mb-1 tabular-nums">{{ m.value }}</div>
-            <div class="text-[10px] md:text-[11px] font-bold text-text-muted uppercase tracking-[0.12em] md:tracking-[0.15em]">{{ m.label }}</div>
+            <div class="text-[11px] font-bold text-text-muted uppercase tracking-[0.12em] md:tracking-[0.15em]">{{ m.label }}</div>
           </div>
         </div>
         <div v-if="home?.stats?.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left stagger-grid">

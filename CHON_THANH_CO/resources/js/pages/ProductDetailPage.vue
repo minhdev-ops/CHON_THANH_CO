@@ -105,9 +105,9 @@ const breadcrumbs = computed(() => [
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
         <!-- Gallery -->
         <div class="reveal">
-          <div class="bg-surface-bright rounded-3xl overflow-hidden flex items-center justify-center p-8 aspect-[4/3] relative border border-outline-variant hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] transition-all duration-500 group">
+          <div class="bg-surface-bright rounded-3xl flex items-center justify-center p-8 aspect-[4/3] relative border border-outline-variant hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] transition-all duration-500 group">
             <transition name="page" mode="out-in">
-              <img :key="activeImage" :src="galleryImages[activeImage] ?? product.image" :alt="product.name" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" loading="lazy">
+            <img :key="activeImage" :src="galleryImages[activeImage] ?? product.image" :alt="product.name" class="w-full h-full object-contain group-hover:scale-105 transition-transform ease-out duration-300" loading="lazy">
             </transition>
             <div v-if="galleryImages.length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 glass-premium rounded-full px-5 py-2.5 shadow-lg">
               <button type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-text-main hover:bg-surface-vlm transition-colors duration-300" @click="activeImage = (activeImage - 1 + galleryImages.length) % galleryImages.length">
@@ -163,7 +163,7 @@ const breadcrumbs = computed(() => [
           <div v-if="product.specs?.length" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div v-for="spec in product.specs.slice(0, 3)" :key="spec.label" class="bg-surface-bright border border-outline-variant rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
               <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                <span class="material-symbols-outlined text-primary-deep text-xl">{{ spec.icon }}</span>
+                <span class="material-symbols-outlined text-primary-deep text-xl">{{ spec.icon || 'check' }}</span>
               </div>
               <span class="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] mb-2">{{ spec.label }}</span>
               <span class="font-bold text-text-main text-[16px]">{{ spec.value }}</span>
@@ -171,7 +171,7 @@ const breadcrumbs = computed(() => [
           </div>
 
           <div class="flex flex-col sm:flex-row gap-4 mt-auto border-t border-outline-variant pt-8">
-            <router-link to="/contact" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center gap-3 shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+            <router-link to="/contact" class="btn bg-primary text-primary-deep hover:bg-primary-dark rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center gap-3 shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
               <span class="material-symbols-outlined text-xl">request_quote</span> {{ t('product.quote') }}
             </router-link>
             <a href="tel:0909292530" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center gap-3 transition-all duration-300">
@@ -232,7 +232,6 @@ const breadcrumbs = computed(() => [
     <!-- Related Products -->
     <section v-if="related.length" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop pb-20">
       <div class="text-center mb-12 reveal">
-        <span class="kicker inline-block mb-3">{{ t('product.related') }}</span>
         <h2 class="text-[32px] md:text-[40px] font-extrabold text-text-main tracking-tight">Sản phẩm liên quan</h2>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-grid">
@@ -244,7 +243,7 @@ const breadcrumbs = computed(() => [
   <div v-else-if="notFound" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 text-center">
     <span class="material-symbols-outlined text-7xl text-outline-variant mb-6 block">inventory_2</span>
     <h1 class="text-[28px] text-text-main font-bold mb-6">{{ t('product.notFound') }}</h1>
-    <router-link to="/products" class="btn bg-primary text-white hover:bg-primary-dark rounded-full inline-flex items-center gap-2">
+    <router-link to="/products" class="btn bg-primary text-primary-deep hover:bg-primary-dark rounded-full inline-flex items-center gap-2">
       <span class="material-symbols-outlined text-lg">arrow_back</span> {{ t('product.backToList') }}
     </router-link>
   </div>

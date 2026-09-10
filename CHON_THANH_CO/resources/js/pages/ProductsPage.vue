@@ -179,7 +179,7 @@ const bentoCol = (i: number) => {
         >
           <span class="material-symbols-outlined text-[18px]">tune</span>
           <span>{{ t('products.filter') }}</span>
-          <span v-if="activeFilterCount" class="bg-white text-primary text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ml-1">{{ activeFilterCount }}</span>
+          <span v-if="activeFilterCount" class="bg-white text-primary text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center ml-1">{{ activeFilterCount }}</span>
         </button>
       </div>
 
@@ -193,10 +193,10 @@ const bentoCol = (i: number) => {
             <!-- Rail header -->
             <div class="px-5 py-4 bg-primary text-white flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="font-mono text-[10px] font-bold text-primary tracking-[0.2em]">/FILTER</span>
-                <span class="text-[10px] font-bold tracking-[0.2em] uppercase opacity-70">{{ t('products.filter') }}</span>
+                <span class="font-mono text-[11px] font-bold text-primary tracking-[0.2em]">/FILTER</span>
+                <span class="text-[11px] font-bold tracking-[0.2em] uppercase opacity-70">{{ t('products.filter') }}</span>
               </div>
-              <span v-if="activeFilterCount" class="font-mono text-[10px] font-bold bg-primary text-canvas rounded-full w-5 h-5 flex items-center justify-center tabular-nums">{{ activeFilterCount }}</span>
+              <span v-if="activeFilterCount" class="font-mono text-[11px] font-bold bg-primary text-canvas rounded-full w-5 h-5 flex items-center justify-center tabular-nums">{{ activeFilterCount }}</span>
             </div>
 
             <div class="p-5 space-y-7 max-h-[65vh] overflow-y-auto custom-scrollbar">
@@ -352,10 +352,10 @@ const bentoCol = (i: number) => {
 
           <!-- Active filter chips -->
           <div v-if="activeFilterCount > 0" class="flex flex-wrap items-center gap-2 mb-8 reveal">
-            <span class="text-[10px] font-mono font-bold text-text-muted tracking-[0.2em] uppercase">/ACTIVE</span>
+            <span class="text-[11px] font-mono font-bold text-text-muted tracking-[0.2em] uppercase">/ACTIVE</span>
             <button
               v-for="cat in selectedCategories" :key="'c-'+cat"
-              class="inline-flex items-center gap-1.5 bg-primary text-white pl-2.5 pr-1.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-primary-deep transition-colors duration-200"
+              class="inline-flex items-center gap-1.5 bg-primary text-white pl-2.5 pr-1.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-primary-deep transition-colors duration-200"
               @click="toggle(selectedCategories, cat)"
             >
               <span>{{ categories.find(c => c.slug === cat)?.name || cat }}</span>
@@ -363,7 +363,7 @@ const bentoCol = (i: number) => {
             </button>
             <button
               v-for="app in selectedApplications" :key="'a-'+app"
-              class="inline-flex items-center gap-1.5 bg-primary text-canvas pl-2.5 pr-1.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-primary-deep transition-colors duration-200"
+              class="inline-flex items-center gap-1.5 bg-primary text-canvas pl-2.5 pr-1.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-primary-deep transition-colors duration-200"
               @click="toggle(selectedApplications, app)"
             >
               <span>{{ applications.find(a => a.slug === app)?.name || app }}</span>
@@ -371,13 +371,13 @@ const bentoCol = (i: number) => {
             </button>
             <button
               v-if="selectedStrength"
-              class="inline-flex items-center gap-1.5 bg-olive text-canvas pl-2.5 pr-1.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] hover:bg-olive-light transition-colors duration-200"
+              class="inline-flex items-center gap-1.5 bg-olive text-canvas pl-2.5 pr-1.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-olive-light transition-colors duration-200"
               @click="selectedStrength = null"
             >
               <span>{{ selectedStrength }}</span>
               <span class="material-symbols-outlined text-[12px]">close</span>
             </button>
-            <button class="text-[10px] font-bold text-text-muted tracking-[0.18em] uppercase underline hover:text-text-main transition-colors ml-2" @click="clearFilters">{{ t('products.clearAll') }}</button>
+            <button class="text-[11px] font-bold text-text-muted tracking-[0.18em] uppercase underline hover:text-text-main transition-colors ml-2" @click="clearFilters">{{ t('products.clearAll') }}</button>
           </div>
 
           <!-- Loading skeleton -->
@@ -400,7 +400,7 @@ const bentoCol = (i: number) => {
           <!-- ═══ INDEX VIEW (table-style catalog) ═══ -->
           <div v-else-if="filteredProducts.length && viewMode === 'index'" class="bg-canvas border border-outline-variant">
             <!-- Sticky header -->
-            <div class="grid grid-cols-12 gap-3 px-4 md:px-6 py-3 bg-primary text-white text-[10px] font-bold tracking-[0.2em] uppercase sticky top-28 z-20">
+            <div class="grid grid-cols-12 gap-3 px-4 md:px-6 py-3 bg-primary text-white text-[11px] font-bold tracking-[0.2em] uppercase sticky top-28 z-20">
               <div class="col-span-1">№</div>
               <div class="col-span-12 md:col-span-2">Code</div>
               <div class="col-span-12 md:col-span-5">Product</div>
@@ -419,7 +419,7 @@ const bentoCol = (i: number) => {
                 <div class="col-span-12 md:col-span-5">
                   <div class="font-bold text-[13px] md:text-[14px] text-text-main group-hover:text-primary transition-colors duration-200 line-clamp-1">{{ product.name }}</div>
                 </div>
-                <div class="col-span-6 md:col-span-2 text-[10px] text-text-muted font-bold tracking-[0.15em] uppercase">{{ product.category?.name || '—' }}</div>
+                <div class="col-span-6 md:col-span-2 text-[11px] text-text-muted font-bold tracking-[0.15em] uppercase">{{ product.category?.name || '—' }}</div>
                 <div class="col-span-3 md:col-span-1 text-right font-mono text-[11px] font-bold text-primary tabular-nums">{{ formatStrength(product) }}</div>
                 <div class="col-span-3 md:col-span-1 text-right">
                   <span class="inline-flex items-center justify-center w-8 h-8 border border-outline-variant group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-200">

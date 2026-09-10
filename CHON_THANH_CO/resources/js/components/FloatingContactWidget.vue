@@ -83,7 +83,7 @@ const contacts = computed(() => [
           :alt="contact.name"
         />
         <span v-else v-html="contact.icon"></span>
-        <span class="text-[9px] font-bold tracking-wide truncate w-full text-center">{{ contact.name }}</span>
+        <span class="text-[11px] font-bold tracking-wide truncate w-full text-center">{{ contact.name }}</span>
       </a>
     </div>
   </div>

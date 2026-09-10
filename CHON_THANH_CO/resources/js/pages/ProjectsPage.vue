@@ -144,7 +144,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
             </div>
             <div class="hidden sm:flex flex-col items-end px-3 border-l border-outline-variant h-full justify-center">
               <span class="font-black text-[16px] text-text-main leading-none">{{ String(filteredProjects.length).padStart(2, '0') }}</span>
-              <span class="text-[9px] font-bold text-text-muted uppercase tracking-widest mt-0.5">Kết quả</span>
+              <span class="text-[11px] font-bold text-text-muted uppercase tracking-widest mt-0.5">Kết quả</span>
             </div>
           </div>
         </div>
@@ -182,7 +182,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.15em]">{{ project.period }}</span>
+                  <span class="text-primary text-[11px] font-extrabold uppercase tracking-[0.15em]">{{ project.period }}</span>
                 </div>
                 <h3 class="font-bold text-[14px] text-text-main group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2">
                   {{ project.name }}
@@ -204,13 +204,13 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
               >
                 <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm z-10">
                   <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
-                  <span class="text-[9px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
+                  <span class="text-[11px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
                 </div>
               </LazyImage>
 
               <div class="p-6 md:p-8 flex flex-col flex-grow relative">
                 <div class="flex items-center gap-3 mb-3">
-                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
+                  <span class="text-primary text-[11px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
                   <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
                   <span class="text-[11px] font-bold text-text-muted line-clamp-1 uppercase tracking-wider">{{ project.location }}</span>
                 </div>

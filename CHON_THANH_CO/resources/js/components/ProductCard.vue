@@ -39,7 +39,7 @@ const isCatalog = computed(() => props.variant === 'catalog')
 
         <div
           v-if="showStrength && product.strength_label"
-          class="absolute bottom-0 left-0 bg-primary/90 backdrop-blur-sm text-canvas px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] uppercase tabular-nums z-10"
+          class="absolute bottom-0 left-0 bg-primary/90 backdrop-blur-sm text-canvas px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] uppercase tabular-nums z-10"
           style="background: rgba(22, 36, 61, 0.9);"
         >
           {{ product.strength_label }}
@@ -47,7 +47,7 @@ const isCatalog = computed(() => props.variant === 'catalog')
 
         <div v-if="showCategory" class="absolute top-3 left-3 z-10">
           <span
-            class="inline-flex items-center gap-1 bg-canvas/90 backdrop-blur-md border border-text-main/20 px-2.5 py-1 text-[9px] font-bold text-text-main uppercase tracking-[0.18em]"
+            class="inline-flex items-center gap-1 bg-canvas/90 backdrop-blur-md border border-text-main/20 px-2.5 py-1 text-[11px] font-bold text-text-main uppercase tracking-[0.18em]"
           >
             {{ product.category?.name || 'Geosynthetics' }}
           </span>
@@ -93,7 +93,7 @@ const isCatalog = computed(() => props.variant === 'catalog')
       </div>
       <div class="flex-1 min-w-0">
         <div v-if="showCategory" class="mb-1">
-          <span class="inline-flex items-center text-[9px] font-bold text-primary uppercase tracking-[0.15em]">
+          <span class="inline-flex items-center text-[11px] font-bold text-primary uppercase tracking-[0.15em]">
             {{ product.category?.name || 'Geosynthetics' }}
           </span>
         </div>
@@ -101,7 +101,7 @@ const isCatalog = computed(() => props.variant === 'catalog')
           {{ product.name }}
         </h3>
         <div class="flex items-center justify-between mt-1.5">
-          <span class="text-[10px] font-bold text-text-muted tracking-[0.15em] uppercase tabular-nums">
+          <span class="text-[11px] font-bold text-text-muted tracking-[0.15em] uppercase tabular-nums">
             {{ product.code }}
           </span>
           <span class="material-symbols-outlined text-[16px] text-primary">arrow_forward</span>

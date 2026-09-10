@@ -192,9 +192,9 @@ const activeCategoryName = computed(() => {
                   />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <span class="text-[9px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
+                  <span class="text-[11px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
                   <h3 class="font-bold text-[14px] text-text-main mt-0.5 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
-                  <span class="inline-flex items-center gap-1 font-bold text-[10px] text-primary mt-1 uppercase tracking-[0.1em]">
+                  <span class="inline-flex items-center gap-1 font-bold text-[11px] text-primary mt-1 uppercase tracking-[0.1em]">
                     {{ t('news.readMore') }} <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
                   </span>
                 </div>
@@ -265,7 +265,7 @@ const activeCategoryName = computed(() => {
                   <div class="font-mono text-[14px] font-bold text-outline-variant group-hover:text-primary transition-colors duration-200 shrink-0 tabular-nums pt-0.5">{{ paddedIndex(i) }}</div>
                   <div class="flex-grow min-w-0">
                     <h4 class="font-medium text-text-main text-[13px] leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-1.5">{{ n.title }}</h4>
-                    <span class="text-[10px] text-text-muted font-medium">{{ formatDate(n.published_at) }}</span>
+                    <span class="text-[11px] text-text-muted font-medium">{{ formatDate(n.published_at) }}</span>
                   </div>
                 </router-link>
               </div>

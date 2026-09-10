@@ -10,7 +10,7 @@ defineProps<{
   <div class="bg-surface-bright border border-outline-variant rounded-2xl p-7 hover:shadow-[0_8px_30px_rgba(51,45,41,0.06)] hover:border-primary/30 hover:-translate-y-1 transition-all duration-500 group card-premium">
     <div class="flex items-start gap-4">
       <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-400">
-        <span class="material-symbols-outlined text-xl text-primary-deep group-hover:text-white">{{ icon }}</span>
+        <span class="material-symbols-outlined text-[24px] text-primary-deep group-hover:text-white">{{ icon }}</span>
       </div>
       <div>
         <div class="text-2xl font-bold text-text-main mb-1">{{ value }}</div>
