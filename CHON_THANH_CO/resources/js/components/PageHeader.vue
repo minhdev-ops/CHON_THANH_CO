@@ -35,8 +35,8 @@ const paddingClass = computed(() => {
       class="absolute inset-0 pointer-events-none"
       :style="{
         background: variant === 'cinematic'
-          ? 'linear-gradient(180deg, rgba(42,36,32,0.7) 0%, rgba(42,36,32,0.4) 40%, rgba(42,36,32,0.7) 100%)'
-          : 'linear-gradient(180deg, rgba(42,36,32,0.65) 0%, rgba(42,36,32,0.35) 50%, rgba(42,36,32,0.65) 100%)',
+          ? 'linear-gradient(180deg, rgba(42,36,32,0.82) 0%, rgba(42,36,32,0.55) 40%, rgba(42,36,32,0.82) 100%)'
+          : 'linear-gradient(180deg, rgba(42,36,32,0.92) 0%, rgba(42,36,32,0.72) 50%, rgba(42,36,32,0.92) 100%)',
         transform: variant === 'cinematic' ? `translateY(${scrollY * 0.15 + 20}px) scale(1.1)` : 'none',
       }"
     />

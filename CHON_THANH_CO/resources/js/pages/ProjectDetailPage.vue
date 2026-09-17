@@ -183,7 +183,7 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
                 :alt="prod.name"
                 fallback-src="/images/products/geotextile-roll.jpg"
                 container-class="w-full h-32 bg-transparent flex items-center justify-center"
-                image-class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                image-class="max-w-full max-h-full object-contain"
               />
             </div>
             <div class="p-8 flex flex-col justify-center">

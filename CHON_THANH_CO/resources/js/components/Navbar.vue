@@ -81,7 +81,7 @@ watch(isMobileOpen, (open) => {
       class="hidden lg:block w-full bg-[#F7F3F0] text-[#6B5D55] overflow-hidden transition-all duration-300 border-b border-[#E4D8D0]"
       :class="isScrolled ? 'h-0 opacity-0' : 'h-[44px] opacity-100'"
     >
-      <div class="max-w-[1600px] mx-auto px-[var(--spacing-margin-desktop)] h-full flex items-center justify-between text-[13px] font-medium">
+      <div class="max-w-[1600px] mx-auto px-[var(--spacing-margin-desktop)] h-full flex items-center justify-between text-[13px] font-medium py-3">
         <div class="flex items-center gap-6">
           <a href="https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8?entry=ttu&g_ep=EgoyMDI2MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-[#B89B88] transition-colors duration-200 cursor-pointer">
             <span class="material-symbols-outlined text-[16px] text-[#B89B88]">location_on</span>

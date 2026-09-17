@@ -105,7 +105,7 @@ const goToPage = (page: number | string) => {
           class="min-w-[36px] h-9 px-3 rounded-md text-[13px] font-bold transition-all duration-200 cursor-pointer tabular-nums"
           :class="
             p === currentPage
-              ? 'bg-primary text-white shadow-sm border border-primary ring-2 ring-primary/20 scale-105'
+              ? 'bg-primary text-primary-deep shadow-sm border border-primary ring-2 ring-primary/20 scale-105'
               : 'border border-outline-variant text-text-main hover:bg-surface-vlm hover:border-primary/40 hover:text-primary active:scale-95'
           "
           :aria-current="p === currentPage ? 'page' : undefined"

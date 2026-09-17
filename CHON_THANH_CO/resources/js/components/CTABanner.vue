@@ -35,24 +35,20 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
 
         <div class="relative z-10 text-center">
           <div class="max-w-3xl mx-auto">
-            <div class="inline-flex items-center gap-3 text-[11px] md:text-[12px] font-bold tracking-[0.18em] uppercase text-white/90 justify-center mb-4 md:mb-6">
-              <div class="w-6 md:w-7 h-[2px] bg-white/90 rounded-sm"></div>
-              Bước tiếp theo
-            </div>
             
             <h2 class="text-[24px] md:text-[46px] font-extrabold leading-[1.15] tracking-[-0.02em] mb-4 md:mb-6 drop-shadow-sm text-white">
               {{ title || 'CẦN TƯ VẤN? LIÊN HỆ NGAY' }}
             </h2>
             
-            <p class="text-white/90 text-[15px] md:text-[18px] leading-relaxed mb-8 md:mb-10 max-w-2xl mx-auto font-medium">
+            <p class="text-white/90 text-[15px] md:text-[18px] leading-relaxed mb-10 md:mb-14 max-w-2xl mx-auto font-medium">
               {{ text || 'Đội ngũ kỹ sư của chúng tôi sẵn sàng hỗ trợ giải pháp tối ưu cho dự án của bạn.' }}
             </p>
             
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
-              <router-link
-                :to="linkTo || '/contact'"
-                class="group inline-flex items-center gap-2 bg-white text-[#B89B88] font-bold text-[13px] md:text-[14px] uppercase tracking-[0.15em] py-3.5 md:py-4 px-8 md:px-10 rounded-[50px] shadow-lg shadow-black/10 hover:bg-[#2A2420] hover:text-white hover:shadow-xl hover:shadow-[#2A2420]/20 transition-all duration-300 hover:-translate-y-1 active:scale-[0.97] w-full sm:w-auto justify-center"
-              >
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-4 md:mt-6">
+<router-link
+                 :to="linkTo || '/contact'"
+                 class="group btn-light btn-lg rounded-full w-full sm:w-auto justify-center"
+               >
                 {{ linkLabel || 'GỬI YÊU CẦU' }}
                 <span class="material-symbols-outlined text-[18px] md:text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
               </router-link>
@@ -60,13 +56,13 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
               <div class="hidden sm:block w-px h-12 bg-white/30"></div>
               
               <!-- Desktop: Full hotline cluster -->
-              <div class="hidden sm:flex items-center shrink-0 bg-white rounded-[50px] p-2 pe-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group hotline-cluster">
+              <div class="hidden xl:flex items-center shrink-0 bg-white rounded-[50px] p-2 pe-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group hotline-cluster">
                 <a :href="hotlineHref" class="relative flex items-center justify-center shrink-0">
                   <div class="absolute inset-0 rounded-full bg-[#D84315] opacity-30 animate-ping group-hover:bg-[#D84315]/50"></div>
                   <div class="w-[64px] h-[64px] rounded-full bg-[#D84315] text-white flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-all duration-300">
                     <span class="material-symbols-outlined text-[30px] animate-ring">call</span>
                   </div>
-                  <div class="absolute -top-1 -right-1 w-6 h-6 bg-[#B89B88] rounded-full flex items-center justify-center z-20 shadow-sm border-2 border-white group-hover:bg-[#2A2420] transition-colors">
+                  <div class="absolute -top-1 -right-1 w-6 h-6 bg-[#B89B88] rounded-full flex items-center justify-center z-20 shadow-sm border-2 border-white group-hover:bg-[#16243D] transition-colors">
                     <span class="material-symbols-outlined text-[14px] text-white">chat</span>
                   </div>
                 </a>

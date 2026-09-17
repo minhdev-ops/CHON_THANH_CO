@@ -79,7 +79,7 @@ const breadcrumbs = computed(() => [
                     :class="openIndex === i ? 'text-primary-deep' : 'text-text-main group-hover/btn:text-primary'">{{ faq.question }}</span>
                 </div>
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500"
-                  :class="openIndex === i ? 'bg-primary text-white rotate-180 shadow-[0_4px_16px_rgba(184,155,136,0.3)]' : 'bg-surface-vlm text-text-muted group-hover/btn:bg-primary/10 group-hover/btn:text-primary'">
+                  :class="openIndex === i ? 'bg-primary text-[#2A2420] rotate-180 shadow-[0_4px_16px_rgba(184,155,136,0.3)]' : 'bg-surface-vlm text-text-muted group-hover/btn:bg-primary/10 group-hover/btn:text-primary'">
                   <span class="material-symbols-outlined text-xl">expand_more</span>
                 </div>
               </button>
@@ -94,7 +94,7 @@ const breadcrumbs = computed(() => [
             <div v-if="filteredFaqs.length === 0" class="py-16 text-center bg-surface-bright border border-outline-variant rounded-3xl card-shine glow-card">
               <span class="material-symbols-outlined text-6xl text-outline-variant mb-4 block">search_off</span>
               <p class="text-text-secondary font-medium mb-6 text-[16px]">Không tìm thấy câu hỏi phù hợp với từ khóa "{{ searchQuery }}".</p>
-              <button class="btn bg-primary text-white hover:bg-primary-dark rounded-full px-6 py-3 font-bold text-[14px]" @click="searchQuery = ''">Xóa bộ lọc</button>
+              <button class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full px-6 py-3 font-bold text-[14px]" @click="searchQuery = ''">Xóa bộ lọc</button>
             </div>
           </div>
 
@@ -119,7 +119,7 @@ const breadcrumbs = computed(() => [
               <div class="flex flex-wrap gap-2">
                 <button v-for="cat in categories" :key="cat"
                   class="px-4 py-2 rounded-full font-bold text-[11px] uppercase tracking-[0.1em] transition-all duration-300"
-                  :class="activeCategory === cat ? 'bg-primary text-white shadow-md shadow-primary/20' : 'bg-canvas text-text-secondary border border-outline-variant hover:border-primary/40 hover:text-primary-deep'"
+                  :class="activeCategory === cat ? 'bg-primary text-[#2A2420] shadow-md shadow-primary/20' : 'bg-canvas text-text-secondary border border-outline-variant hover:border-primary/40 hover:text-primary-deep'"
                   @click="activeCategory = cat">
                   {{ cat }}
                 </button>

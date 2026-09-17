@@ -181,7 +181,7 @@ const downloadPdf = () => {
           </button>
         </div>
         
-        <button type="button" class="btn bg-primary text-white hover:bg-primary-dark py-2 px-4 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300" @click="downloadPdf">
+        <button type="button" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white py-2 px-4 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300" @click="downloadPdf">
           <span class="material-symbols-outlined text-[16px]">download</span> Tải bản gốc
         </button>
         
@@ -213,7 +213,7 @@ const downloadPdf = () => {
         <div class="w-16 h-16 border-4 border-outline-variant border-t-primary rounded-full animate-spin mb-4"></div>
         <p class="text-text-main font-semibold mb-2">Đang xử lý tệp PDF...</p>
         <div class="w-64 h-2 bg-outline-variant rounded-full overflow-hidden">
-          <div class="h-full bg-primary transition-all duration-300" :style="{ width: `${progress}%` }"></div>
+          <div class="h-full bg-primary transition-[width] duration-300" :style="{ width: `${progress}%` }"></div>
         </div>
         <p class="text-text-secondary text-sm mt-2">{{ progress }}%</p>
       </div>
@@ -222,7 +222,7 @@ const downloadPdf = () => {
       <div v-else-if="error" class="absolute inset-0 flex flex-col items-center justify-center z-20 px-4 text-center">
         <span class="material-symbols-outlined text-error text-5xl mb-4">error</span>
         <p class="text-error font-semibold mb-4">{{ error }}</p>
-        <button @click="renderPdf" class="btn bg-primary text-white py-2 px-6 rounded-full font-bold">Thử lại</button>
+        <button @click="renderPdf" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white py-2 px-6 rounded-full font-bold">Thử lại</button>
       </div>
 
       <!-- Flipbook container -->

@@ -188,7 +188,7 @@ const activeCategoryName = computed(() => {
                     :src="n.image"
                     :alt="n.title"
                     fallback-src="/images/products/industrial-1.jpg"
-                    image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    image-class="w-full h-full object-cover"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
@@ -208,7 +208,7 @@ const activeCategoryName = computed(() => {
                   fallback-src="/images/products/industrial-1.jpg"
                   aspect-ratio="aspect-[4/3]"
                   container-class="w-[35%] shrink-0 border-r border-outline-variant/60"
-                  image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  image-class="w-full h-full object-cover"
                 />
                 <div class="p-8 flex flex-col flex-grow justify-center">
                   <div class="flex items-center gap-3 mb-4">
@@ -276,7 +276,7 @@ const activeCategoryName = computed(() => {
               <div class="relative">
                 <div class="font-bold text-[12px] text-text-main tracking-widest uppercase mb-4">{{ t('news.subscribeTitle') }}</div>
                 <p class="text-text-secondary text-[13px] mb-6 leading-relaxed">{{ t('news.subscribeText') }}</p>
-                <router-link to="/contact" class="group flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 text-[12px] font-bold tracking-wider uppercase hover:bg-primary-hover shadow-sm hover:shadow transition-all rounded-md w-full">
+                <router-link to="/contact" class="group flex items-center justify-center gap-2 btn-primary px-5 py-3 text-[12px] font-bold tracking-wider uppercase shadow-sm hover:shadow transition-all rounded-md w-full">
                   <span>{{ t('news.contactUs') }}</span>
                 </router-link>
               </div>

@@ -160,7 +160,7 @@ const breadcrumbs = computed(() => [
             :alt="n.title"
             fallback-src="/images/products/industrial-1.jpg"
             aspect-ratio="aspect-[16/10]"
-            image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            image-class="w-full h-full object-cover"
           />
           <div class="p-6">
             <span class="text-[11px] font-bold text-primary uppercase tracking-[0.15em] mb-3 block">{{ n.category?.name || 'Tin tức' }}</span>
@@ -180,7 +180,7 @@ const breadcrumbs = computed(() => [
         <span class="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform duration-300">arrow_back</span>
         {{ t('news.backToList') }}
       </router-link>
-      <router-link to="/contact" class="btn bg-primary text-white hover:bg-primary-dark rounded-full inline-flex items-center gap-2 group">
+      <router-link to="/contact" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full inline-flex items-center gap-2 group">
         {{ t('news.contact') }}
         <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">send</span>
       </router-link>
@@ -190,7 +190,7 @@ const breadcrumbs = computed(() => [
   <div v-else-if="notFound" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 text-center">
     <span class="material-symbols-outlined text-7xl text-outline-variant mb-6 block">article</span>
     <h1 class="text-[28px] text-text-main font-bold mb-6">{{ t('news.notFound') }}</h1>
-    <router-link to="/news" class="btn bg-primary text-white hover:bg-primary-dark rounded-full inline-flex items-center gap-2">
+    <router-link to="/news" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full inline-flex items-center gap-2">
       <span class="material-symbols-outlined text-lg">arrow_back</span> {{ t('news.backToList') }}
     </router-link>
   </div>

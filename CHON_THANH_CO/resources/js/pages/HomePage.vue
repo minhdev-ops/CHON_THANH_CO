@@ -147,11 +147,11 @@ const displayStats = computed(() =>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           <div v-for="(f, i) in features" :key="i"
-            class="feature-card relative bg-surface-bright rounded-2xl p-4 md:p-8 pt-5 md:pt-10 text-center flex flex-col items-center h-full transition-all duration-500 group overflow-hidden reveal"
+            class="feature-card relative bg-surface-bright rounded-2xl p-6 md:p-8 pt-5 md:pt-10 text-center flex flex-col items-center h-full transition-all duration-500 group overflow-hidden reveal"
             :class="`reveal-delay-${i+1}`">
-            <div class="absolute inset-0 bg-gradient-to-b from-primary/5 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div class="relative z-10 w-[48px] h-[48px] md:w-[72px] md:h-[72px] rounded-2xl bg-gradient-to-br from-surface-vlm to-primary-xlight flex items-center justify-center mb-3 md:mb-6 group-hover:scale-110 group-hover:shadow-lg transition-all duration-500">
-              <span class="material-symbols-outlined text-[24px] md:text-[36px] text-primary group-hover:text-primary-dark transition-colors duration-500">{{ f.icon }}</span>
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div class="relative w-[48px] h-[48px] md:w-[72px] md:h-[72px] rounded-2xl bg-surface-vlm flex items-center justify-center mb-3 md:mb-6">
+              <span class="material-symbols-outlined text-[24px] md:text-[36px] text-primary">{{ f.icon }}</span>
             </div>
             <h3 class="relative z-10 font-extrabold text-text-main text-[14px] md:text-[18px] mb-2 md:mb-3 tracking-tight leading-tight">{{ f.title }}</h3>
             <p class="relative z-10 text-text-secondary text-[12px] md:text-[14px] leading-relaxed mb-4 md:mb-6 flex-grow hidden sm:block">{{ f.desc }}</p>
@@ -193,7 +193,7 @@ const displayStats = computed(() =>
               </div>
             </div>
 
-            <router-link to="/about" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-3.5 px-8 text-[16px] transition-colors shadow-md">
+            <router-link to="/about" class="btn-primary rounded-full py-3.5 px-8 text-[16px] shadow-md">
               Xem hồ sơ năng lực
             </router-link>
           </div>
@@ -211,7 +211,7 @@ const displayStats = computed(() =>
               </div>
               <div class="grid grid-cols-2 gap-6">
                 <div v-for="(s, i) in displayStats" :key="i" :ref="(el) => setCounterEl(el as HTMLElement | null)"
-                  class="bg-surface-bright rounded-[10px] p-6 reveal flex flex-col justify-center h-full hover:shadow-xl transition-shadow border border-outline-variant/50" :class="`reveal-delay-${i+1}`">
+                  class="bg-surface-bright rounded-[10px] p-6 pb-8 reveal flex flex-col justify-center h-full hover:shadow-xl transition-shadow border border-outline-variant/50" :class="`reveal-delay-${i+1}`">
                   <div class="flex items-end gap-1 mb-2">
                     <span class="text-[40px] font-extrabold text-primary tabular-nums leading-none">{{ formatAnimatedValue(i, s.value) }}</span>
                     <span v-if="s.value.includes('+')" class="text-[32px] font-extrabold text-primary leading-none">+</span>
@@ -230,7 +230,7 @@ const displayStats = computed(() =>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12 reveal">
           <SectionHeader kicker="Sản phẩm của chúng tôi" title="Sản phẩm tiêu biểu" />
-          <router-link to="/products" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold">
+          <router-link to="/products" class="btn-primary rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold hover:transform-none">
             Tất cả sản phẩm <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
           </router-link>
         </div>
@@ -246,7 +246,6 @@ const displayStats = computed(() =>
 
     <!-- ── 6. Services ───────────────────────────────── -->
     <section class="w-full py-10 md:py-24 bg-surface-bright relative overflow-hidden">
-      <div class="absolute inset-0 mesh-bg opacity-50"></div>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
         <div class="text-center max-w-2xl mx-auto mb-8 md:mb-16 reveal">
           <SectionHeader align="center" kicker="Dịch vụ của chúng tôi" title="Giải pháp trọn gói từ tư vấn đến thi công" />
@@ -261,7 +260,8 @@ const displayStats = computed(() =>
               fallback-src="/images/products/geotextile-roll.jpg"
               aspect-ratio="aspect-[4/3]"
               container-class="shrink-0"
-              image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+              image-class="w-full h-full object-cover"
+              no-overflow
             >
               <div class="absolute inset-0 bg-gradient-to-t from-text-main/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div class="absolute -bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:-translate-y-2 transition-transform duration-500 z-10">
@@ -282,7 +282,7 @@ const displayStats = computed(() =>
         <!-- Mobile: compact horizontal cards -->
         <div class="flex flex-col gap-3 md:hidden stagger-grid">
           <div v-for="(s, i) in services" :key="i"
-            class="group flex items-center gap-4 bg-canvas border border-outline-variant rounded-2xl p-4 hover:shadow-md hover:border-primary/30 transition-all duration-300 reveal" :class="`reveal-delay-${(i%4)+1}`">
+            class="group flex items-center gap-4 bg-canvas border border-outline-variant rounded-2xl p-5 hover:shadow-md hover:border-primary/30 transition-all duration-300 reveal" :class="`reveal-delay-${(i%4)+1}`">
             <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
               <span class="material-symbols-outlined text-[24px] text-primary">{{ s.icon }}</span>
             </div>
@@ -300,7 +300,6 @@ const displayStats = computed(() =>
 
     <!-- ── 7. Process Steps ──────────────────────────── -->
     <section class="w-full py-10 md:py-20 bg-canvas relative overflow-hidden">
-      <div class="absolute inset-0 mesh-bg opacity-50"></div>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
         <div class="text-center max-w-2xl mx-auto mb-8 md:mb-16 reveal">
           <SectionHeader align="center" kicker="Quy trình hợp tác" title="4 bước đồng hành cùng khách hàng" />
@@ -351,7 +350,7 @@ const displayStats = computed(() =>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12 reveal">
           <SectionHeader kicker="Dự án của chúng tôi" title="Công trình hạ tầng tiêu biểu" />
-          <router-link to="/projects" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold">
+          <router-link to="/projects" class="btn-primary rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold hover:transform-none">
             Tất cả dự án <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
           </router-link>
         </div>
@@ -393,17 +392,17 @@ const displayStats = computed(() =>
             </div>
           </div>
           <div class="reveal-right">
-            <div class="relative rounded-[10px] overflow-hidden shadow-2xl">
+            <div class="relative rounded-[10px] overflow-hidden">
               <LazyImage
                 src="/images/projects/highway-1.jpg"
                 alt="Công trình địa kỹ thuật"
                 fallback-src="/images/projects/highway-1.jpg"
                 aspect-ratio="aspect-[4/5]"
-                image-class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                image-class="w-full h-full object-cover"
               >
                 <div class="absolute inset-0 bg-gradient-to-t from-primary-deep/80 via-primary-deep/20 to-transparent"></div>
                 <div class="absolute bottom-8 left-8 right-8 z-10">
-                  <div class="bg-surface-glass backdrop-blur-md rounded-[10px] p-6 shadow-xl border-l-4 border-primary">
+                  <div class="bg-surface-glass backdrop-blur-md rounded-[10px] p-6">
                     <div class="text-text-main font-extrabold text-2xl mb-2">{{ getYearsOfExperience() }}+ năm kinh nghiệm</div>
                     <div class="text-text-secondary text-[15px] font-medium">Đồng hành cùng hàng nghìn công trình hạ tầng từ 2005 đến nay</div>
                   </div>
@@ -417,7 +416,6 @@ const displayStats = computed(() =>
 
     <!-- ── 10. Testimonials ──────────────────────────── -->
     <section class="w-full py-10 md:py-20 bg-surface-bright relative overflow-hidden">
-      <div class="absolute inset-0 mesh-bg opacity-50"></div>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
         <div class="text-center max-w-2xl mx-auto mb-8 md:mb-14 reveal">
           <SectionHeader align="center" kicker="Khách hàng nói về chúng tôi" title="Đối tác đồng hành" />
@@ -425,24 +423,22 @@ const displayStats = computed(() =>
         <!-- Desktop: 3-column grid -->
         <div class="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 stagger-grid">
           <div v-for="(t, i) in testimonials" :key="i"
-            class="testimonial-item reveal h-full" :class="`reveal-delay-${(i%3)+1}`">
-            <div class="testimonial-inner flex flex-col">
-              <div class="flex items-center gap-1 mb-4">
-                <span v-for="s in 5" :key="s" class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
-              </div>
-              <p class="text-text-secondary text-[15px] leading-relaxed mb-6 flex-grow italic">"{{ t.text }}"</p>
-              <div class="flex items-center gap-3 pt-4 border-t border-outline-variant">
-                <LazyImage
-                  :src="t.avatar"
-                  :alt="t.name"
-                  fallback-src="/images/projects/highway-1.jpg"
-                  container-class="w-12 h-12 rounded-full shrink-0 border-2 border-primary/20"
-                  image-class="w-full h-full rounded-full object-cover"
-                />
-                <div>
-                  <div class="font-extrabold text-text-main text-[15px]">{{ t.name }}</div>
-                  <div class="text-text-muted text-[12px] font-medium">{{ t.role }}</div>
-                </div>
+            class="testimonial-card bg-surface-1 border border-outline-variant rounded-2xl p-6 flex flex-col h-full reveal" :class="`reveal-delay-${(i%3)+1}`">
+            <div class="flex items-center gap-1 mb-4">
+              <span v-for="s in 5" :key="s" class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            </div>
+            <p class="text-text-secondary text-[15px] leading-relaxed mb-6 flex-grow italic">"{{ t.text }}"</p>
+            <div class="flex items-center gap-3 pt-4 border-t border-outline-variant">
+              <LazyImage
+                :src="t.avatar"
+                :alt="t.name"
+                fallback-src="/images/projects/highway-1.jpg"
+                container-class="w-12 h-12 rounded-full shrink-0 border-2 border-primary/20"
+                image-class="w-full h-full rounded-full object-cover"
+              />
+              <div>
+                <div class="font-extrabold text-text-main text-[15px]">{{ t.name }}</div>
+                <div class="text-text-secondary text-[13px] font-medium">{{ t.role }}</div>
               </div>
             </div>
           </div>
@@ -450,24 +446,22 @@ const displayStats = computed(() =>
         <!-- Mobile: horizontal scroll -->
         <div class="flex md:hidden gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 scrollbar-none">
           <div v-for="(t, i) in testimonials" :key="i"
-            class="testimonial-item snap-start shrink-0 w-[85vw] max-w-[320px]">
-            <div class="testimonial-inner flex flex-col">
-              <div class="flex items-center gap-1 mb-3">
-                <span v-for="s in 5" :key="s" class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-              </div>
-              <p class="text-text-secondary text-[13px] leading-relaxed mb-4 flex-grow italic line-clamp-4">"{{ t.text }}"</p>
-              <div class="flex items-center gap-3 pt-3 border-t border-outline-variant">
-                <LazyImage
-                  :src="t.avatar"
-                  :alt="t.name"
-                  fallback-src="/images/projects/highway-1.jpg"
-                  container-class="w-10 h-10 rounded-full shrink-0 border-2 border-primary/20"
-                  image-class="w-full h-full rounded-full object-cover"
-                />
-                <div>
-                  <div class="font-extrabold text-text-main text-[14px]">{{ t.name }}</div>
-                  <div class="text-text-muted text-[11px] font-medium">{{ t.role }}</div>
-                </div>
+            class="testimonial-card bg-surface-1 border border-outline-variant rounded-2xl p-5 flex flex-col snap-start shrink-0 w-[85vw] max-w-[320px] reveal" :class="`reveal-delay-${(i%3)+1}`">
+            <div class="flex items-center gap-1 mb-3">
+              <span v-for="s in 5" :key="s" class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            </div>
+            <p class="text-text-secondary text-[13px] leading-relaxed mb-4 flex-grow italic line-clamp-4">"{{ t.text }}"</p>
+            <div class="flex items-center gap-3 pt-3 border-t border-outline-variant">
+              <LazyImage
+                :src="t.avatar"
+                :alt="t.name"
+                fallback-src="/images/projects/highway-1.jpg"
+                container-class="w-10 h-10 rounded-full shrink-0 border-2 border-primary/20"
+                image-class="w-full h-full rounded-full object-cover"
+              />
+              <div>
+                <div class="font-extrabold text-text-main text-[14px]">{{ t.name }}</div>
+                <div class="text-text-secondary text-[13px] font-medium">{{ t.role }}</div>
               </div>
             </div>
           </div>
@@ -480,7 +474,7 @@ const displayStats = computed(() =>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12 reveal">
           <SectionHeader kicker="Tin tức mới nhất" title="Tin tức & Sự kiện" />
-          <router-link to="/news" class="btn bg-primary text-white hover:bg-primary-dark rounded-full py-3 px-6 md:py-3.5 md:px-8 shrink-0 shadow-md transition-colors font-semibold text-[14px]">
+          <router-link to="/news" class="btn-primary rounded-full py-3 px-6 md:py-3.5 md:px-8 shrink-0 shadow-md transition-colors font-semibold text-[14px]">
             Xem tất cả <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
           </router-link>
         </div>
@@ -493,7 +487,7 @@ const displayStats = computed(() =>
               :alt="n.title"
               fallback-src="/images/products/industrial-1.jpg"
               aspect-ratio="aspect-[16/10]"
-              image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              image-class="w-full h-full object-cover"
             />
             <div class="p-5 md:p-7 flex flex-col flex-grow">
               <span class="text-[11px] font-bold text-primary uppercase tracking-[0.15em] mb-3">{{ n.category?.name || 'Tin tức' }} — {{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
@@ -508,13 +502,13 @@ const displayStats = computed(() =>
         <!-- Mobile: horizontal cards -->
         <div class="flex flex-col gap-3 md:hidden stagger-grid">
           <router-link v-for="(n, i) in newsPreview" :key="n.slug" :to="`/news/${n.slug}`"
-            class="flex items-center gap-3 bg-surface-bright border border-outline-variant rounded-2xl p-3 group hover:shadow-md hover:border-primary/30 transition-all duration-300 reveal" :class="`reveal-delay-${(i%3)+1}`">
+            class="flex items-center gap-3 bg-surface-bright border border-outline-variant rounded-2xl p-4 group hover:shadow-md hover:border-primary/30 transition-all duration-300 reveal" :class="`reveal-delay-${(i%3)+1}`">
             <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
               <LazyImage
                 :src="n.image"
                 :alt="n.title"
                 fallback-src="/images/products/industrial-1.jpg"
-                image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                image-class="w-full h-full object-cover"
               />
             </div>
             <div class="flex-1 min-w-0">

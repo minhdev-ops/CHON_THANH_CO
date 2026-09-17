@@ -40,7 +40,10 @@ const breadcrumbs = computed(() => [
                 Hồ sơ năng lực CHƠN THÀNH
               </span>
               <div class="flex items-center gap-3 flex-shrink-0">
-                <!-- Removed Xem toàn màn hình button -->
+                <a :href="capabilityFile" target="_blank" rel="noopener noreferrer" class="btn bg-surface-bright border border-outline-variant text-text-main hover:border-primary hover:text-primary py-2.5 px-5 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300">
+                  <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                  Xem trên trình duyệt
+                </a>
                 <a :href="capabilityFile" download="ho-so-nang-luc-chon-thanh.pdf" class="btn btn-primary py-2.5 px-5 flex items-center justify-center gap-2 group/btn btn-magnetic">
                   <span class="material-symbols-outlined text-[18px] group-hover/btn:-translate-y-0.5 transition-transform">download</span>
                   Tải xuống

@@ -24,7 +24,7 @@ const heroImage = computed(() =>
       fallback-src="/images/projects/highway-1.jpg"
       aspect-ratio="aspect-[4/3]"
       container-class="rounded-[10px]"
-      image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+      image-class="w-full h-full object-cover"
     >
       <!-- Dark gradient for readability -->
       <div class="absolute inset-0 bg-gradient-to-t from-[#16243D]/90 via-[#16243D]/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>

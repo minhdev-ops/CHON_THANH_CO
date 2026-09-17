@@ -20,6 +20,7 @@ const { data: certificates, loading, error, load } = useApiData(
 const viewer = ref<Certificate | null>(null)
 const viewerEl = ref<HTMLElement | null>(null)
 const viewerOpen = ref(false)
+const lightboxImage = ref<{ image: string; name: string } | null>(null)
 
 const closeViewer = () => { viewer.value = null }
 const onKeydown = (e: KeyboardEvent) => { if (e.key === 'Escape') closeViewer() }
@@ -62,13 +63,13 @@ const breadcrumbs = computed(() => [
           <div v-for="(cert, i) in certificates" :key="cert.slug"
             class="bg-surface-bright border border-outline-variant rounded-3xl shadow-sm hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 flex flex-col overflow-hidden group card-shine glow-card reveal"
             :class="`reveal-delay-${(i % 3) + 1}`">
-            <div class="h-60 bg-surface-vlm border-b border-outline-variant relative overflow-hidden flex items-center justify-center p-8">
+            <div class="h-72 bg-surface-vlm border-b border-outline-variant relative overflow-hidden flex items-center justify-center p-8 cursor-pointer" @click="lightboxImage = { image: cert.image || '/images/certs/iso-9001.png', name: cert.name }">
               <LazyImage
                 :src="cert.image"
                 :alt="cert.name"
                 fallback-src="/images/certs/iso-9001.png"
                 container-class="w-full h-full bg-transparent flex items-center justify-center"
-                image-class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out mx-auto"
+                image-class="max-w-full max-h-full object-contain mx-auto"
               />
               <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-500 pointer-events-none"></div>
               <div class="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-500 shadow-lg z-10">
@@ -79,14 +80,14 @@ const breadcrumbs = computed(() => [
               <h2 class="font-extrabold text-text-main text-[20px] mb-3 group-hover:text-primary transition-colors duration-300">{{ cert.name }}</h2>
               <p class="text-[14px] text-text-secondary mb-8 flex-grow leading-relaxed">{{ cert.description }}</p>
               <div v-if="cert.file" class="flex flex-col sm:flex-row gap-3">
-                <button @click="viewer = cert" class="flex-1 bg-primary text-white hover:bg-primary-dark py-3 px-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg">
+                <button @click="viewer = cert" class="flex-1 btn-primary py-3 px-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg">
                   <span class="material-symbols-outlined text-[18px]">visibility</span> {{ t('certs.view') }}
                 </button>
                 <a :href="cert.file" :download="`${cert.slug}.pdf`" class="flex-1 border border-outline-variant text-text-main hover:border-primary hover:text-primary py-3 px-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-300">
                   <span class="material-symbols-outlined text-[18px]">download</span> {{ t('certs.download') }}
                 </a>
               </div>
-              <router-link v-else to="/contact" class="flex-1 bg-primary text-white hover:bg-primary-dark py-3 px-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg">
+              <router-link v-else to="/contact" class="flex-1 btn-primary py-3 px-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg">
                 <span class="material-symbols-outlined text-[18px]">download</span> {{ t('certs.request') }}
               </router-link>
             </div>
@@ -94,6 +95,22 @@ const breadcrumbs = computed(() => [
         </div>
       </div>
     </section>
+
+    <!-- Image Lightbox -->
+    <div v-if="lightboxImage" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8" @click.self="lightboxImage = null">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-md" @click="lightboxImage = null"></div>
+      <div class="relative bg-surface rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
+        <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-outline-variant bg-surface-bright">
+          <h3 class="font-bold text-text-main truncate">{{ lightboxImage.name }}</h3>
+          <button type="button" class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-vlm border border-outline-variant hover:bg-outline-variant hover:text-primary transition-all duration-300 shrink-0" @click="lightboxImage = null">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+        <div class="flex-1 p-6 flex items-center justify-center bg-surface-vlm overflow-auto">
+          <img :src="lightboxImage.image" :alt="lightboxImage.name" class="max-w-full max-h-[75vh] object-contain rounded-lg" />
+        </div>
+      </div>
+    </div>
 
     <!-- CTA -->
     <section class="bg-surface-vlm py-16 md:py-20 px-margin-mobile md:px-margin-desktop border-t border-outline-variant relative overflow-hidden">
@@ -104,7 +121,7 @@ const breadcrumbs = computed(() => [
           <h2 class="text-[28px] md:text-[34px] text-text-main font-extrabold mb-3 tracking-tight">{{ t('certs.ctaTitle') }}</h2>
           <p class="text-[16px] text-text-secondary leading-relaxed">{{ t('certs.ctaText') }}</p>
         </div>
-        <router-link to="/contact" class="btn bg-primary text-white hover:bg-primary-dark rounded-full inline-flex items-center gap-2 group shrink-0 py-4 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg">
+        <router-link to="/contact" class="btn-primary rounded-full inline-flex items-center gap-2 group shrink-0 py-4 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg">
           <span class="material-symbols-outlined text-[18px] group-hover:-translate-y-0.5 transition-transform duration-300">support_agent</span> {{ t('certs.ctaButton') }}
         </router-link>
       </div>
@@ -124,7 +141,7 @@ const breadcrumbs = computed(() => [
         <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-5 border-b border-outline-variant bg-surface-bright">
           <h3 class="font-bold text-lg text-text-main truncate">{{ viewer.name }}</h3>
           <div class="flex items-center gap-3 flex-shrink-0">
-            <a :href="viewer.file ?? ''" :download="`${viewer.slug}`" class="btn bg-primary text-white hover:bg-primary-dark py-2.5 px-5 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300">
+            <a :href="viewer.file ?? ''" :download="`${viewer.slug}`" class="btn-primary py-2.5 px-5 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300">
               <span class="material-symbols-outlined text-[16px]">download</span> {{ t('certs.download') }}
             </a>
             <button type="button" class="w-11 h-11 rounded-full flex items-center justify-center bg-surface-vlm border border-outline-variant hover:bg-outline-variant hover:text-primary transition-all duration-300" :aria-label="t('common.close')" @click="closeViewer">

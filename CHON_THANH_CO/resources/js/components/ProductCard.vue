@@ -33,7 +33,7 @@ const isCatalog = computed(() => props.variant === 'catalog')
         :alt="product.name"
         fallback-src="/images/products/geotextile-roll.jpg"
         :aspect-ratio="isCatalog ? 'aspect-[4/3]' : 'aspect-[4/3]'"
-        image-class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
+        image-class="w-full h-full object-cover object-center"
       >
         <div class="absolute inset-0 bg-gradient-to-t from-text-main/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
@@ -88,7 +88,7 @@ const isCatalog = computed(() => props.variant === 'catalog')
           :src="productImage"
           :alt="product.name"
           fallback-src="/images/products/geotextile-roll.jpg"
-          image-class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+          image-class="w-full h-full object-cover object-center"
         />
       </div>
       <div class="flex-1 min-w-0">

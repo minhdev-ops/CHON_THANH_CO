@@ -343,7 +343,7 @@ const breadcrumbs = computed(() => [
             <h2 class="text-[24px] text-text-main mb-8 pb-5 border-b border-outline-variant font-bold tracking-tight">{{ t('contact.infoTitle') }}</h2>
             <ul class="space-y-6">
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
                   <span class="material-symbols-outlined text-primary-deep text-xl">location_on</span>
                 </div>
                 <div>
@@ -352,7 +352,7 @@ const breadcrumbs = computed(() => [
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
                   <span class="material-symbols-outlined text-primary-deep text-xl">call</span>
                 </div>
                 <div>
@@ -366,7 +366,7 @@ const breadcrumbs = computed(() => [
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
                   <span class="material-symbols-outlined text-primary-deep text-xl">mail</span>
                 </div>
                 <div>
@@ -375,7 +375,7 @@ const breadcrumbs = computed(() => [
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
                   <span class="material-symbols-outlined text-primary-deep text-xl">schedule</span>
                 </div>
                 <div>

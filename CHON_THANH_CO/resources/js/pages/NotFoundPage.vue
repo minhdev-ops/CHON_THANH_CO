@@ -26,7 +26,7 @@ import { t } from '../i18n'
       <p class="text-text-secondary mb-12 leading-[1.8] text-[15px] md:text-[16px] max-w-md mx-auto">{{ t('nf.text') }}</p>
 
       <div class="flex flex-wrap justify-center gap-4 mb-12">
-        <router-link to="/" class="btn bg-primary text-white hover:bg-primary-dark rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg">
+        <router-link to="/" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg">
           <span class="material-symbols-outlined text-[18px] group-hover:-translate-y-0.5 transition-transform">home</span>
           {{ t('nf.backHome') }}
         </router-link>

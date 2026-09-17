@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -7,8 +9,8 @@
 @source '../**/*.ts';
 
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'DM Sans', Georgia, serif;
+    --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Roboto', ui-sans-serif, system-ui, sans-serif;
 
     /* ═══════════════════════════════════════════════════════
        CHƠN THÀNH — WARM EARTH DESIGN SYSTEM
@@ -42,11 +44,11 @@
     --color-on-olive: #FFFFFF;
 
     /* ── Surfaces — Light Mode ───────────────────────────── */
-    --color-canvas: #F7F3F0;
-    --color-surface-0: #F0EBE7;
+    --color-canvas: #FAFAFA;
+    --color-surface-0: #F5F5F5;
     --color-surface-1: #FFFFFF;
-    --color-surface-2: #FAF7F5;
-    --color-surface-3: #F7F3F0;
+    --color-surface-2: #FAFAFA;
+    --color-surface-3: #FAFAFA;
     --color-surface-glass: rgba(255, 255, 255, 0.88);
 
     /* ── Text ───────────────────────────────────────────── */
@@ -62,20 +64,20 @@
     --color-border-primary: rgba(184, 155, 136, 0.4);
 
     /* ── Legacy aliases (keep pages working) ─────────────── */
-    --color-background: #F7F3F0;
+    --color-background: #FAFAFA;
     --color-surface: #FFFFFF;
-    --color-surface-vlm: #F0EBE7;
+    --color-surface-vlm: #F5F5F5;
     --color-surface-bright: #FFFFFF;
-    --color-surface-container: #F7F3F0;
-    --color-surface-container-high: #EDE5DF;
-    --color-surface-container-highest: #E4D8D0;
+    --color-surface-container: #FAFAFA;
+    --color-surface-container-high: #F5F5F5;
+    --color-surface-container-highest: #EDEDED;
     --color-on-background: #4A403B;
     --color-on-surface: #4A403B;
     --color-on-surface-variant: #6B5D55;
     --color-on-surface-muted: #9B8B82;
     --color-text-main: #4A403B;
-    --color-outline: #E4D8D0;
-    --color-outline-variant: #EDE5DF;
+    --color-outline: #E0E0E0;
+    --color-outline-variant: #EDEDED;
     --color-dark-bg: #4A403B;
     --color-dark-surface: #6B5D55;
     --color-brand-gold: #B89B88;
@@ -439,7 +441,7 @@
 
     .btn-primary {
         background: var(--color-primary);
-        color: #FFFFFF;
+        color: #2A2420;
         box-shadow: var(--shadow-primary);
     }
 
@@ -447,7 +449,7 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
         opacity: 0;
         transition: opacity 0.4s ease;
     }
@@ -457,7 +459,8 @@
     }
 
     .btn-primary:hover {
-        background: var(--color-primary-hover);
+        background: var(--color-primary-dark);
+        color: var(--color-on-primary);
         box-shadow: 0 8px 36px rgba(184, 155, 136, 0.45);
         transform: translateY(-3px);
     }
@@ -676,21 +679,145 @@
 
     @keyframes hotline-ring {
         0% {
-            box-shadow: 0 0 0 0 rgba(184, 155, 136, 0.5);
+            box-shadow: 0 0 0 0 rgba(216, 67, 21, 0.8);
         }
 
-        70% {
-            box-shadow: 0 0 0 12px rgba(184, 155, 136, 0);
+        50% {
+            box-shadow: 0 0 0 18px rgba(216, 67, 21, 0);
         }
 
         100% {
-            box-shadow: 0 0 0 0 rgba(184, 155, 136, 0);
+            box-shadow: 0 0 0 0 rgba(216, 67, 21, 0);
         }
     }
 
     .animate-hotline-ring {
-        animation: hotline-ring 2.5s ease-out infinite;
+        animation: hotline-ring 1.8s ease-out infinite;
     }
+
+    /* Stronger version for floating widget */
+    @keyframes hotline-ring-strong {
+        0% {
+            box-shadow: 
+                0 0 0 0 rgba(216, 67, 21, 0.9),
+                0 0 30px 4px rgba(216, 67, 21, 0.4);
+        }
+
+        30% {
+            box-shadow: 
+                0 0 0 10px rgba(216, 67, 21, 0.5),
+                0 0 40px 8px rgba(216, 67, 21, 0.3);
+        }
+
+        60% {
+            box-shadow: 
+                0 0 0 22px rgba(216, 67, 21, 0.15),
+                0 0 50px 12px rgba(216, 67, 21, 0.2);
+        }
+
+        100% {
+            box-shadow: 
+                0 0 0 0 rgba(216, 67, 21, 0),
+                0 0 30px 4px rgba(216, 67, 21, 0.1);
+        }
+    }
+
+    .animate-hotline-ring-strong {
+        animation: hotline-ring-strong 1.5s ease-out infinite;
+    }
+
+    /* EXTREME version - maximum alarm intensity */
+    @keyframes hotline-ring-extreme {
+        0% {
+            box-shadow: 
+                0 0 0 0 rgba(216, 67, 21, 1),
+                0 0 40px 8px rgba(216, 67, 21, 0.6),
+                0 0 80px 16px rgba(216, 67, 21, 0.3);
+        }
+
+        20% {
+            box-shadow: 
+                0 0 0 8px rgba(216, 67, 21, 0.7),
+                0 0 50px 12px rgba(216, 67, 21, 0.5),
+                0 0 100px 20px rgba(216, 67, 21, 0.4);
+        }
+
+        40% {
+            box-shadow: 
+                0 0 0 18px rgba(216, 67, 21, 0.4),
+                0 0 60px 16px rgba(216, 67, 21, 0.4),
+                0 0 120px 24px rgba(216, 67, 21, 0.3);
+        }
+
+        60% {
+            box-shadow: 
+                0 0 0 28px rgba(216, 67, 21, 0.2),
+                0 0 70px 20px rgba(216, 67, 21, 0.3),
+                0 0 140px 28px rgba(216, 67, 21, 0.2);
+        }
+
+        80% {
+            box-shadow: 
+                0 0 0 35px rgba(216, 67, 21, 0.08),
+                0 0 80px 24px rgba(216, 67, 21, 0.15),
+                0 0 160px 32px rgba(216, 67, 21, 0.1);
+        }
+
+        100% {
+            box-shadow: 
+                0 0 0 0 rgba(216, 67, 21, 0),
+                0 0 40px 8px rgba(216, 67, 21, 0.1),
+                0 0 80px 16px rgba(216, 67, 21, 0.05);
+        }
+    }
+
+    .animate-hotline-ring-extreme {
+        animation: hotline-ring-extreme 1.2s ease-out infinite;
+    }
+
+    /* Zalo - Blue alarm ring */
+    @keyframes zalo-ring-extreme {
+        0% { box-shadow: 0 0 0 0 rgba(0, 104, 255, 1), 0 0 35px 6px rgba(0, 104, 255, 0.5), 0 0 70px 14px rgba(0, 104, 255, 0.3); }
+        20% { box-shadow: 0 0 0 8px rgba(0, 104, 255, 0.7), 0 0 45px 10px rgba(0, 104, 255, 0.4), 0 0 90px 18px rgba(0, 104, 255, 0.3); }
+        40% { box-shadow: 0 0 0 16px rgba(0, 104, 255, 0.4), 0 0 55px 14px rgba(0, 104, 255, 0.35), 0 0 110px 22px rgba(0, 104, 255, 0.25); }
+        60% { box-shadow: 0 0 0 24px rgba(0, 104, 255, 0.2), 0 0 65px 18px rgba(0, 104, 255, 0.3), 0 0 130px 26px rgba(0, 104, 255, 0.2); }
+        80% { box-shadow: 0 0 0 30px rgba(0, 104, 255, 0.08), 0 0 75px 22px rgba(0, 104, 255, 0.15), 0 0 150px 30px rgba(0, 104, 255, 0.1); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 104, 255, 0), 0 0 35px 6px rgba(0, 104, 255, 0.1), 0 0 70px 14px rgba(0, 104, 255, 0.05); }
+    }
+    .animate-zalo-ring-extreme { animation: zalo-ring-extreme 1.3s ease-out infinite; }
+
+    /* WhatsApp - Green alarm ring */
+    @keyframes whatsapp-ring-extreme {
+        0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 1), 0 0 35px 6px rgba(37, 211, 102, 0.5), 0 0 70px 14px rgba(37, 211, 102, 0.3); }
+        20% { box-shadow: 0 0 0 8px rgba(37, 211, 102, 0.7), 0 0 45px 10px rgba(37, 211, 102, 0.4), 0 0 90px 18px rgba(37, 211, 102, 0.3); }
+        40% { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0.4), 0 0 55px 14px rgba(37, 211, 102, 0.35), 0 0 110px 22px rgba(37, 211, 102, 0.25); }
+        60% { box-shadow: 0 0 0 24px rgba(37, 211, 102, 0.2), 0 0 65px 18px rgba(37, 211, 102, 0.3), 0 0 130px 26px rgba(37, 211, 102, 0.2); }
+        80% { box-shadow: 0 0 0 30px rgba(37, 211, 102, 0.08), 0 0 75px 22px rgba(37, 211, 102, 0.15), 0 0 150px 30px rgba(37, 211, 102, 0.1); }
+        100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0), 0 0 35px 6px rgba(37, 211, 102, 0.1), 0 0 70px 14px rgba(37, 211, 102, 0.05); }
+    }
+    .animate-whatsapp-ring-extreme { animation: whatsapp-ring-extreme 1.25s ease-out infinite; }
+
+    /* WeChat - Green alarm ring */
+    @keyframes wechat-ring-extreme {
+        0% { box-shadow: 0 0 0 0 rgba(7, 193, 96, 1), 0 0 35px 6px rgba(7, 193, 96, 0.5), 0 0 70px 14px rgba(7, 193, 96, 0.3); }
+        20% { box-shadow: 0 0 0 8px rgba(7, 193, 96, 0.7), 0 0 45px 10px rgba(7, 193, 96, 0.4), 0 0 90px 18px rgba(7, 193, 96, 0.3); }
+        40% { box-shadow: 0 0 0 16px rgba(7, 193, 96, 0.4), 0 0 55px 14px rgba(7, 193, 96, 0.35), 0 0 110px 22px rgba(7, 193, 96, 0.25); }
+        60% { box-shadow: 0 0 0 24px rgba(7, 193, 96, 0.2), 0 0 65px 18px rgba(7, 193, 96, 0.3), 0 0 130px 26px rgba(7, 193, 96, 0.2); }
+        80% { box-shadow: 0 0 0 30px rgba(7, 193, 96, 0.08), 0 0 75px 22px rgba(7, 193, 96, 0.15), 0 0 150px 30px rgba(7, 193, 96, 0.1); }
+        100% { box-shadow: 0 0 0 0 rgba(7, 193, 96, 0), 0 0 35px 6px rgba(7, 193, 96, 0.1), 0 0 70px 14px rgba(7, 193, 96, 0.05); }
+    }
+    .animate-wechat-ring-extreme { animation: wechat-ring-extreme 1.35s ease-out infinite; }
+
+    /* Map - Gray alarm ring */
+    @keyframes map-ring-extreme {
+        0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.6), 0 0 25px 4px rgba(0, 0, 0, 0.3), 0 0 50px 10px rgba(0, 0, 0, 0.2); }
+        20% { box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.4), 0 0 35px 8px rgba(0, 0, 0, 0.25), 0 0 65px 14px rgba(0, 0, 0, 0.15); }
+        40% { box-shadow: 0 0 0 12px rgba(0, 0, 0, 0.25), 0 0 45px 12px rgba(0, 0, 0, 0.2), 0 0 80px 18px rgba(0, 0, 0, 0.12); }
+        60% { box-shadow: 0 0 0 18px rgba(0, 0, 0, 0.15), 0 0 55px 16px rgba(0, 0, 0, 0.18), 0 0 95px 22px rgba(0, 0, 0, 0.1); }
+        80% { box-shadow: 0 0 0 22px rgba(0, 0, 0, 0.06), 0 0 65px 20px rgba(0, 0, 0, 0.1), 0 0 110px 26px rgba(0, 0, 0, 0.06); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0), 0 0 25px 4px rgba(0, 0, 0, 0.05), 0 0 50px 10px rgba(0, 0, 0, 0.03); }
+    }
+    .animate-map-ring-extreme { animation: map-ring-extreme 1.4s ease-out infinite; }
 
     @keyframes hotline-nudge {
 
@@ -1361,24 +1488,17 @@
     }
 
     /* ── Testimonial Cards ── */
-    .testimonial-item {
-        background: var(--color-canvas);
-        border-radius: 10px;
-        padding: 25px;
-        transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    .testimonial-card {
+        background: var(--color-surface-1);
+        border: 1px solid var(--color-outline-variant);
+        border-radius: var(--radius-xl);
+        transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .testimonial-item:hover {
+    .testimonial-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 32px rgba(74, 64, 59, 0.1);
-    }
-
-    .testimonial-inner {
-        border-radius: 10px;
-        background: var(--color-surface-1);
-        padding: 25px;
-        height: 100%;
-        transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        border-color: var(--color-primary);
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -1435,10 +1555,9 @@
     }
 
     /* ── Glow Card ── */
-    .glow-card {
-        position: relative;
-        overflow: hidden;
-    }
+.glow-card {
+    position: relative;
+}
 
     .glow-card::after {
         content: '';
@@ -1518,23 +1637,22 @@
         transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
     }
 
-    .btn-magnetic::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: width 0.6s ease, height 0.6s ease;
-    }
+.btn-magnetic::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.6s ease;
+}
 
-    .btn-magnetic:hover::before {
-        width: 300px;
-        height: 300px;
-    }
+.btn-magnetic:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
 
     .btn-magnetic:hover {
         transform: translateY(-3px) scale(1.02);
@@ -1547,20 +1665,22 @@
         display: inline-block;
     }
 
-    .animated-underline::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--color-primary);
-        transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
+.animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: var(--color-primary);
+    width: 0;
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: scaleX(0);
+}
 
-    .animated-underline:hover::after {
-        width: 100%;
-    }
+.animated-underline:hover::after {
+    transform: scaleX(1);
+}
 
     /* ── Tilt Card ── */
     .tilt-card {
@@ -1629,15 +1749,18 @@
     }
 
     /* ── Scroll Progress Bar ── */
-    .scroll-progress {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--color-primary), var(--color-olive));
-        z-index: 9999;
-        transition: width 0.1s linear;
-    }
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-olive));
+    z-index: 9999;
+    width: 0;
+    transform-origin: left;
+    transition: transform 0.1s linear;
+    transform: scaleX(0);
+}
 
     /* ── Animated Counter ── */
     @keyframes counter-glow {

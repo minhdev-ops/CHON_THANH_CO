@@ -53,12 +53,12 @@ onMounted(() => load())
         </p>
         <div class="footer-badges">
           <div class="footer-badge">
-            <span class="material-symbols-outlined text-white text-[18px] fill">workspace_premium</span>
+            <span class="material-symbols-outlined text-[#2A2420] text-[18px] fill">workspace_premium</span>
             <span>ISO 9001:2015</span>
           </div>
           <div class="footer-badge-divider"></div>
           <div class="footer-badge">
-            <span class="material-symbols-outlined text-white text-[18px] fill">workspace_premium</span>
+            <span class="material-symbols-outlined text-[#2A2420] text-[18px] fill">workspace_premium</span>
             <span>TCVN 9844</span>
           </div>
         </div>
@@ -120,64 +120,64 @@ onMounted(() => load())
         <router-link to="/" class="footer-logo-link">
           <img src="/images/logo.svg" alt="Logo" class="h-11 w-auto object-contain">
           <div>
-            <span class="block font-extrabold text-[20px] leading-tight text-white tracking-tight">CHƠN THÀNH</span>
-            <span class="block text-[11px] font-bold tracking-[0.3em] uppercase text-white/50">GEOSYNTHETICS</span>
+            <span class="block font-extrabold text-[20px] leading-tight text-[#2A2420] tracking-tight">CHƠN THÀNH</span>
+            <span class="block text-[11px] font-bold tracking-[0.3em] uppercase text-[#2A2420]/50">GEOSYNTHETICS</span>
           </div>
         </router-link>
-        <p class="text-white/55 text-[14px] text-center mt-1">Vật liệu địa kỹ thuật hàng đầu Việt Nam</p>
+        <p class="text-[#2A2420]/60 text-[14px] text-center mt-1">Vật liệu địa kỹ thuật hàng đầu Việt Nam</p>
       </div>
 
       <div class="px-6 mb-6">
-        <h4 class="text-[12px] font-bold text-white/40 uppercase tracking-[0.2em] mb-3">Liên kết nhanh</h4>
+        <h4 class="text-[12px] font-bold text-[#2A2420]/50 uppercase tracking-[0.2em] mb-3">Liên kết nhanh</h4>
         <div class="space-y-0 mb-5">
           <router-link v-for="link in quickLinks" :key="link.to" :to="link.to"
-            class="flex items-center justify-between py-3 border-b border-white/8 text-white/85 text-[16px] font-medium hover:text-white transition-colors">
+            class="flex items-center justify-between py-3 border-b border-[#2A2420]/10 text-[#2A2420]/85 text-[16px] font-medium hover:text-[#2A2420] transition-colors">
             <span>{{ link.label }}</span>
-            <span class="material-symbols-outlined text-white/30 text-[18px]">chevron_right</span>
+            <span class="material-symbols-outlined text-[#2A2420]/30 text-[18px]">chevron_right</span>
           </router-link>
         </div>
 
-        <h4 class="text-[12px] font-bold text-white/40 uppercase tracking-[0.2em] mb-3">Sản phẩm</h4>
+        <h4 class="text-[12px] font-bold text-[#2A2420]/50 uppercase tracking-[0.2em] mb-3">Sản phẩm</h4>
         <div class="space-y-0">
           <router-link v-for="p in productLinks" :key="p.slug" :to="`/products?category=${p.slug}`"
-            class="flex items-center justify-between py-3 border-b border-white/8 text-white/85 text-[16px] font-medium hover:text-white transition-colors">
+            class="flex items-center justify-between py-3 border-b border-[#2A2420]/10 text-[#2A2420]/85 text-[16px] font-medium hover:text-[#2A2420] transition-colors">
             <span>{{ p.label }}</span>
-            <span class="material-symbols-outlined text-white/30 text-[18px]">chevron_right</span>
+            <span class="material-symbols-outlined text-[#2A2420]/30 text-[18px]">chevron_right</span>
           </router-link>
         </div>
       </div>
 
       <div class="px-6 mb-6 space-y-4">
-        <h4 class="text-[12px] font-bold text-white/40 uppercase tracking-[0.2em]">Liên hệ</h4>
+        <h4 class="text-[12px] font-bold text-[#2A2420]/50 uppercase tracking-[0.2em]">Liên hệ</h4>
         <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps'" target="_blank" rel="noopener noreferrer"
           class="flex items-start gap-3 group">
-          <span class="material-symbols-outlined text-white/50 text-[20px] mt-0.5 shrink-0 group-hover:text-white transition-colors">location_on</span>
-          <span class="text-white/75 text-[15px] leading-snug group-hover:text-white transition-colors">{{ settings?.['contact.address'] || '416A Đường CC2, P. Sơn Kỳ, Q. Tân Phú, TP.HCM' }}</span>
+          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0 group-hover:text-[#2A2420] transition-colors">location_on</span>
+          <span class="text-[#2A2420]/80 text-[15px] leading-snug group-hover:text-[#2A2420] transition-colors">{{ settings?.['contact.address'] || '416A Đường CC2, P. Sơn Kỳ, Q. Tân Phú, TP.HCM' }}</span>
         </a>
         <div class="flex items-start gap-3">
-          <span class="material-symbols-outlined text-white/50 text-[20px] mt-0.5 shrink-0">call</span>
+          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0">call</span>
           <div class="flex flex-col gap-1.5">
             <a v-for="phone in phones" :key="phone.href" :href="phone.href"
-              class="text-white/75 text-[15px] font-medium tabular-nums hover:text-white transition-colors">{{ phone.display }}</a>
+              class="text-[#2A2420]/80 text-[15px] font-medium tabular-nums hover:text-[#2A2420] transition-colors">{{ phone.display }}</a>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-white/50 text-[20px] shrink-0">mail</span>
-          <span class="text-white/75 text-[15px]">{{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}</span>
+          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] shrink-0">mail</span>
+          <span class="text-[#2A2420]/80 text-[15px]">{{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}</span>
         </div>
         <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-white/50 text-[20px] shrink-0">schedule</span>
-          <span class="text-white/75 text-[15px]">{{ settings?.['contact.working_hours'] || 'T2 – T6: 8:30 AM – 5:30 PM' }}</span>
+          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] shrink-0">schedule</span>
+          <span class="text-[#2A2420]/80 text-[15px]">{{ settings?.['contact.working_hours'] || 'T2 – T6: 8:30 AM – 5:30 PM' }}</span>
         </div>
       </div>
 
-      <div class="px-6 pt-5 border-t border-white/15">
+      <div class="px-6 pt-5 border-t border-[#2A2420]/15">
         <div class="flex justify-center gap-3 mb-3">
-          <router-link to="/privacy-policy" class="text-white/50 text-[12px] hover:text-white transition-colors">Chính sách bảo mật</router-link>
-          <span class="text-white/30">|</span>
-          <router-link to="/terms-of-service" class="text-white/50 text-[12px] hover:text-white transition-colors">Điều khoản sử dụng</router-link>
+          <router-link to="/privacy-policy" class="text-[#2A2420]/60 text-[12px] hover:text-[#2A2420] transition-colors">Chính sách bảo mật</router-link>
+          <span class="text-[#2A2420]/30">|</span>
+          <router-link to="/terms-of-service" class="text-[#2A2420]/60 text-[12px] hover:text-[#2A2420] transition-colors">Điều khoản sử dụng</router-link>
         </div>
-        <p class="text-white/40 text-[12px] text-center leading-relaxed">
+        <p class="text-[#2A2420]/50 text-[12px] text-center leading-relaxed">
           &copy; {{ new Date().getFullYear() }} CHƠN THÀNH Geosynthetics
         </p>
       </div>
@@ -245,6 +245,9 @@ onMounted(() => load())
 /* ═══ Desktop Bottom Bar ═══ */
 .footer-bottom-desktop {
   display: none;
+  position: relative;
+  z-index: 10;
+  border-top: 1px solid rgba(42, 36, 32, 0.15);
 }
 
 /* ═══ Responsive: Tablet (≥768px) ═══ */
@@ -304,7 +307,7 @@ onMounted(() => load())
   font-weight: 700;
   font-size: 24px;
   line-height: 1.2;
-  color: #fff;
+  color: #2A2420;
 }
 
 .footer-logo-sub {
@@ -313,11 +316,11 @@ onMounted(() => load())
   font-weight: 700;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(42, 36, 32, 0.7);
 }
 
 .footer-desc {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(42, 36, 32, 0.85);
   font-size: 16px;
   line-height: 1.7;
   margin-bottom: 1.5rem;
@@ -327,8 +330,8 @@ onMounted(() => load())
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(42, 36, 32, 0.08);
+  border: 1px solid rgba(42, 36, 32, 0.2);
   border-radius: 0.5rem;
   padding: 0.375rem 0.5rem;
   margin-bottom: 1.75rem;
@@ -342,7 +345,7 @@ onMounted(() => load())
   padding: 0.25rem 0.75rem;
   font-size: 13px;
   font-weight: 700;
-  color: #fff;
+  color: #2A2420;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -350,7 +353,7 @@ onMounted(() => load())
 .footer-badge-divider {
   width: 1px;
   height: 1.5rem;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(42, 36, 32, 0.3);
   margin: 0 0.25rem;
 }
 
@@ -362,12 +365,12 @@ onMounted(() => load())
 .footer-heading {
   font-size: 14px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
+  color: #2A2420;
   text-transform: uppercase;
   letter-spacing: 0.22em;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(42, 36, 32, 0.2);
 }
 
 .footer-nav {
@@ -380,7 +383,7 @@ onMounted(() => load())
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(42, 36, 32, 0.85);
   font-size: 16px;
   font-weight: 500;
   transition: color 0.2s ease;
@@ -388,20 +391,20 @@ onMounted(() => load())
 }
 
 .footer-nav-link:hover {
-  color: #fff;
+  color: #2A2420;
 }
 
 .footer-dot {
   width: 4px;
   height: 4px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(42, 36, 32, 0.5);
   flex-shrink: 0;
   transition: background 0.2s ease;
 }
 
 .footer-nav-link:hover .footer-dot {
-  background: #fff;
+  background: #2A2420;
 }
 
 /* ═══ Footer Contact ═══ */
@@ -421,24 +424,24 @@ onMounted(() => load())
 }
 
 a.footer-contact-item:hover {
-  color: #fff;
+  color: #2A2420;
 }
 
 .footer-contact-icon {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(42, 36, 32, 0.9);
   font-size: 22px;
   margin-top: 2px;
   flex-shrink: 0;
 }
 
 .footer-contact-text {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(42, 36, 32, 0.85);
   font-size: 16px;
   line-height: 1.6;
 }
 
 .footer-phone {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(42, 36, 32, 0.85);
   font-size: 16px;
   transition: color 0.2s ease;
   display: block;
@@ -447,7 +450,7 @@ a.footer-contact-item:hover {
 }
 
 .footer-phone:hover {
-  color: #fff;
+  color: #2A2420;
 }
 
 /* ═══ Desktop Bottom Bar ═══ */
@@ -462,7 +465,7 @@ a.footer-contact-item:hover {
 }
 
 .footer-bottom-copy {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(42, 36, 32, 0.75);
   font-size: 15px;
   margin: 0;
   flex-shrink: 0;
@@ -474,7 +477,7 @@ a.footer-contact-item:hover {
   align-items: center;
   gap: 1rem;
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(42, 36, 32, 0.6);
 }
 
 .footer-bottom-links {
@@ -482,26 +485,26 @@ a.footer-contact-item:hover {
   align-items: center;
   gap: 0.75rem;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(42, 36, 32, 0.6);
   flex-wrap: nowrap;
   white-space: nowrap;
 }
 
 .footer-bottom-link {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(42, 36, 32, 0.6);
   text-decoration: none;
   transition: color 0.2s ease;
   white-space: nowrap;
 }
 
 .footer-bottom-link:hover {
-  color: #fff;
+  color: #2A2420;
 }
 
 .footer-bottom-divider {
   width: 1px;
   height: 0.625rem;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(42, 36, 32, 0.2);
   flex-shrink: 0;
 }
 </style>

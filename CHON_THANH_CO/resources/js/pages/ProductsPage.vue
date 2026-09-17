@@ -174,7 +174,7 @@ const bentoCol = (i: number) => {
       <!-- Mobile filter trigger -->
       <div class="lg:hidden mb-4 flex items-center gap-3">
         <button
-          class="flex-1 inline-flex items-center justify-center gap-2 bg-primary text-white py-3 text-[12px] font-bold uppercase tracking-[0.15em] rounded-xl active:scale-[0.98] transition-transform shadow-md"
+          class="flex-1 inline-flex items-center justify-center gap-2 btn-primary py-3 text-[12px] font-bold uppercase tracking-[0.15em] rounded-xl active:scale-[0.98] transition-transform shadow-md"
           @click="mobileFiltersOpen = !mobileFiltersOpen"
         >
           <span class="material-symbols-outlined text-[18px]">tune</span>
@@ -301,7 +301,7 @@ const bentoCol = (i: number) => {
 
             <!-- Actions -->
             <div class="p-5 border-t border-outline-variant space-y-2 bg-surface-1">
-              <button class="w-full bg-primary text-white py-3 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-primary-deep transition-colors duration-300 rounded-none" @click="currentPage = 1">
+              <button class="w-full btn-primary py-3 text-[11px] font-bold uppercase tracking-[0.2em] rounded-none" @click="currentPage = 1">
                 {{ t('products.apply') }}
               </button>
               <button
@@ -355,7 +355,7 @@ const bentoCol = (i: number) => {
             <span class="text-[11px] font-mono font-bold text-text-muted tracking-[0.2em] uppercase">/ACTIVE</span>
             <button
               v-for="cat in selectedCategories" :key="'c-'+cat"
-              class="inline-flex items-center gap-1.5 bg-primary text-white pl-2.5 pr-1.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-primary-deep transition-colors duration-200"
+              class="inline-flex items-center gap-1.5 btn-primary pl-2.5 pr-1.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] transition-colors duration-200"
               @click="toggle(selectedCategories, cat)"
             >
               <span>{{ categories.find(c => c.slug === cat)?.name || cat }}</span>
@@ -363,7 +363,7 @@ const bentoCol = (i: number) => {
             </button>
             <button
               v-for="app in selectedApplications" :key="'a-'+app"
-              class="inline-flex items-center gap-1.5 bg-primary text-canvas pl-2.5 pr-1.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-primary-deep transition-colors duration-200"
+              class="inline-flex items-center gap-1.5 btn-primary pl-2.5 pr-1.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] transition-colors duration-200"
               @click="toggle(selectedApplications, app)"
             >
               <span>{{ applications.find(a => a.slug === app)?.name || app }}</span>
@@ -434,7 +434,7 @@ const bentoCol = (i: number) => {
           <div v-else class="py-20 text-center bg-canvas border border-outline-variant">
             <div class="font-sans text-[80px] font-bold text-text-muted/30 leading-none mb-4 select-none">∅</div>
             <p class="text-text-secondary font-medium mb-6 text-[13px] uppercase tracking-[0.2em]">{{ t('products.empty') }}</p>
-            <button class="bg-primary text-white px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-primary-deep transition-colors duration-300" @click="clearFilters">
+            <button class="btn-primary px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300" @click="clearFilters">
               {{ t('products.clearAll') }}
             </button>
           </div>

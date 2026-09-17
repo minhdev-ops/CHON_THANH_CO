@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { api } from '../api/client'
 import { useApiData } from '../composables/useApiData'
 import { useSettings } from '../composables/useSettings'
@@ -51,6 +51,12 @@ const breadcrumbs = computed(() => [
   { label: t('nav.about') }
 ])
 
+const lightboxCert = ref<{ image: string; name: string } | null>(null)
+const closeLightbox = () => { lightboxCert.value = null }
+const onKeydown = (e: KeyboardEvent) => { if (e.key === 'Escape') closeLightbox() }
+onMounted(() => document.addEventListener('keydown', onKeydown))
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
+
 // Core values
 const coreValues = [
   { icon: 'handshake', title: 'Chữ tín', desc: 'Cam kết chất lượng sản phẩm, tiến độ giao hàng và giá cả hợp lý — đặt lợi ích khách hàng lên hàng đầu.' },
@@ -71,7 +77,7 @@ const milestones = [
 <template>
   <div>
     <!-- Hero -->
-    <PageHeader :title="t('nav.about')" :breadcrumbs="breadcrumbs" />
+    <PageHeader class="about-page-header" :title="t('nav.about')" :breadcrumbs="breadcrumbs" />
 
     <!-- History & Timeline -->
     <section class="py-10 md:py-20 bg-surface-bright relative mesh-bg">
@@ -84,7 +90,7 @@ const milestones = [
               <span class="kicker mb-4 block">{{ t('about.history') }}</span>
               <h2 class="text-[32px] md:text-[42px] text-text-main font-bold leading-[1.15] tracking-tight">Hành trình phát triển</h2>
             </div>
-            <div class="text-text-secondary space-y-6 leading-[1.8] text-[16px] md:text-[17px]">
+            <div class="text-text-main space-y-6 leading-[1.8] text-[16px] md:text-[17px]">
               <p v-for="(para, i) in historyParagraphs" :key="i" class="relative pl-6 border-l-2 border-primary/30 hover:border-primary transition-colors duration-500">{{ para }}</p>
             </div>
           </div>
@@ -100,7 +106,7 @@ const milestones = [
                   <div class="absolute left-0 top-3 w-5 h-5 -translate-x-[9px] rounded-full border-[3px] border-[#B89B88] bg-surface-bright shadow-[0_0_0_4px_rgba(184,155,136,0.1)] z-10 transition-all duration-500 hover:shadow-[0_0_0_8px_rgba(184,155,136,0.2)] hover:scale-125"></div>
                   <div class="bg-surface-bright border border-outline-variant rounded-2xl p-4 md:p-7 hover:shadow-[0_12px_40px_rgba(184,155,136,0.12)] hover:border-[#B89B88] transition-all duration-500 group card-shine">
                     <div class="flex items-center gap-3 mb-2 md:mb-3">
-                      <span class="text-[12px] md:text-[13px] font-bold text-primary bg-primary/8 px-3 py-1 rounded-full uppercase tracking-wider">{{ item.year }}</span>
+                      <span class="text-[12px] md:text-[13px] font-bold text-primary bg-primary/8 px-3 py-1 rounded-full tracking-wider">{{ item.year }}</span>
                     </div>
                     <p class="text-[13px] md:text-[15px] text-text-secondary leading-relaxed">{{ item.description }}</p>
                   </div>
@@ -113,29 +119,29 @@ const milestones = [
     </section>
 
     <!-- Mission & Vision -->
-    <section class="py-10 md:py-24 relative overflow-hidden mesh-bg">
+    <section class="py-10 md:py-24 relative mesh-bg">
       <div class="absolute inset-0 noise-overlay pointer-events-none"></div>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 lg:gap-12">
-          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-[#B89B88] transition-all duration-500 relative overflow-hidden group reveal-left glow-card">
-            <div class="absolute top-0 right-0 w-40 h-40 bg-primary/8 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
-            <div class="absolute -bottom-8 -right-8 text-[140px] font-bold text-primary/[0.04] leading-none select-none pointer-events-none group-hover:text-primary/[0.08] transition-colors duration-500">M</div>
+          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-[#B89B88] transition-all duration-500 relative group reveal-left glow-card">
+            <div class="absolute top-0 right-0 w-40 h-40 bg-primary/4 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="absolute -bottom-8 -right-8 text-[140px] font-bold text-[#7A6E68]/40 leading-none select-none pointer-events-none group-hover:text-[#7A6E68]/50 transition-colors duration-500">M</div>
 
             <div class="relative z-10">
-              <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-[#B89B88]/15 to-[#B89B88]/5 flex items-center justify-center mb-4 md:mb-7 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+              <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-[#B89B88]/15 to-[#B89B88]/5 flex items-center justify-center mb-4 md:mb-7 p-2 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                 <span class="material-symbols-outlined text-2xl md:text-3xl text-primary" style="font-variation-settings: 'FILL' 1;">flag</span>
               </div>
               <h2 class="text-[22px] md:text-[32px] text-text-main font-bold mb-3 md:mb-5 tracking-tight">{{ t('about.mission') }}</h2>
-              <p class="text-text-secondary leading-[1.8] text-[14px] md:text-[17px]">{{ missionText }}</p>
+              <p class="text-text-main leading-[1.8] text-[14px] md:text-[17px]">{{ missionText }}</p>
             </div>
           </div>
 
-          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(140,107,88,0.15)] hover:border-[#8C6B58] transition-all duration-500 relative overflow-hidden group reveal-right glow-card">
+          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(140,107,88,0.15)] hover:border-[#8C6B58] transition-all duration-500 relative group reveal-right glow-card">
             <div class="absolute top-0 right-0 w-40 h-40 bg-[#8C6B58]/8 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
-            <div class="absolute -bottom-8 -right-8 text-[140px] font-bold text-[#8C6B58]/[0.04] leading-none select-none pointer-events-none group-hover:text-[#8C6B58]/[0.08] transition-colors duration-500">V</div>
+            <div class="absolute -bottom-8 -right-8 text-[140px] font-bold text-[#7A6E68]/40 leading-none select-none pointer-events-none group-hover:text-[#7A6E68]/50 transition-colors duration-500">V</div>
 
             <div class="relative z-10">
-              <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-[#8C6B58]/15 to-[#8C6B58]/5 flex items-center justify-center mb-4 md:mb-7 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+              <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-[#8C6B58]/15 to-[#8C6B58]/5 flex items-center justify-center mb-4 md:mb-7 p-2 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                 <span class="material-symbols-outlined text-2xl md:text-3xl text-[#8C6B58]" style="font-variation-settings: 'FILL' 1;">visibility</span>
               </div>
               <h2 class="text-[22px] md:text-[32px] text-text-main font-bold mb-3 md:mb-5 tracking-tight">{{ t('about.vision') }}</h2>
@@ -194,7 +200,7 @@ const milestones = [
               <span class="material-symbols-outlined text-[18px] md:text-[22px] text-primary-deep group-hover:text-white transition-colors">{{ m.icon }}</span>
             </div>
             <div class="text-[24px] md:text-[32px] font-extrabold text-text-main mb-1 tabular-nums">{{ m.value }}</div>
-            <div class="text-[11px] font-bold text-text-muted uppercase tracking-[0.12em] md:tracking-[0.15em]">{{ m.label }}</div>
+            <span class="text-text-muted text-[11px] font-bold tracking-wide">{{ m.label }}</span>
           </div>
         </div>
         <div v-if="home?.stats?.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left stagger-grid">
@@ -235,16 +241,16 @@ const milestones = [
                 alt="Nhà máy Rọ đá Á Châu"
                 fallback-src="/images/products/gabion-1.jpg"
                 aspect-ratio="aspect-[16/9]"
-                image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                image-class="w-full h-full object-cover"
               />
-              <div class="p-8">
+              <div class="p-8 pb-10">
                 <div class="flex items-center gap-3 mb-4">
-                  <span class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <span class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center p-2">
                     <span class="material-symbols-outlined text-primary text-[24px]">factory</span>
                   </span>
                   <div>
                     <h3 class="font-extrabold text-text-main text-[20px] leading-tight">Nhà máy Rọ đá Á Châu</h3>
-                    <span class="text-text-muted text-[12px] font-bold uppercase tracking-wider">Hóc Môn, TP.HCM</span>
+                    <span class="text-text-muted text-[12px] font-bold tracking-wider">Hóc Môn, TP.HCM</span>
                   </div>
                 </div>
                 <p class="text-text-secondary text-[15px] leading-relaxed mb-5">Chuyên sản xuất rọ đá mạ kẽm nhúng nóng, lưới B40, dây kẽm gai, lưới thép hàn. Công suất 3.000 tấn/năm.</p>
@@ -269,7 +275,7 @@ const milestones = [
               </div>
               <div class="flex-1 min-w-0">
                 <h3 class="font-extrabold text-text-main text-[15px] leading-tight">Nhà máy Lưới thép Tiên Phong</h3>
-                <span class="text-text-muted text-[11px] font-bold uppercase tracking-wider">Đà Nẵng</span>
+                <span class="text-text-muted text-[11px] font-bold tracking-wider">Đà Nẵng</span>
                 <p class="text-text-secondary text-[12px] leading-snug mt-1 line-clamp-2">Vải KT không dệt, vải dệt, lưới KT polyester. 5.000 tấn/năm.</p>
               </div>
             </div>
@@ -280,11 +286,11 @@ const milestones = [
                 alt="Nhà máy Lưới thép Tiên Phong"
                 fallback-src="/images/projects/highway-2.jpg"
                 aspect-ratio="aspect-[16/9]"
-                image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                image-class="w-full h-full object-cover"
               />
-              <div class="p-8">
+              <div class="p-8 pb-10">
                 <div class="flex items-center gap-3 mb-4">
-                  <span class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <span class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center p-2">
                     <span class="material-symbols-outlined text-primary text-[24px]">precision_manufacturing</span>
                   </span>
                   <div>
@@ -317,9 +323,11 @@ const milestones = [
           <ErrorState :message="certError" @retry="loadCertificates" />
         </div>
         <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 stagger-grid">
-          <router-link v-for="(cert, i) in certificates?.data ?? []" :key="cert.slug" to="/certificates"
-            class="aspect-[3/4] bg-surface-bright border border-outline-variant p-3 md:p-6 flex flex-col items-center justify-center hover:shadow-[0_16px_48px_rgba(184,155,136,0.15)] hover:border-[#B89B88] transition-all duration-500 rounded-xl md:rounded-2xl group card-shine">
-            <div class="w-full h-3/5 mb-2 md:mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+          <div v-for="(cert, i) in certificates?.data ?? []" :key="cert.slug"
+            class="aspect-[3/4] bg-surface-bright border border-outline-variant p-3 md:p-5 flex flex-col items-center justify-center hover:shadow-[0_16px_48px_rgba(184,155,136,0.15)] hover:border-[#B89B88] transition-all duration-500 rounded-xl md:rounded-2xl group card-shine cursor-pointer"
+            :class="`reveal-delay-${(i % 4) + 1}`"
+            @click="lightboxCert = { image: cert.image || '/images/certs/iso-9001.png', name: cert.name }">
+            <div class="w-full h-4/5 mb-2 md:mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
               <LazyImage
                 :src="cert.image"
                 :alt="cert.name"
@@ -329,7 +337,7 @@ const milestones = [
               />
             </div>
             <span class="text-[11px] md:text-[13px] font-bold text-text-secondary text-center group-hover:text-primary transition-colors duration-300 leading-snug">{{ cert.name }}</span>
-          </router-link>
+          </div>
         </div>
       </div>
     </section>
@@ -347,7 +355,7 @@ const milestones = [
             </div>
             <h2 class="text-[22px] md:text-[36px] text-text-main mb-4 md:mb-6 font-bold tracking-tight">{{ t('about.downloadProfile') }}</h2>
             <p class="text-text-secondary mb-6 md:mb-10 text-[14px] md:text-[17px] max-w-lg leading-relaxed">{{ t('about.downloadProfileText') }}</p>
-            <router-link to="/contact" class="btn btn-magnetic bg-primary text-white hover:bg-primary-dark rounded-full py-3 md:py-4 px-8 md:px-10 text-[14px] md:text-[15px] inline-flex items-center gap-3 font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-500">
+            <router-link to="/contact" class="btn btn-magnetic bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full py-3 md:py-4 px-8 md:px-10 text-[14px] md:text-[15px] inline-flex items-center gap-3 font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-500">
               <span class="material-symbols-outlined text-xl">download</span> {{ t('about.requestProfile') }}
               <span class="material-symbols-outlined text-lg arrow-bounce">arrow_forward</span>
             </router-link>
@@ -355,5 +363,28 @@ const milestones = [
         </div>
       </div>
     </section>
+
+    <!-- Certificate Lightbox -->
+    <div v-if="lightboxCert" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8" @click.self="closeLightbox">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-md" @click="closeLightbox"></div>
+      <div class="relative bg-surface rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
+        <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-outline-variant bg-surface-bright">
+          <h3 class="font-bold text-text-main truncate">{{ lightboxCert.name }}</h3>
+          <button type="button" class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-vlm border border-outline-variant hover:bg-outline-variant hover:text-primary transition-all duration-300 shrink-0" @click="closeLightbox">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+        <div class="flex-1 p-6 flex items-center justify-center bg-surface-vlm overflow-auto">
+          <img :src="lightboxCert.image" :alt="lightboxCert.name" class="max-w-full max-h-[75vh] object-contain rounded-lg" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.about-page-header h1 {
+  color: var(--color-text-primary) !important;
+  text-shadow: none !important;
+}
+</style>

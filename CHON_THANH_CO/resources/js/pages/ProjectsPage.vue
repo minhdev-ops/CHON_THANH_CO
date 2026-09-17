@@ -142,7 +142,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
                 class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60"
               >
             </div>
-            <div class="hidden sm:flex flex-col items-end px-3 border-l border-outline-variant h-full justify-center">
+            <div class="hidden sm:flex flex-col items-end px-3 h-full justify-center">
               <span class="font-black text-[16px] text-text-main leading-none">{{ String(filteredProjects.length).padStart(2, '0') }}</span>
               <span class="text-[11px] font-bold text-text-muted uppercase tracking-widest mt-0.5">Kết quả</span>
             </div>
@@ -177,7 +177,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
                   :src="project.hero_image"
                   :alt="project.name"
                   fallback-src="/images/projects/highway-1.jpg"
-                  image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  image-class="w-full h-full object-cover"
                 />
               </div>
               <div class="flex-1 min-w-0">
@@ -200,7 +200,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
                 fallback-src="/images/projects/highway-1.jpg"
                 aspect-ratio="aspect-[4/3]"
                 container-class="shrink-0 border-b border-outline-variant/60"
-                image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                image-class="w-full h-full object-cover"
               >
                 <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm z-10">
                   <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
@@ -239,7 +239,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
         <div v-else class="py-20 text-center bg-canvas border border-outline-variant">
           <div class="font-sans text-[80px] font-bold text-text-muted/30 leading-none mb-4 select-none">∅</div>
           <p class="text-text-secondary font-medium mb-6 text-[13px] uppercase tracking-[0.2em]">{{ t('projects.empty') || 'Không tìm thấy dự án phù hợp' }}</p>
-          <button class="bg-primary text-white px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-primary-deep transition-colors duration-300" @click="selectedLocation = null; searchQuery = ''; currentPage = 1">
+          <button class="btn-primary px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300" @click="selectedLocation = null; searchQuery = ''; currentPage = 1">
             {{ t('products.clearAll') || 'Xóa bộ lọc' }}
           </button>
         </div>

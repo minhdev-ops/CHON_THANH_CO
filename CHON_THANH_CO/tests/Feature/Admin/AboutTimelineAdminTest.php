@@ -12,7 +12,7 @@ use function Pest\Laravel\withSession;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    seed(AboutTimelineSeeder::class);
+    seed(AboutTimelineSeeder::coplass);
 
     // Đăng nhập admin qua session (giống luồng thật của AuthController)
     session(['admin_authenticated' => true, 'admin_name' => 'admin']);

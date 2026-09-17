@@ -162,7 +162,7 @@ const breadcrumbs = computed(() => [
 
           <div v-if="product.specs?.length" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div v-for="spec in product.specs.slice(0, 3)" :key="spec.label" class="bg-surface-bright border border-outline-variant rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
-              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-primary-deep text-xl">{{ spec.icon || 'check' }}</span>
               </div>
               <span class="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] mb-2">{{ spec.label }}</span>
@@ -211,7 +211,7 @@ const breadcrumbs = computed(() => [
             </div>
             <div v-else-if="activeTab === 'applications' && product.applications?.length" key="applications" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div v-for="app in product.applications" :key="app.slug" class="flex items-start gap-4 p-6 bg-surface-vlm border border-outline-variant rounded-2xl hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-primary-deep shrink-0 group-hover:scale-110 transition-transform duration-500">
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-primary-deep shrink-0">
                   <span class="material-symbols-outlined text-xl">{{ appIcons[app.slug] || 'check' }}</span>
                 </div>
                 <div>
