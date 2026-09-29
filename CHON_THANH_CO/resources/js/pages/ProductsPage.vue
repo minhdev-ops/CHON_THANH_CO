@@ -177,7 +177,7 @@ const bentoCol = (i: number) => {
           class="flex-1 inline-flex items-center justify-center gap-2 btn-primary py-3 text-[12px] font-bold uppercase tracking-[0.15em] rounded-xl active:scale-[0.98] transition-transform shadow-md"
           @click="mobileFiltersOpen = !mobileFiltersOpen"
         >
-          <span class="material-symbols-outlined text-[18px]">tune</span>
+          <i class="fa text-[18px] fa-sliders"></i>
           <span>{{ t('products.filter') }}</span>
           <span v-if="activeFilterCount" class="bg-white text-primary text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center ml-1">{{ activeFilterCount }}</span>
         </button>
@@ -207,12 +207,12 @@ const bentoCol = (i: number) => {
                   <span class="text-[13px] font-bold text-text-main uppercase tracking-[0.2em]">{{ t('products.searchLabel') }}</span>
                 </div>
                 <div class="relative">
-                  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[16px]">search</span>
+                  <i class="fa absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[16px] fa-magnifying-glass"></i>
                   <input
                     v-model="searchQuery"
                     type="text"
                     :placeholder="t('products.searchPlaceholder')"
-                    class="w-full bg-canvas border border-outline-variant pl-9 pr-3 py-2.5 text-[15px] text-text-main outline-none focus:border-text-main transition-colors duration-200 placeholder:text-text-muted/60 rounded-none"
+                    class="w-full bg-canvas border border-outline-variant pl-9 pr-3 py-2.5 text-[15px] text-text-main outline-none focus:border-text-main transition-colors duration-200 placeholder:text-text-muted/60 rounded-none fa-check"
                   />
                 </div>
               </div>
@@ -233,7 +233,7 @@ const bentoCol = (i: number) => {
                           :checked="selectedCategories.includes(cat.slug)"
                           @change="toggle(selectedCategories, cat.slug)"
                         >
-                        <span class="material-symbols-outlined absolute text-canvas text-[12px] font-bold opacity-0 peer-checked:opacity-100 pointer-events-none">check</span>
+                        <i class="fa absolute text-canvas text-[12px] font-bold opacity-0 peer-checked:opacity-100 pointer-events-none fa-check"></i>
                       </span>
                       <span class="text-[15px] text-text-secondary group-hover:text-text-main transition-colors duration-200 font-medium flex-grow leading-tight">{{ cat.name }}</span>
                       <span v-if="cat.products_count" class="font-mono text-[12px] text-text-muted font-bold tabular-nums">{{ String(cat.products_count).padStart(2, '0') }}</span>
@@ -261,7 +261,7 @@ const bentoCol = (i: number) => {
                           :checked="selectedApplications.includes(app.slug)"
                           @change="toggle(selectedApplications, app.slug)"
                         >
-                        <span class="material-symbols-outlined absolute text-canvas text-[12px] font-bold opacity-0 peer-checked:opacity-100 pointer-events-none">check</span>
+                        <i class="fa absolute text-canvas text-[12px] font-bold opacity-0 peer-checked:opacity-100 pointer-events-none fa-check"></i>
                       </span>
                       <span class="text-[15px] text-text-secondary group-hover:text-text-main transition-colors duration-200 font-medium leading-tight">{{ app.name }}</span>
                     </label>
@@ -332,7 +332,7 @@ const bentoCol = (i: number) => {
                   @click="viewMode = 'grid'"
                   :title="t('products.viewGrid')"
                 >
-                  <span class="material-symbols-outlined text-[16px]">grid_view</span>
+                  <i class="fa text-[16px] fa-th"></i>
                 </button>
                 <button
                   class="px-3 py-2 transition-colors duration-200 border-l border-outline-variant"
@@ -340,7 +340,7 @@ const bentoCol = (i: number) => {
                   @click="viewMode = 'index'"
                   :title="t('products.viewList')"
                 >
-                  <span class="material-symbols-outlined text-[16px]">view_list</span>
+                  <i class="fa text-[16px] fa-list"></i>
                 </button>
               </div>
               <select v-model="sortBy" class="bg-canvas border border-outline-variant px-3 py-2 text-[11px] font-bold text-text-main uppercase tracking-[0.15em] focus:outline-none focus:border-text-main cursor-pointer rounded-none">
@@ -359,7 +359,7 @@ const bentoCol = (i: number) => {
               @click="toggle(selectedCategories, cat)"
             >
               <span>{{ categories.find(c => c.slug === cat)?.name || cat }}</span>
-              <span class="material-symbols-outlined text-[12px]">close</span>
+              <i class="fa text-[12px] fa-xmark"></i>
             </button>
             <button
               v-for="app in selectedApplications" :key="'a-'+app"
@@ -367,7 +367,7 @@ const bentoCol = (i: number) => {
               @click="toggle(selectedApplications, app)"
             >
               <span>{{ applications.find(a => a.slug === app)?.name || app }}</span>
-              <span class="material-symbols-outlined text-[12px]">close</span>
+              <i class="fa text-[12px] fa-xmark"></i>
             </button>
             <button
               v-if="selectedStrength"
@@ -375,7 +375,7 @@ const bentoCol = (i: number) => {
               @click="selectedStrength = null"
             >
               <span>{{ selectedStrength }}</span>
-              <span class="material-symbols-outlined text-[12px]">close</span>
+              <i class="fa text-[12px] fa-xmark"></i>
             </button>
             <button class="text-[11px] font-bold text-text-muted tracking-[0.18em] uppercase underline hover:text-text-main transition-colors ml-2" @click="clearFilters">{{ t('products.clearAll') }}</button>
           </div>
@@ -393,7 +393,7 @@ const bentoCol = (i: number) => {
           <!-- ═══ BENTO GRID ═══ -->
           <div v-else-if="filteredProducts.length && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 stagger-grid">
             <div v-for="(p, i) in paginatedProducts" :key="p.slug" class="reveal" :class="[`reveal-delay-${(i%3)+1}`]">
-              <ProductCard :product="p" class="h-full" />
+              <ProductCard :product="p" variant="catalog" class="h-full" />
             </div>
           </div>
 
@@ -423,7 +423,7 @@ const bentoCol = (i: number) => {
                 <div class="col-span-3 md:col-span-1 text-right font-mono text-[11px] font-bold text-primary tabular-nums">{{ formatStrength(product) }}</div>
                 <div class="col-span-3 md:col-span-1 text-right">
                   <span class="inline-flex items-center justify-center w-8 h-8 border border-outline-variant group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-200">
-                    <span class="material-symbols-outlined text-[14px] group-hover:translate-x-0.5 transition-transform duration-200">arrow_forward</span>
+                    <i class="fa text-[14px] group-hover:translate-x-0.5 transition-transform duration-200 fa-arrow-right"></i>
                   </span>
                 </div>
               </router-link>

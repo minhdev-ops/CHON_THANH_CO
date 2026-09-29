@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Localizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,11 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Category extends Model
 {
     use HasFactory;
-    use Localizable;
     use SoftDeletes;
 
     protected $fillable = [
         'slug',
+        'name',
+        'description',
         'sort_order',
         'is_active',
     ];

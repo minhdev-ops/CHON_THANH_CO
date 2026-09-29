@@ -89,11 +89,11 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
         <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-black/5 group-hover:bg-black/10 transition-colors">
           <!-- Pulse ring for ALL buttons (mobile) -->
           <div class="absolute inset-0 rounded-full animate-pulse-ring" :style="{ borderColor: variantStyles[contact.variant].pulseColor }" aria-hidden="true"></div>
-          
+
           <!-- Hotline exclusive: stronger alarm rings (mobile) -->
           <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-extreme" aria-hidden="true"></div>
           <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-strong" style="animation-delay: 0.4s;" aria-hidden="true"></div>
-          
+
           <img
             v-if="contact.image"
             :src="contact.image"
@@ -129,11 +129,11 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
     >
       <!-- Pulse ring for ALL buttons (subtle attention) -->
       <div class="absolute inset-0 rounded-full animate-pulse-ring" :style="{ borderColor: variantStyles[contact.variant].pulseColor }" aria-hidden="true"></div>
-      
+
       <!-- Hotline exclusive: stronger alarm rings -->
       <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-extreme" aria-hidden="true"></div>
       <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-strong" style="animation-delay: 0.4s;" aria-hidden="true"></div>
-      
+
       <!-- Button content with icon animation -->
       <div class="relative z-10 flex items-center justify-center">
         <img
@@ -150,9 +150,7 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
         {{ contact.name }}
         <span class="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-3 border-transparent border-l-[#1a1a1a]"></span>
       </span>
-      
-      <!-- Notification badge for hotline -->
-      <span v-if="contact.variant === 'hotline'" class="absolute -top-1 -right-1 w-5 h-5 bg-[#FFD700] text-[#1a1a1a] rounded-full flex items-center justify-center text-[9px] font-black" aria-label="Hotline ưu tiên">!</span>
+
     </a>
   </div>
 </template>
@@ -280,31 +278,31 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
 /* Hotline EXCLUSIVE: Extreme alarm ring - FAST & BRIGHT */
 @keyframes hotline-ring-extreme {
   0% {
-    box-shadow: 
+    box-shadow:
       0 0 0 0 rgba(216, 67, 21, 1),
       0 0 50px 10px rgba(216, 67, 21, 0.8),
       0 0 100px 20px rgba(216, 67, 21, 0.5);
   }
   25% {
-    box-shadow: 
+    box-shadow:
       0 0 0 12px rgba(216, 67, 21, 0.8),
       0 0 70px 16px rgba(216, 67, 21, 0.6),
       0 0 140px 28px rgba(216, 67, 21, 0.4);
   }
   50% {
-    box-shadow: 
+    box-shadow:
       0 0 0 24px rgba(216, 67, 21, 0.5),
       0 0 90px 22px rgba(216, 67, 21, 0.5),
       0 0 180px 36px rgba(216, 67, 21, 0.35);
   }
   75% {
-    box-shadow: 
+    box-shadow:
       0 0 0 36px rgba(216, 67, 21, 0.25),
       0 0 110px 28px rgba(216, 67, 21, 0.3),
       0 0 220px 44px rgba(216, 67, 21, 0.2);
   }
   100% {
-    box-shadow: 
+    box-shadow:
       0 0 0 0 rgba(216, 67, 21, 0),
       0 0 60px 12px rgba(216, 67, 21, 0.15),
       0 0 120px 24px rgba(216, 67, 21, 0.08);
@@ -318,22 +316,22 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
 /* Hotline EXCLUSIVE: Strong alarm ring - FAST */
 @keyframes hotline-ring-strong {
   0% {
-    box-shadow: 
+    box-shadow:
       0 0 0 0 rgba(216, 67, 21, 1),
       0 0 40px 8px rgba(216, 67, 21, 0.6);
   }
   40% {
-    box-shadow: 
+    box-shadow:
       0 0 0 16px rgba(216, 67, 21, 0.6),
       0 0 60px 14px rgba(216, 67, 21, 0.4);
   }
   70% {
-    box-shadow: 
+    box-shadow:
       0 0 0 30px rgba(216, 67, 21, 0.3),
       0 0 80px 18px rgba(216, 67, 21, 0.25);
   }
   100% {
-    box-shadow: 
+    box-shadow:
       0 0 0 0 rgba(216, 67, 21, 0),
       0 0 40px 8px rgba(216, 67, 21, 0.15);
   }

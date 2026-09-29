@@ -2,24 +2,29 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Localizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 class Product extends Model
 {
     use HasFactory;
-    use Localizable;
     use SoftDeletes;
+    use Searchable;
 
     protected $fillable = [
         'category_id',
         'slug',
         'code',
+        'name',
+        'description',
+        'strength_label',
+        'meta_title',
+        'meta_description',
         'image',
         'strength_min',
         'strength_max',
@@ -49,11 +54,6 @@ class Product extends Model
         return $this->belongsToMany(Application::class, 'product_application');
     }
 
-    public function translations(): HasMany
-    {
-        return $this->hasMany(ProductTranslation::class);
-    }
-
     public function specs(): HasMany
     {
         return $this->hasMany(ProductSpec::class)->orderBy('sort_order');
@@ -67,5 +67,25 @@ class Product extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(ProductDocument::class)->orderBy('sort_order');
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'code' => $this->code,
+            'slug' => $this->slug,
+            'category' => $this->category?->name,
+            'strength_min' => $this->strength_min,
+            'strength_max' => $this->strength_max,
+            'is_active' => $this->is_active,
+        ];
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return (bool) $this->is_active;
     }
 }

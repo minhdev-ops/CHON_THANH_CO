@@ -89,7 +89,7 @@ const breadcrumbs = computed(() => [
   </div>
 
   <div v-else-if="item">
-    <PageHeader :title="item.title" :breadcrumbs="breadcrumbs" />
+    <PageHeader :title="item.title" :breadcrumbs="breadcrumbs" :eyebrow="item.category?.name || t('nav.news')" />
 
     <article class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14">
       <!-- Hero Image -->
@@ -107,11 +107,11 @@ const breadcrumbs = computed(() => [
       <div class="flex flex-wrap items-center gap-4 mb-8">
         <span v-if="item.category" class="inline-block bg-primary/10 text-primary-deep font-bold text-[12px] px-4 py-1.5 rounded-full uppercase tracking-[0.15em]">{{ item.category.name }}</span>
         <span class="text-[13px] text-text-muted font-bold uppercase tracking-[0.12em] flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+          <i class="fa text-[16px] fa-calendar"></i>
           {{ formatDateLong(item.published_at) }}
         </span>
         <span class="text-[13px] text-text-muted font-bold uppercase tracking-[0.12em] flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-[16px]">schedule</span>
+          <i class="fa text-[16px] fa-clock"></i>
           {{ readingTime }} phút đọc
         </span>
       </div>
@@ -139,7 +139,7 @@ const breadcrumbs = computed(() => [
           </a>
           <a :href="`https://zalo.me/share?u=${encodeURIComponent(shareUrl)}`" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-surface-vlm border border-outline-variant flex items-center justify-center hover:bg-[#0068FF] hover:text-white hover:border-[#0068FF] transition-all duration-300 text-[11px] font-bold">Zalo</a>
           <button @click="copyToClipboard(shareUrl)" class="w-10 h-10 rounded-full bg-surface-vlm border border-outline-variant flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300">
-            <span class="material-symbols-outlined text-[18px]">link</span>
+            <i class="fa text-[18px] fa-link"></i>
           </button>
         </div>
       </div>
@@ -148,7 +148,7 @@ const breadcrumbs = computed(() => [
     <!-- Related News -->
     <section v-if="related.length" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop pb-20">
       <div class="text-center mb-12">
-        <span class="kicker inline-block mb-3">Tin tức liên quan</span>
+        <span class="inline-block px-3.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-extrabold tracking-[0.15em] uppercase mb-3">Tin tức liên quan</span>
         <h2 class="text-[32px] md:text-[40px] font-extrabold text-text-main tracking-tight">Đọc thêm</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 stagger-grid">
@@ -167,7 +167,7 @@ const breadcrumbs = computed(() => [
             <h3 class="font-extrabold text-text-main text-[16px] leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-3">{{ n.title }}</h3>
             <span class="inline-flex items-center gap-1.5 text-[12px] font-bold text-primary group-hover:gap-2.5 transition-all duration-300">
               {{ t('news.readMore') }}
-              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              <i class="fa text-[14px] fa-arrow-right"></i>
             </span>
           </div>
         </router-link>
@@ -177,21 +177,21 @@ const breadcrumbs = computed(() => [
     <!-- Navigation -->
     <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 flex items-center justify-between border-t border-outline-variant">
       <router-link to="/news" class="inline-flex items-center gap-2 text-primary-deep font-bold text-[13px] uppercase tracking-[0.12em] hover:text-primary transition-colors duration-300 group">
-        <span class="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform duration-300">arrow_back</span>
+        <i class="fa text-[18px] group-hover:-translate-x-1 transition-transform duration-300 fa-arrow-left"></i>
         {{ t('news.backToList') }}
       </router-link>
       <router-link to="/contact" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full inline-flex items-center gap-2 group">
         {{ t('news.contact') }}
-        <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">send</span>
+        <i class="fa text-[16px] group-hover:translate-x-1 transition-transform fa-paper-plane"></i>
       </router-link>
     </div>
   </div>
 
   <div v-else-if="notFound" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 text-center">
-    <span class="material-symbols-outlined text-7xl text-outline-variant mb-6 block">article</span>
+    <i class="fa text-7xl text-outline-variant mb-6 block fa-newspaper"></i>
     <h1 class="text-[28px] text-text-main font-bold mb-6">{{ t('news.notFound') }}</h1>
     <router-link to="/news" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full inline-flex items-center gap-2">
-      <span class="material-symbols-outlined text-lg">arrow_back</span> {{ t('news.backToList') }}
+      <i class="fa text-lg fa-arrow-left"></i> {{ t('news.backToList') }}
     </router-link>
   </div>
 </template>

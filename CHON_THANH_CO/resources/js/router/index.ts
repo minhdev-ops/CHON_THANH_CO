@@ -82,6 +82,12 @@ const router = createRouter({
       meta: { titleKey: 'meta.news', descKey: 'meta.desc.news' },
     },
     {
+      path: '/faq',
+      name: 'faq',
+      component: () => import('../pages/FaqPage.vue'),
+      meta: { titleKey: 'meta.faq', descKey: 'meta.desc.faq' },
+    },
+    {
       path: '/privacy-policy',
       name: 'privacy-policy',
       component: () => import('../pages/PrivacyPolicyPage.vue'),

@@ -9,12 +9,10 @@ class CertificateResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $translation = $this->translation();
-
         return [
             'slug' => $this->slug,
-            'name' => $translation?->name,
-            'description' => $translation?->description,
+            'name' => $this->name,
+            'description' => $this->description,
             'image' => $this->image,
             'file' => $this->file,
         ];

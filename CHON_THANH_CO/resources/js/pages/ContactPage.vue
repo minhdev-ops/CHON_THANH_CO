@@ -225,19 +225,18 @@ const breadcrumbs = computed(() => [
 
     <section class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-16 md:py-20">
       <div class="text-center max-w-2xl mx-auto mb-16 reveal">
-        <span class="kicker mb-4 block">Contact Us</span>
-        <h2 class="text-[32px] md:text-[42px] text-text-main font-bold tracking-tight mb-5">{{ t('contact.formTitle') }}</h2>
+        <SectionHeader align="center" kicker="Contact Us" :title="t('contact.formTitle')" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
         <!-- Contact Form -->
         <div class="bg-surface-bright border border-outline-variant rounded-3xl p-8 md:p-10 shadow-sm hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] transition-all duration-500 reveal-left card-shine glow-card">
           <div v-if="submitted" class="mb-6 flex items-start gap-3 bg-green-50 border border-green-200 rounded-2xl p-4 animate-fade-in-up">
-            <span class="material-symbols-outlined text-green-600 flex-shrink-0">check_circle</span>
+            <i class="fa text-green-600 flex-shrink-0 fa-circle-check"></i>
             <p class="text-sm text-green-800 font-medium">{{ t('contact.success') }}</p>
           </div>
           <div v-if="error" class="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 rounded-2xl p-4">
-            <span class="material-symbols-outlined text-red-500 flex-shrink-0">error</span>
+            <i class="fa text-red-500 flex-shrink-0 fa-circle-exclamation"></i>
             <p class="text-sm text-red-600 font-medium">{{ error }}</p>
           </div>
           <form class="space-y-6" novalidate @submit.prevent="handleSubmit">
@@ -273,12 +272,12 @@ const breadcrumbs = computed(() => [
                     <span v-for="(product, index) in selectedProducts" :key="product" class="inline-flex items-center gap-1 bg-primary/10 text-primary-deep rounded-full pl-3.5 pr-1.5 py-1 text-xs font-bold transition-all duration-300 hover:bg-primary/20">
                       {{ product }}
                       <button type="button" class="w-5 h-5 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors" :aria-label="`${t('contact.remove')} ${product}`" @click="removeProduct(index)">
-                        <span class="material-symbols-outlined text-xs leading-none">close</span>
+                        <i class="fa text-xs leading-none fa-xmark"></i>
                       </button>
                     </span>
                   </div>
                   <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-text-muted text-lg">search</span>
+                    <i class="fa text-text-muted text-lg fa-magnifying-glass"></i>
                     <input
                       id="product-search"
                       ref="productInput"
@@ -317,7 +316,7 @@ const breadcrumbs = computed(() => [
                 <!-- Empty state for suggestions -->
                 <div v-if="showSuggestions && searchQuery.trim() && !availableProducts.length" class="absolute left-0 right-0 top-full mt-2 bg-surface-bright border border-outline-variant/30 rounded-2xl shadow-2xl z-20">
                   <div class="p-8 flex flex-col items-center justify-center text-center">
-                    <span class="material-symbols-outlined text-4xl text-outline-variant mb-3">search_off</span>
+                    <i class="fa text-4xl text-outline-variant mb-3 fa-magnifying-glass-minus"></i>
                     <p class="text-text-main font-semibold mb-1">{{ t('contact.noProductsFound') }}</p>
                     <p class="text-text-secondary text-[13px]">{{ t('contact.tryDifferentKeyword') }}</p>
                   </div>
@@ -332,7 +331,7 @@ const breadcrumbs = computed(() => [
             </div>
             <button type="submit" :disabled="submitting" class="btn btn-primary btn-magnetic w-full md:w-auto mt-4 inline-flex items-center justify-center gap-2 group disabled:opacity-60">
               <span>{{ submitting ? t('contact.submitting') : t('contact.submit') }}</span>
-              <span class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform duration-300">send</span>
+              <i class="fa text-base group-hover:translate-x-1 transition-transform duration-300 fa-paper-plane"></i>
             </button>
           </form>
         </div>
@@ -344,7 +343,7 @@ const breadcrumbs = computed(() => [
             <ul class="space-y-6">
               <li class="flex items-start gap-4 group">
                 <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">location_on</span>
+                  <i class="fa text-primary-deep text-xl fa-location-dot"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.headquarters') }}</span>
@@ -353,7 +352,7 @@ const breadcrumbs = computed(() => [
               </li>
               <li class="flex items-start gap-4 group">
                 <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">call</span>
+                  <i class="fa text-primary-deep text-xl fa-phone"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.phoneLabel') }}</span>
@@ -367,7 +366,7 @@ const breadcrumbs = computed(() => [
               </li>
               <li class="flex items-start gap-4 group">
                 <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">mail</span>
+                  <i class="fa text-primary-deep text-xl fa-envelope"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.emailLabel') }}</span>
@@ -376,7 +375,7 @@ const breadcrumbs = computed(() => [
               </li>
               <li class="flex items-start gap-4 group">
                 <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">schedule</span>
+                  <i class="fa text-primary-deep text-xl fa-clock"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.hoursLabel') }}</span>

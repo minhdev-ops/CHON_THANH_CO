@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\Concerns\SyncsTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\NewsCategory;
 use Illuminate\Http\Request;
@@ -10,11 +9,44 @@ use Illuminate\Support\Str;
 
 class NewsCategoryController extends Controller
 {
-    use SyncsTranslations;
+    use Concerns\RendersAdminTables;
 
-    public function index()
+    public function index(Request $request)
     {
-        $categories = NewsCategory::with('translations')->withCount('news')->orderBy('sort_order')->get();
+        $baseQuery = fn () => NewsCategory::withCount('news');
+
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('q')) {
+                $search = $request->input('q');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%");
+                });
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.news-categories.rows',
+                itemsVar: 'categories',
+                sortable: [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'sort_order' => 'sort_order',
+                    'news_count' => 'news_count',
+                    'is_active' => 'is_active',
+                ],
+                defaultOrder: ['sort_order' => 'asc'],
+            );
+        }
+
+        $query = $baseQuery();
+        $applyFilters($query, $request);
+
+        $categories = $query->orderBy('sort_order')->paginate(15)->withQueryString();
 
         return view('admin.news-categories.index', compact('categories'));
     }
@@ -29,18 +61,17 @@ class NewsCategoryController extends Controller
         $data = $this->validated($request);
         $category = NewsCategory::create([
             'slug' => $this->makeSlug($data),
+            'name' => $data['name'],
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($category, $data['translations'], ['name']);
 
         return redirect()->route('admin.news-categories.index')->with('success', 'Đã tạo danh mục tin tức.');
     }
 
     public function edit(NewsCategory $news_category)
     {
-        return view('admin.news-categories.form', ['category' => $news_category->load('translations')]);
+        return view('admin.news-categories.form', ['category' => $news_category]);
     }
 
     public function update(Request $request, NewsCategory $news_category)
@@ -48,11 +79,10 @@ class NewsCategoryController extends Controller
         $data = $this->validated($request);
         $news_category->update([
             'slug' => $this->makeSlug($data, $news_category),
+            'name' => $data['name'],
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($news_category, $data['translations'], ['name']);
 
         return redirect()->route('admin.news-categories.index')->with('success', 'Đã cập nhật danh mục tin tức.');
     }
@@ -72,10 +102,9 @@ class NewsCategoryController extends Controller
     {
         return $request->validate([
             'slug' => ['nullable', 'string', 'max:150'],
+            'name' => ['required', 'string', 'max:150'],
             'sort_order' => ['nullable', 'integer'],
             'is_active' => ['boolean'],
-            'translations.vi.name' => ['required', 'string', 'max:150'],
-            'translations.en.name' => ['nullable', 'string', 'max:150'],
         ]);
     }
 
@@ -85,8 +114,8 @@ class NewsCategoryController extends Controller
             return Str::slug($data['slug']);
         }
 
-        $name = $data['translations']['vi']['name'] ?? '';
+        $name = $data['name'] ?? '';
 
-        return Str::slug($name) ?: ($existing?->slug ?? 'news-category-' . Str::random(6));
+        return Str::slug($name) ?: ($existing?->slug ?? 'news-category-'.Str::random(6));
     }
 }

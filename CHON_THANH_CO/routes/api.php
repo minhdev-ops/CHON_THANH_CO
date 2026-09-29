@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProjectController;
-use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\ProfileBookController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,9 +29,11 @@ Route::middleware('set.locale')
 
         Route::get('certificates', [CertificateController::class, 'index']);
 
-        Route::get('profile-book', [ProfileBookController::class, 'show']);
-        Route::post('profile-book/upload', [ProfileBookController::class, 'upload'])
-            ->middleware('admin.auth');
+        Route::middleware('web')->group(function () {
+            Route::get('profile-book', [ProfileBookController::class, 'show']);
+            Route::post('profile-book/upload', [ProfileBookController::class, 'upload'])
+                ->middleware('admin.auth');
+        });
 
         Route::get('news/categories', [NewsController::class, 'categories']);
         Route::get('news', [NewsController::class, 'index']);
@@ -42,9 +43,6 @@ Route::middleware('set.locale')
 
         Route::post('contact', [ContactController::class, 'store'])
             ->middleware('throttle:10,1');
-
-        // New route for dynamic pages
-        Route::get('pages/{slug}', [PageController::class, 'show']);
     });
 
 ?>

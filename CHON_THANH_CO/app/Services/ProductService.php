@@ -10,7 +10,7 @@ class ProductService
     public function list(array $filters = [], string $locale = 'vi', int $limit = 12): array
     {
         $query = Product::query()
-            ->with(['translations', 'category.translations', 'applications.translations'])
+            ->with(['category', 'applications'])
             ->where('is_active', true);
 
         if (! empty($filters['category'])) {
@@ -42,9 +42,7 @@ class ProductService
         }
 
         if (! empty($filters['search'])) {
-            $query->whereHas('translations', function ($q) use ($filters) {
-                $q->where('name', 'like', '%'.$filters['search'].'%');
-            });
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         if (! empty($filters['cursor'])) {
@@ -69,14 +67,14 @@ class ProductService
         return Product::query()
             ->where('slug', $slug)
             ->where('is_active', true)
-            ->with(['translations', 'category.translations', 'applications.translations', 'specs.translations', 'images', 'documents'])
+            ->with(['category', 'applications', 'specs', 'images', 'documents'])
             ->first();
     }
 
     public function featured(string $locale = 'vi', int $limit = 8): Collection
     {
         return Product::query()
-            ->with(['translations', 'category.translations'])
+            ->with(['category'])
             ->where('is_featured', true)
             ->where('is_active', true)
             ->orderBy('sort_order')

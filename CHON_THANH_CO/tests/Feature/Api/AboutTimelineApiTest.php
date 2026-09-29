@@ -30,22 +30,22 @@ it('returns active timeline milestones ordered by sort_order', function () {
     $response->assertJsonPath('data.0.description', 'Thành lập với tên gọi CÔNG TY TNHH DỊCH VỤ VÀ THƯƠNG MẠI CHƠN THÀNH, mã số doanh nghiệp 0303792837 do Sở KH&ĐT TP.HCM cấp.');
 });
 
-it('serves english translations when requesting the en locale', function () {
+it('serves vietnamese translations when requesting the vi locale', function () {
     seed(AboutTimelineSeeder::class);
 
-    getJson('/api/v1/about/timeline', ['X-Locale' => 'en'])
+    getJson('/api/v1/about/timeline', ['X-Locale' => 'vi'])
         ->assertStatus(200)
         ->assertJsonCount(6, 'data')
-        ->assertJsonPath('data.0.year', '2005 - Founding')
-        ->assertJsonPath('data.5.year', 'Today');
+        ->assertJsonPath('data.0.year', '2005 - Thành lập')
+        ->assertJsonPath('data.5.year', 'Hiện tại');
 });
 
 it('supports locale via query parameter', function () {
     seed(AboutTimelineSeeder::class);
 
-    getJson('/api/v1/about/timeline?locale=en')
+    getJson('/api/v1/about/timeline?locale=vi')
         ->assertStatus(200)
-        ->assertJsonPath('data.5.year', 'Today');
+        ->assertJsonPath('data.5.year', 'Hiện tại');
 });
 
 it('excludes inactive milestones from the timeline', function () {
@@ -63,10 +63,10 @@ it('excludes inactive milestones from the timeline', function () {
 it('falls back to the vi translation when the requested locale is missing', function () {
     seed(AboutTimelineSeeder::class);
 
-    // Thêm một mốc chỉ có bản dịch tiếng Việt
-    $item = AboutTimeline::create(['sort_order' => 99, 'is_active' => true]);
-    $item->translations()->create([
-        'locale' => 'vi',
+    // Thêm một mốc mới
+    $item = AboutTimeline::create([
+        'sort_order' => 99,
+        'is_active' => true,
         'year' => '2026 - Mốc mới',
         'description' => 'Chỉ có bản tiếng Việt.',
     ]);

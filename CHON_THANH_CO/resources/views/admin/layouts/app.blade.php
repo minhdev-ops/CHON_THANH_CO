@@ -7,9 +7,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script defer src="{{ asset('js/admin-table.js') }}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
     <style>[x-cloak] { display: none !important; }</style>
     @vite(['resources/css/app.css'])
+    @stack('styles')
 </head>
 <body class="bg-[#f8fafc] text-gray-900 antialiased">
     <div class="min-h-screen flex">

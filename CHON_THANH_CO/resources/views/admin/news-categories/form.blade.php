@@ -36,7 +36,7 @@
                     :fields="[
                         ['name' => 'name', 'label' => 'Tên danh mục', 'required' => true, 'max' => 150],
                     ]"
-                    :values="$category?->translation('vi')?->toArray() ?? []"
+                    :values="$category?->toArray() ?? []"
                 />
 
                 <x-admin.partials.translation-section
@@ -45,7 +45,7 @@
                     :fields="[
                         ['name' => 'name', 'label' => 'Name', 'max' => 150],
                     ]"
-                    :values="$category?->translation('en')?->toArray() ?? []"
+                    :values="$category?->toArray() ?? []"
                 />
             </div>
 

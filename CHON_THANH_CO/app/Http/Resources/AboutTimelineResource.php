@@ -9,11 +9,9 @@ class AboutTimelineResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $translation = $this->translation();
-
         return [
-            'year' => $translation?->year,
-            'description' => $translation?->description,
+            'year' => $this->year,
+            'description' => $this->description,
         ];
     }
 }

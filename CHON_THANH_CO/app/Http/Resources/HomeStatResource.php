@@ -11,7 +11,7 @@ class HomeStatResource extends JsonResource
     {
         return [
             'value' => $this->value,
-            'label' => $this->translation()?->label,
+            'label' => $this->label,
             'icon' => $this->icon,
         ];
     }

@@ -158,11 +158,43 @@
     }
 
     .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
         font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
     }
 
     .material-symbols-outlined.fill {
+        font-family: 'Material Symbols Outlined';
         font-variation-settings: 'FILL' 1;
+    }
+
+    /* Font Awesome Icons */
+    .fa,
+    .fas,
+    .far,
+    .fal,
+    .fad,
+    .fab {
+        font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+        font-weight: 900;
+        font-style: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .far {
+        font-weight: 400;
+    }
+
+    .fal {
+        font-weight: 300;
+    }
+
+    .fab {
+        font-family: "Font Awesome 6 Brands";
+        font-weight: 400;
     }
 
     /* Scrollbar */
@@ -445,29 +477,10 @@
         box-shadow: var(--shadow-primary);
     }
 
-    .btn-primary::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-
-    .btn-primary:hover::before {
-        opacity: 1;
-    }
-
     .btn-primary:hover {
         background: var(--color-primary-dark);
         color: var(--color-on-primary);
         box-shadow: 0 8px 36px rgba(184, 155, 136, 0.45);
-        transform: translateY(-3px);
-    }
-
-    .btn-primary:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 16px rgba(184, 155, 136, 0.3);
     }
 
     .btn-secondary {

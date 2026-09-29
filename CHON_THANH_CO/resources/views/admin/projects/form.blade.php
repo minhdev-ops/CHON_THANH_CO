@@ -16,10 +16,10 @@
                     'product_id' => $m->product_id,
                     'image' => $m->image,
                     'sort_order' => $m->sort_order,
-                    'name_vi' => $m->translation('vi')?->name ?? '',
-                    'detail_vi' => $m->translation('vi')?->detail ?? '',
-                    'name_en' => $m->translation('en')?->name ?? '',
-                    'detail_en' => $m->translation('en')?->detail ?? '',
+                    'name_vi' => $m?->name ?? '',
+                    'detail_vi' => $m?->detail ?? '',
+                    'name_en' => $m?->name ?? '',
+                    'detail_en' => $m?->detail ?? '',
                 ];
             }
         }
@@ -86,7 +86,7 @@
                             ['name' => 'meta_title', 'label' => 'Meta title (SEO)', 'max' => 200],
                             ['name' => 'meta_description', 'label' => 'Meta description (SEO)', 'type' => 'textarea', 'rows' => 2, 'max' => 300],
                         ]"
-                        :values="$project?->translation('vi')?->toArray() ?? []"
+                        :values="$project?->toArray() ?? []"
                     />
 
                     <x-admin.partials.translation-section
@@ -99,7 +99,7 @@
                             ['name' => 'meta_title', 'label' => 'Meta title', 'max' => 200],
                             ['name' => 'meta_description', 'label' => 'Meta description', 'type' => 'textarea', 'rows' => 2, 'max' => 300],
                         ]"
-                        :values="$project?->translation('en')?->toArray() ?? []"
+                        :values="$project?->toArray() ?? []"
                     />
                 </div>
             </div>
@@ -117,7 +117,7 @@
                                 <select x-model="mat.product_id" class="flex-1 border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                                     <option value="">-- Không liên kết sản phẩm --</option>
                                     @foreach ($products as $product)
-                                        <option value="{{ $product->id }}">{{ $product->translation('vi')?->name }} ({{ $product->code }})</option>
+                                        <option value="{{ $product->id }}">{{ $product?->name }} ({{ $product->code }})</option>
                                     @endforeach
                                 </select>
                                 <div class="w-20">

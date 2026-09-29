@@ -16,6 +16,8 @@ class Certificate extends Model
 
     protected $fillable = [
         'slug',
+        'name',
+        'description',
         'image',
         'file',
         'is_active',
@@ -28,10 +30,5 @@ class Certificate extends Model
             'is_active' => 'boolean',
             'sort_order' => 'integer',
         ];
-    }
-
-    public function translations(): HasMany
-    {
-        return $this->hasMany(CertificateTranslation::class);
     }
 }

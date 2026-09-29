@@ -12,10 +12,10 @@ const phones = computed(() => {
 })
 
 const quickLinks = [
+  { label: 'Trang chủ',   to: '/' },
   { label: 'Giới thiệu',  to: '/about' },
   { label: 'Sản phẩm',    to: '/products' },
   { label: 'Dự án',       to: '/projects' },
-  { label: 'Chứng nhận',  to: '/certificates' },
   { label: 'Tin tức',     to: '/news' },
   { label: 'Liên hệ',     to: '/contact' },
   { label: 'Chính sách bảo mật', to: '/privacy-policy' },
@@ -51,17 +51,6 @@ onMounted(() => load())
         <p class="footer-desc">
           {{ settings?.['company.description'] || `Nhà phân phối chính thức vật liệu địa kỹ thuật ARITEX và các sản phẩm gia cố nền, chống thấm, chống xói mòn phục vụ hạ tầng giao thông, thủy lợi và bảo vệ môi trường tại Việt Nam và xuất khẩu.` }}
         </p>
-        <div class="footer-badges">
-          <div class="footer-badge">
-            <span class="material-symbols-outlined text-[#2A2420] text-[18px] fill">workspace_premium</span>
-            <span>ISO 9001:2015</span>
-          </div>
-          <div class="footer-badge-divider"></div>
-          <div class="footer-badge">
-            <span class="material-symbols-outlined text-[#2A2420] text-[18px] fill">workspace_premium</span>
-            <span>TCVN 9844</span>
-          </div>
-        </div>
       </div>
 
       <!-- Quick Links -->
@@ -93,21 +82,21 @@ onMounted(() => load())
         <h3 class="footer-heading">Liên hệ</h3>
         <div class="footer-contact">
           <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps'" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
-            <span class="material-symbols-outlined footer-contact-icon">location_on</span>
+            <i class="fa footer-contact-icon fa-location-dot"></i>
             <span class="footer-contact-text">{{ settings?.['contact.address'] || '416A Đường CC2, Phường Tây Thạnh, Thành Phố Hồ Chí Minh' }}</span>
           </a>
           <div class="footer-contact-item">
-            <span class="material-symbols-outlined footer-contact-icon">call</span>
+            <i class="fa footer-contact-icon fa-phone"></i>
             <div class="footer-contact-text">
               <a v-for="phone in phones" :key="phone.href" :href="phone.href" class="footer-phone">{{ phone.display }}</a>
             </div>
           </div>
           <div class="footer-contact-item">
-            <span class="material-symbols-outlined footer-contact-icon">mail</span>
+            <i class="fa footer-contact-icon fa-envelope"></i>
             <span class="footer-contact-text">{{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}</span>
           </div>
           <div class="footer-contact-item">
-            <span class="material-symbols-outlined footer-contact-icon">schedule</span>
+            <i class="fa footer-contact-icon fa-clock"></i>
             <span class="footer-contact-text">{{ settings?.['contact.working_hours'] || 'Thứ 2 - Thứ 6: 08:30 - 17:30' }}</span>
           </div>
         </div>
@@ -133,7 +122,7 @@ onMounted(() => load())
           <router-link v-for="link in quickLinks" :key="link.to" :to="link.to"
             class="flex items-center justify-between py-3 border-b border-[#2A2420]/10 text-[#2A2420]/85 text-[16px] font-medium hover:text-[#2A2420] transition-colors">
             <span>{{ link.label }}</span>
-            <span class="material-symbols-outlined text-[#2A2420]/30 text-[18px]">chevron_right</span>
+            <i class="fa text-[#2A2420]/30 text-[18px] fa-chevron-right"></i>
           </router-link>
         </div>
 
@@ -142,7 +131,7 @@ onMounted(() => load())
           <router-link v-for="p in productLinks" :key="p.slug" :to="`/products?category=${p.slug}`"
             class="flex items-center justify-between py-3 border-b border-[#2A2420]/10 text-[#2A2420]/85 text-[16px] font-medium hover:text-[#2A2420] transition-colors">
             <span>{{ p.label }}</span>
-            <span class="material-symbols-outlined text-[#2A2420]/30 text-[18px]">chevron_right</span>
+            <i class="fa text-[#2A2420]/30 text-[18px] fa-chevron-right"></i>
           </router-link>
         </div>
       </div>
@@ -151,22 +140,22 @@ onMounted(() => load())
         <h4 class="text-[12px] font-bold text-[#2A2420]/50 uppercase tracking-[0.2em]">Liên hệ</h4>
         <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps'" target="_blank" rel="noopener noreferrer"
           class="flex items-start gap-3 group">
-          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0 group-hover:text-[#2A2420] transition-colors">location_on</span>
+          <i class="fa text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0 group-hover:text-[#2A2420] transition-colors fa-location-dot"></i>
           <span class="text-[#2A2420]/80 text-[15px] leading-snug group-hover:text-[#2A2420] transition-colors">{{ settings?.['contact.address'] || '416A Đường CC2, P. Sơn Kỳ, Q. Tân Phú, TP.HCM' }}</span>
         </a>
         <div class="flex items-start gap-3">
-          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0">call</span>
+          <i class="fa text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0 fa-phone"></i>
           <div class="flex flex-col gap-1.5">
             <a v-for="phone in phones" :key="phone.href" :href="phone.href"
               class="text-[#2A2420]/80 text-[15px] font-medium tabular-nums hover:text-[#2A2420] transition-colors">{{ phone.display }}</a>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] shrink-0">mail</span>
+          <i class="fa text-[#2A2420]/60 text-[20px] shrink-0 fa-envelope"></i>
           <span class="text-[#2A2420]/80 text-[15px]">{{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}</span>
         </div>
         <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-[#2A2420]/60 text-[20px] shrink-0">schedule</span>
+          <i class="fa text-[#2A2420]/60 text-[20px] shrink-0 fa-clock"></i>
           <span class="text-[#2A2420]/80 text-[15px]">{{ settings?.['contact.working_hours'] || 'T2 – T6: 8:30 AM – 5:30 PM' }}</span>
         </div>
       </div>
@@ -278,7 +267,7 @@ onMounted(() => load())
 /* ═══ Responsive: Desktop (≥1024px) ═══ */
 @media (min-width: 1024px) {
   .footer-desktop {
-    grid-template-columns: 4fr 2.5fr 3fr 3.5fr;
+    grid-template-columns: 4fr 3fr 2fr 3.5fr;
     gap: 2rem;
   }
 }

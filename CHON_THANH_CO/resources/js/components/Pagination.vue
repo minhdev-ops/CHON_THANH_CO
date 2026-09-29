@@ -87,7 +87,7 @@ const goToPage = (page: number | string) => {
         @click="goToPage(currentPage - 1)"
         aria-label="Trang trước"
       >
-        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        <i class="fa text-[18px] fa-chevron-left"></i>
         <span class="hidden md:inline">Trước</span>
       </button>
 
@@ -129,7 +129,7 @@ const goToPage = (page: number | string) => {
         aria-label="Trang sau"
       >
         <span class="hidden md:inline">Sau</span>
-        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        <i class="fa text-[18px] fa-chevron-right"></i>
       </button>
     </div>
   </nav>

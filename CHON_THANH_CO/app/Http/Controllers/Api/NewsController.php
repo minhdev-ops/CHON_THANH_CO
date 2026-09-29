@@ -30,7 +30,7 @@ class NewsController extends Controller
         return $this->service->newsCategories(app()->getLocale())
             ->map(fn ($category) => [
                 'slug' => $category->slug,
-                'name' => $category->translation()?->name,
+                'name' => $category->name,
             ])
             ->values();
     }

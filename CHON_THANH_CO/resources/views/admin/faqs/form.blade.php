@@ -35,7 +35,7 @@
                         ['name' => 'question', 'label' => 'Câu hỏi', 'required' => true, 'max' => 500],
                         ['name' => 'answer', 'label' => 'Trả lời', 'type' => 'textarea', 'required' => true, 'rows' => 6],
                     ]"
-                    :values="$faq?->translation('vi')?->toArray() ?? []"
+                    :values="$faq?->toArray() ?? []"
                 />
 
                 <x-admin.partials.translation-section
@@ -45,7 +45,7 @@
                         ['name' => 'question', 'label' => 'Question', 'max' => 500],
                         ['name' => 'answer', 'label' => 'Answer', 'type' => 'textarea', 'rows' => 6],
                     ]"
-                    :values="$faq?->translation('en')?->toArray() ?? []"
+                    :values="$faq?->toArray() ?? []"
                 />
             </div>
 

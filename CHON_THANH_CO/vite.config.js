@@ -30,4 +30,16 @@ export default defineConfig({
             ignored: ['**/storage/framework/views/**'],
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'three': ['three'],
+                    'vendor-vue': ['vue', 'vue-router'],
+                    'vendor-utils': ['axios', '@vueuse/core'],
+                },
+            },
+        },
+        chunkSizeWarningLimit: 1000,
+    },
 });

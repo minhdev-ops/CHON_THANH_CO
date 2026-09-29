@@ -134,12 +134,12 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
           </div>
           <div class="flex items-center gap-4 mb-4 lg:mb-3">
             <div class="relative w-full lg:w-72">
-              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+              <i class="fa absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px] fa-magnifying-glass"></i>
               <input
                 v-model="searchQuery"
                 type="text"
                 :placeholder="t('projects.searchPlaceholder')"
-                class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60"
+                class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60 fa-arrow-right"
               >
             </div>
             <div class="hidden sm:flex flex-col items-end px-3 h-full justify-center">
@@ -189,7 +189,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
                 </h3>
                 <span class="text-[11px] font-bold text-text-muted line-clamp-1 mt-1 block">{{ project.location }}</span>
               </div>
-              <span class="material-symbols-outlined text-[18px] text-primary shrink-0">arrow_forward</span>
+              <i class="fa text-[18px] text-primary shrink-0 fa-arrow-right"></i>
             </div>
 
             <!-- Desktop: full vertical card -->
@@ -227,7 +227,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
 
                 <div class="mt-auto flex items-center pt-5 border-t border-outline-variant/30">
                   <span class="inline-flex items-center gap-1.5 font-bold text-[12px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
-                    Chi tiết dự án <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    Chi tiết dự án <i class="fa text-[16px] group-hover:translate-x-1 transition-transform fa-arrow-right"></i>
                   </span>
                 </div>
               </div>

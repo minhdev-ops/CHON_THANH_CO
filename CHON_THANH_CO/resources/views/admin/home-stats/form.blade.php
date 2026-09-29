@@ -35,7 +35,7 @@
                     :fields="[
                         ['name' => 'label', 'label' => 'Nhãn', 'required' => true, 'max' => 150],
                     ]"
-                    :values="$stat?->translation('vi')?->toArray() ?? []"
+                    :values="$stat?->toArray() ?? []"
                 />
 
                 <x-admin.partials.translation-section
@@ -44,7 +44,7 @@
                     :fields="[
                         ['name' => 'label', 'label' => 'Label', 'max' => 150],
                     ]"
-                    :values="$stat?->translation('en')?->toArray() ?? []"
+                    :values="$stat?->toArray() ?? []"
                 />
             </div>
 

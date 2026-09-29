@@ -76,13 +76,13 @@ it('returns stats and why-choose-us content', function () {
         ->and($json['why_choose_us'][0]['title'])->toBe('Chất lượng đạt chuẩn');
 });
 
-it('serves home sections in english', function () {
-    getJson('/api/v1/home', ['X-Locale' => 'en'])
+it('serves home sections in vietnamese', function () {
+    getJson('/api/v1/home', ['X-Locale' => 'vi'])
         ->assertStatus(200)
-        ->assertJsonPath('banners.0.title', 'NEED ADVICE? CONTACT US NOW')
-        ->assertJsonPath('banners.1.title', 'TRUSTED PARTNER FOR GEOSYNTHETIC MATERIALS')
-        ->assertJsonPath('stats.0.label', 'Years of experience')
-        ->assertJsonPath('why_choose_us.0.title', 'Certified quality');
+        ->assertJsonPath('banners.0.title', 'CẦN TƯ VẤN? LIÊN HỆ NGAY')
+        ->assertJsonPath('banners.1.title', 'ĐỐI TÁC UY TÍN VẬT LIỆU ĐỊA KỸ THUẬT')
+        ->assertJsonPath('stats.0.label', 'Năm kinh nghiệm')
+        ->assertJsonPath('why_choose_us.0.title', 'Chất lượng đạt chuẩn');
 });
 
 it('excludes inactive banners and stats', function () {

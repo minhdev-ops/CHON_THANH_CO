@@ -9,11 +9,9 @@ class WhyChooseUsResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $translation = $this->translation();
-
         return [
-            'title' => $translation?->title,
-            'description' => $translation?->description,
+            'title' => $this->title,
+            'description' => $this->description,
             'icon' => $this->icon,
         ];
     }

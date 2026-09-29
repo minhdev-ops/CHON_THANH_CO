@@ -171,22 +171,22 @@ const downloadPdf = () => {
         <!-- Pagination controls -->
         <div v-if="!loading && !error && pages.length > 0" class="flex items-center bg-surface-vlm rounded-full border border-outline-variant p-1 mr-2">
           <button @click="prevPage" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-colors" :disabled="currentPage <= 1">
-            <span class="material-symbols-outlined text-lg">chevron_left</span>
+            <i class="fa text-lg fa-chevron-left"></i>
           </button>
           <span class="text-sm font-medium px-3 text-text-main">
             {{ currentPage }} / {{ totalPages }}
           </span>
           <button @click="nextPage" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-colors" :disabled="currentPage >= totalPages">
-            <span class="material-symbols-outlined text-lg">chevron_right</span>
+            <i class="fa text-lg fa-chevron-right"></i>
           </button>
         </div>
         
         <button type="button" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white py-2 px-4 rounded-full font-bold text-[13px] flex items-center justify-center gap-2 transition-all duration-300" @click="downloadPdf">
-          <span class="material-symbols-outlined text-[16px]">download</span> Tải bản gốc
+          <i class="fa text-[16px] fa-download"></i> Tải bản gốc
         </button>
         
         <button v-if="!hideClose" type="button" class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-vlm border border-outline-variant hover:bg-outline-variant hover:text-primary transition-all duration-300" @click="$emit('close')">
-          <span class="material-symbols-outlined text-[20px]">close</span>
+          <i class="fa text-[20px] fa-xmark"></i>
         </button>
       </div>
     </div>
@@ -196,11 +196,11 @@ const downloadPdf = () => {
       
       <!-- Floating Navigation -->
       <button v-show="!loading && !error && pages.length > 0" @click="prevPage" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-14 md:h-14 rounded-full bg-white shadow-xl border border-outline-variant flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-text-main disabled:cursor-not-allowed">
-        <span class="material-symbols-outlined text-[24px] md:text-[32px] group-hover:-translate-x-1 transition-transform disabled:transform-none">chevron_left</span>
+        <i class="fa text-[24px] md:text-[32px] group-hover:-translate-x-1 transition-transform disabled:transform-none fa-chevron-left"></i>
       </button>
       
       <button v-show="!loading && !error && pages.length > 0" @click="nextPage" class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-14 md:h-14 rounded-full bg-white shadow-xl border border-outline-variant flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-text-main disabled:cursor-not-allowed">
-        <span class="material-symbols-outlined text-[24px] md:text-[32px] group-hover:translate-x-1 transition-transform disabled:transform-none">chevron_right</span>
+        <i class="fa text-[24px] md:text-[32px] group-hover:translate-x-1 transition-transform disabled:transform-none fa-chevron-right"></i>
       </button>
 
       <!-- Pagination floating -->
@@ -220,7 +220,7 @@ const downloadPdf = () => {
 
       <!-- Error State -->
       <div v-else-if="error" class="absolute inset-0 flex flex-col items-center justify-center z-20 px-4 text-center">
-        <span class="material-symbols-outlined text-error text-5xl mb-4">error</span>
+        <i class="fa text-error text-5xl mb-4 fa-circle-exclamation"></i>
         <p class="text-error font-semibold mb-4">{{ error }}</p>
         <button @click="renderPdf" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white py-2 px-6 rounded-full font-bold">Thử lại</button>
       </div>

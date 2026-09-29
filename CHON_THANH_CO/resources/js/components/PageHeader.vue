@@ -8,6 +8,7 @@ const props = withDefaults(
     title: string
     breadcrumbs: { label: string; to?: string }[]
     variant?: 'default' | 'compact' | 'cinematic'
+    eyebrow?: string
   }>(),
   { variant: 'compact' },
 )
@@ -57,14 +58,12 @@ const paddingClass = computed(() => {
       class="relative z-10 max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop text-center flex flex-col items-center reveal"
     >
       <div
-        v-if="breadcrumbs.length"
-        class="inline-flex items-center gap-3 mb-5"
+        v-if="eyebrow || breadcrumbs.length"
+        class="inline-flex items-center justify-center mb-5 max-w-2xl px-4 text-center"
       >
-        <span class="w-6 h-px bg-primary" />
-        <span class="text-primary text-[11px] font-bold tracking-[0.22em] uppercase">
-          {{ breadcrumbs[breadcrumbs.length - 1]?.label }}
+        <span class="text-primary text-[11px] md:text-[12px] font-bold tracking-[0.22em] uppercase">
+          {{ eyebrow || breadcrumbs[breadcrumbs.length - 1]?.label }}
         </span>
-        <span class="w-6 h-px bg-primary" />
       </div>
 
       <h1

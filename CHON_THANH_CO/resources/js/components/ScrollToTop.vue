@@ -30,7 +30,7 @@ onUnmounted(() => {
       class="fixed bottom-6 left-6 z-40 flex items-center gap-2 px-4 py-2.5 bg-[#16243D] text-white rounded-full shadow-lg hover:bg-[#B89B88] hover:shadow-xl active:scale-95 transition-all duration-300 cursor-pointer group"
       @click="scrollToTop"
     >
-      <span class="material-symbols-outlined text-[20px] group-hover:-translate-y-0.5 transition-transform duration-300">arrow_upward</span>
+      <i class="fa text-[20px] group-hover:-translate-y-0.5 transition-transform duration-300 fa-arrow-up"></i>
       <span class="text-[13px] font-semibold tracking-wide hidden sm:inline">Lên đầu trang</span>
     </button>
   </transition>

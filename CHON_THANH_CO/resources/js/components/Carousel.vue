@@ -89,7 +89,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       ]"
       @click="prev"
     >
-      <span class="material-symbols-outlined">chevron_left</span>
+      <i class="fa fa-chevron-left"></i>
     </button>
     <button
       v-if="canNext"
@@ -101,7 +101,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
       ]"
       @click="next"
     >
-      <span class="material-symbols-outlined">chevron_right</span>
+      <i class="fa fa-chevron-right"></i>
     </button>
 
     <div v-if="pageCount > 1" :class="['flex justify-center gap-2', noGap ? 'absolute bottom-6 left-1/2 -translate-x-1/2 z-10' : 'mt-8']">

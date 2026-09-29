@@ -153,17 +153,17 @@ const activeCategoryName = computed(() => {
             </button>
           </div>
           <div class="relative w-full lg:w-72 mb-3 lg:mb-3">
-            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+            <i class="fa absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px] fa-magnifying-glass"></i>
             <input
               v-model="searchQuery" type="text" :placeholder="t('news.searchPlaceholder')"
-              class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60"
+              class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60 fa-newspaper"
             >
           </div>
         </div>
       </div>
 
       <div class="grid grid-cols-12 gap-6 lg:gap-10">
-        <div id="news-main-section" class="col-span-12 scroll-mt-32">
+        <div id="news-main-section" class="col-span-12 lg:col-span-9 scroll-mt-32">
           <!-- ═══ LOADING ═══ -->
           <div v-if="newsLoading" class="grid grid-cols-12 gap-4">
             <div v-for="i in 4" :key="i" class="col-span-12 sm:col-span-6 h-80 bg-canvas animate-shimmer border border-outline-variant"></div>
@@ -195,7 +195,7 @@ const activeCategoryName = computed(() => {
                   <span class="text-[11px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
                   <h3 class="font-bold text-[14px] text-text-main mt-0.5 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
                   <span class="inline-flex items-center gap-1 font-bold text-[11px] text-primary mt-1 uppercase tracking-[0.1em]">
-                    {{ t('news.readMore') }} <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                    {{ t('news.readMore') }} <i class="fa text-[12px] fa-arrow-right"></i>
                   </span>
                 </div>
               </div>
@@ -214,14 +214,14 @@ const activeCategoryName = computed(() => {
                   <div class="flex items-center gap-3 mb-4">
                     <span class="text-primary text-[11px] font-bold uppercase tracking-widest">{{ n.category?.name || 'Tin tức' }}</span>
                     <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                    <span class="text-[12px] font-medium text-text-muted flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">calendar_today</span>{{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
+                    <span class="text-[12px] font-medium text-text-muted flex items-center gap-1.5"><i class="fa text-[14px] fa-calendar-days"></i>{{ new Date(n.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) }}</span>
                   </div>
                   <h3 class="font-bold text-[24px] text-text-main mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
                   <p class="text-text-secondary text-[15px] line-clamp-3 leading-relaxed mb-6">{{ n.excerpt }}</p>
                   <div class="mt-auto">
                     <span class="inline-flex items-center gap-1.5 font-bold text-[13px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
                       {{ t('news.readMore') }}
-                      <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                      <i class="fa text-[16px] group-hover:translate-x-1 transition-transform fa-arrow-right"></i>
                     </span>
                   </div>
                 </div>
@@ -232,7 +232,7 @@ const activeCategoryName = computed(() => {
           <!-- ═══ EMPTY ═══ -->
           <div v-else class="py-24 flex flex-col items-center justify-center text-center bg-surface-bright border border-outline-variant rounded-sm shadow-sm">
             <div class="w-16 h-16 rounded-sm bg-surface-vlm border border-outline-variant/60 flex items-center justify-center mb-6">
-              <span class="material-symbols-outlined text-[32px] text-text-muted">article</span>
+              <i class="fa text-[32px] text-text-muted fa-newspaper"></i>
             </div>
             <h3 class="text-text-main font-bold text-[18px] mb-2 tracking-wide">KHÔNG TÌM THẤY BÀI VIẾT</h3>
             <p class="text-text-secondary font-medium text-[15px]">{{ t('news.empty') }}</p>
@@ -255,39 +255,39 @@ const activeCategoryName = computed(() => {
           <div class="lg:sticky lg:top-32 space-y-6">
             <!-- Recent -->
             <section class="bg-white border border-outline-variant shadow-sm rounded-md overflow-hidden reveal">
-              <div class="bg-surface-vlm/30 border-b border-outline-variant/60 px-5 py-4 flex items-center justify-between">
+              <div class="bg-surface-vlm/30 border-b border-outline-variant/60 px-6 py-5 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                  <span class="font-bold text-[12px] text-text-main tracking-widest uppercase">{{ t('news.latest') }}</span>
+                <span class="font-bold text-[15px] text-text-main tracking-widest uppercase">{{ t('news.latest') }}</span>
                 </div>
               </div>
-              <div class="p-5 divide-y divide-outline-variant/60">
-                <router-link v-for="(n, i) in recentNews" :key="n.slug" :to="`/news/${n.slug}`" class="flex items-start gap-3 group py-3.5 first:pt-0 last:pb-0">
-                  <div class="font-mono text-[14px] font-bold text-outline-variant group-hover:text-primary transition-colors duration-200 shrink-0 tabular-nums pt-0.5">{{ paddedIndex(i) }}</div>
+              <div class="p-6 divide-y divide-outline-variant/60">
+              <router-link v-for="(n, i) in recentNews" :key="n.slug" :to="`/news/${n.slug}`" class="flex items-start gap-4 group py-5 first:pt-0 last:pb-0">
+                <div class="font-mono text-[16px] font-bold text-outline-variant group-hover:text-primary transition-colors duration-200 shrink-0 tabular-nums pt-0.5">{{ paddedIndex(i) }}</div>
                   <div class="flex-grow min-w-0">
-                    <h4 class="font-medium text-text-main text-[13px] leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-1.5">{{ n.title }}</h4>
-                    <span class="text-[11px] text-text-muted font-medium">{{ formatDate(n.published_at) }}</span>
+                  <h4 class="font-semibold text-text-main text-[15px] leading-snug line-clamp-3 group-hover:text-primary transition-colors duration-300 mb-2">{{ n.title }}</h4>
+                  <span class="text-[12px] text-text-muted font-medium">{{ formatDate(n.published_at) }}</span>
                   </div>
                 </router-link>
               </div>
             </section>
 
             <!-- Newsletter / Subscribe -->
-            <section class="relative overflow-hidden bg-white border border-outline-variant p-6 shadow-sm rounded-md reveal">
+            <section class="relative overflow-hidden bg-white border border-outline-variant p-7 shadow-sm rounded-md reveal">
               <div class="relative">
-                <div class="font-bold text-[12px] text-text-main tracking-widest uppercase mb-4">{{ t('news.subscribeTitle') }}</div>
-                <p class="text-text-secondary text-[13px] mb-6 leading-relaxed">{{ t('news.subscribeText') }}</p>
-                <router-link to="/contact" class="group flex items-center justify-center gap-2 btn-primary px-5 py-3 text-[12px] font-bold tracking-wider uppercase shadow-sm hover:shadow transition-all rounded-md w-full">
+                <div class="font-bold text-[15px] text-text-main tracking-widest uppercase mb-5">{{ t('news.subscribeTitle') }}</div>
+                <p class="text-text-secondary text-[15px] mb-7 leading-relaxed">{{ t('news.subscribeText') }}</p>
+                <router-link to="/contact" class="group flex items-center justify-center gap-2 btn-primary px-5 py-3.5 text-[14px] font-bold tracking-wider uppercase shadow-sm hover:shadow transition-all rounded-md w-full">
                   <span>{{ t('news.contactUs') }}</span>
                 </router-link>
               </div>
             </section>
 
             <!-- Tag cloud -->
-            <section class="bg-white border border-outline-variant p-6 shadow-sm rounded-md reveal">
-              <div class="font-bold text-[12px] text-text-main tracking-widest uppercase mb-5">TAGS</div>
+            <section class="bg-white border border-outline-variant p-7 shadow-sm rounded-md reveal">
+              <div class="font-bold text-[15px] text-text-main tracking-widest uppercase mb-5">TAGS</div>
               <div class="flex flex-wrap gap-2">
                 <span v-for="tag in ['Geotextile', 'Geogrid', 'HDPE', 'GCL', 'Thi công', 'Báo giá', 'ISO 9001']" :key="tag"
-                  class="text-[11px] font-medium text-text-secondary bg-surface-vlm border border-outline-variant/60 px-3 py-1.5 hover:bg-primary hover:text-white hover:border-primary cursor-pointer transition-colors duration-200 rounded-sm">
+                  class="text-[13px] font-medium text-text-secondary bg-surface-vlm border border-outline-variant/60 px-3.5 py-2 hover:bg-primary hover:text-white hover:border-primary cursor-pointer transition-colors duration-200 rounded-sm">
                   {{ tag }}
                 </span>
               </div>

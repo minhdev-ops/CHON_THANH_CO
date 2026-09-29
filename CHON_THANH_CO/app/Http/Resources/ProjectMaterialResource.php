@@ -9,11 +9,9 @@ class ProjectMaterialResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $translation = $this->translation();
-
         return [
-            'name' => $translation?->name,
-            'detail' => $translation?->detail,
+            'name' => $this->name,
+            'detail' => $this->detail,
             'image' => $this->image,
             'product' => $this->whenLoaded('product', fn () => [
                 'slug' => $this->product->slug,

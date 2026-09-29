@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="max-w-3xl">
-        <form method="POST" action="{{ $item ? route('admin.about-timeline.update', $item) : route('admin.about-timeline.store') }}"
-            x-data="{ lang: 'vi' }">
+        <form method="POST" action="{{ $item ? route('admin.about-timeline.update', $item) : route('admin.about-timeline.store') }}">
             @csrf
             @if ($item)
                 @method('PUT')
@@ -14,39 +13,16 @@
             <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
                 <h2 class="font-semibold mb-4">Thông tin chung</h2>
 
+                <x-admin.partials.input name="year" label="Mốc thời gian" :value="$item?->year" required max="100" :hint="'VD: 2005 - Thành lập'" />
+
+                <x-admin.partials.input name="description" label="Mô tả" :value="$item?->description" type="textarea" required />
+
                 <div class="grid grid-cols-2 gap-4">
                     <x-admin.partials.input name="sort_order" label="Thứ tự" type="number" :value="$item?->sort_order" min="0" />
                     <div class="pt-7">
                         <x-admin.partials.checkbox name="is_active" label="Hiển thị trên website" :checked="$item?->is_active ?? true" />
                     </div>
                 </div>
-            </div>
-
-            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-                <div class="flex gap-2 mb-4">
-                    <button type="button" @click="lang = 'vi'" :class="lang === 'vi' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-1.5 rounded text-sm font-semibold">Tiếng Việt</button>
-                    <button type="button" @click="lang = 'en'" :class="lang === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-1.5 rounded text-sm font-semibold">English</button>
-                </div>
-
-                <x-admin.partials.translation-section
-                    locale="vi"
-                    label="Tiếng Việt"
-                    :fields="[
-                        ['name' => 'year', 'label' => 'Mốc thời gian', 'required' => true, 'max' => 100, 'hint' => 'VD: 2005 - Thành lập'],
-                        ['name' => 'description', 'label' => 'Mô tả', 'type' => 'textarea', 'required' => true],
-                    ]"
-                    :values="$item?->translation('vi')?->toArray() ?? []"
-                />
-
-                <x-admin.partials.translation-section
-                    locale="en"
-                    label="English"
-                    :fields="[
-                        ['name' => 'year', 'label' => 'Year milestone', 'max' => 100, 'hint' => 'e.g. 2005 - Founding'],
-                        ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
-                    ]"
-                    :values="$item?->translation('en')?->toArray() ?? []"
-                />
             </div>
 
             <div class="flex items-center gap-3">

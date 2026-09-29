@@ -45,7 +45,7 @@
                         ['name' => 'name', 'label' => 'Tên chứng chỉ', 'required' => true, 'max' => 200],
                         ['name' => 'description', 'label' => 'Mô tả', 'type' => 'textarea'],
                     ]"
-                    :values="$certificate?->translation('vi')?->toArray() ?? []"
+                    :values="$certificate?->toArray() ?? []"
                 />
 
                 <x-admin.partials.translation-section
@@ -55,7 +55,7 @@
                         ['name' => 'name', 'label' => 'Name', 'max' => 200],
                         ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
                     ]"
-                    :values="$certificate?->translation('en')?->toArray() ?? []"
+                    :values="$certificate?->toArray() ?? []"
                 />
             </div>
 

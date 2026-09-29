@@ -11,7 +11,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection()
     {
-        return Product::with(['translations', 'category.translations', 'applications.translations'])
+        return Product::with(['category', 'applications'])
             ->orderBy('category_id')
             ->orderBy('sort_order')
             ->get();
@@ -23,12 +23,9 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
             'code',
             'slug',
             'category',
-            'name_vi',
-            'name_en',
-            'description_vi',
-            'description_en',
-            'strength_label_vi',
-            'strength_label_en',
+            'name',
+            'description',
+            'strength_label',
             'strength_min',
             'strength_max',
             'image',
@@ -41,19 +38,13 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
 
     public function map($product): array
     {
-        $vi = $product->translation('vi');
-        $en = $product->translation('en');
-
         return [
             $product->code,
             $product->slug,
             $product->category?->slug ?? '',
-            $vi?->name ?? '',
-            $en?->name ?? '',
-            $vi?->description ?? '',
-            $en?->description ?? '',
-            $vi?->strength_label ?? '',
-            $en?->strength_label ?? '',
+            $product->name,
+            $product->description ?? '',
+            $product->strength_label ?? '',
             $product->strength_min,
             $product->strength_max,
             $product->image,

@@ -15,7 +15,7 @@ uses(RefreshDatabase::class);
  */
 
 it('paginates through a large product catalog without gaps or duplicates', function () {
-    $category = Category::create(['slug' => 'cat-volume', 'sort_order' => 1, 'is_active' => true]);
+    $category = Category::create(['slug' => 'cat-volume', 'name' => 'Cat Volume', 'sort_order' => 1, 'is_active' => true]);
 
     // Tạo 1.000 sản phẩm bằng insertMany (nhanh hơn tạo từng dòng).
     $rows = [];
@@ -24,6 +24,8 @@ it('paginates through a large product catalog without gaps or duplicates', funct
             'category_id' => $category->id,
             'slug' => "sp-volume-{$i}",
             'code' => "VOL-{$i}",
+            'name' => "Sản phẩm {$i}",
+            'description' => "Mô tả sản phẩm {$i}",
             'image' => '/x.png',
             'is_active' => true,
             'created_at' => now(),
@@ -58,7 +60,7 @@ it('paginates through a large product catalog without gaps or duplicates', funct
 });
 
 it('respects the requested limit and caps at 50', function () {
-    $category = Category::create(['slug' => 'cat-limit', 'sort_order' => 1, 'is_active' => true]);
+    $category = Category::create(['slug' => 'cat-limit', 'name' => 'Cat Limit', 'sort_order' => 1, 'is_active' => true]);
 
     $rows = [];
     for ($i = 1; $i <= 100; $i++) {
@@ -66,6 +68,8 @@ it('respects the requested limit and caps at 50', function () {
             'category_id' => $category->id,
             'slug' => "sp-limit-{$i}",
             'code' => "LIM-{$i}",
+            'name' => "Sản phẩm {$i}",
+            'description' => "Mô tả sản phẩm {$i}",
             'image' => '/x.png',
             'is_active' => true,
             'created_at' => now(),
@@ -81,8 +85,8 @@ it('respects the requested limit and caps at 50', function () {
 });
 
 it('still filters correctly across a large catalog', function () {
-    $catA = Category::create(['slug' => 'cat-a', 'sort_order' => 1, 'is_active' => true]);
-    $catB = Category::create(['slug' => 'cat-b', 'sort_order' => 1, 'is_active' => true]);
+    $catA = Category::create(['slug' => 'cat-a', 'name' => 'Cat A', 'sort_order' => 1, 'is_active' => true]);
+    $catB = Category::create(['slug' => 'cat-b', 'name' => 'Cat B', 'sort_order' => 1, 'is_active' => true]);
 
     // 30 sản phẩm thuộc cat-a, 100 thuộc cat-b
     $rows = [];
@@ -91,6 +95,8 @@ it('still filters correctly across a large catalog', function () {
             'category_id' => $i <= 30 ? $catA->id : $catB->id,
             'slug' => 'sp-f'.$i,
             'code' => "FLT-{$i}",
+            'name' => "Sản phẩm {$i}",
+            'description' => "Mô tả sản phẩm {$i}",
             'image' => '/x.png',
             'is_active' => true,
             'created_at' => now(),

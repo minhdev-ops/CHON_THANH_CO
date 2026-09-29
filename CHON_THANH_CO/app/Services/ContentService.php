@@ -13,7 +13,6 @@ class ContentService
     public function certificates(string $locale = 'vi'): Collection
     {
         return Certificate::query()
-            ->with(['translations'])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();
@@ -22,7 +21,7 @@ class ContentService
     public function news(array $filters = [], string $locale = 'vi', int $limit = 12): array
     {
         $query = News::query()
-            ->with(['translations', 'category.translations'])
+            ->with(['category'])
             ->where('is_active', true);
 
         if (! empty($filters['category'])) {
@@ -44,7 +43,6 @@ class ContentService
     public function newsCategories(string $locale = 'vi'): Collection
     {
         return NewsCategory::query()
-            ->with(['translations'])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();
@@ -53,7 +51,7 @@ class ContentService
     public function newsDetail(string $slug, string $locale = 'vi'): ?News
     {
         return News::query()
-            ->with(['translations', 'category.translations'])
+            ->with(['category'])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->first();
@@ -62,7 +60,6 @@ class ContentService
     public function faqs(string $locale = 'vi'): Collection
     {
         return Faq::query()
-            ->with(['translations'])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();

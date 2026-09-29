@@ -47,10 +47,10 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-4 md:mt-6">
 <router-link
                  :to="linkTo || '/contact'"
-                 class="group btn-light btn-lg rounded-full w-full sm:w-auto justify-center"
+                 class="group btn-light btn-lg rounded-full w-full sm:w-auto inline-flex items-center justify-center gap-2"
                >
                 {{ linkLabel || 'GỬI YÊU CẦU' }}
-                <span class="material-symbols-outlined text-[18px] md:text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+                <i class="fa text-[18px] md:text-[20px] transition-transform group-hover:translate-x-1 fa-arrow-right"></i>
               </router-link>
               
               <div class="hidden sm:block w-px h-12 bg-white/30"></div>
@@ -60,10 +60,10 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
                 <a :href="hotlineHref" class="relative flex items-center justify-center shrink-0">
                   <div class="absolute inset-0 rounded-full bg-[#D84315] opacity-30 animate-ping group-hover:bg-[#D84315]/50"></div>
                   <div class="w-[64px] h-[64px] rounded-full bg-[#D84315] text-white flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-all duration-300">
-                    <span class="material-symbols-outlined text-[30px] animate-ring">call</span>
+                    <i class="fa text-[30px] animate-ring fa-phone"></i>
                   </div>
                   <div class="absolute -top-1 -right-1 w-6 h-6 bg-[#B89B88] rounded-full flex items-center justify-center z-20 shadow-sm border-2 border-white group-hover:bg-[#16243D] transition-colors">
-                    <span class="material-symbols-outlined text-[14px] text-white">chat</span>
+                    <i class="fa text-[14px] text-white fa-comment"></i>
                   </div>
                 </a>
                 <div class="flex items-center ms-5 group/hotline">
@@ -73,7 +73,7 @@ const hotlineHref = computed(() => `tel:${hotline.value.replace(/[^\d+]/g, '')}`
 
               <!-- Mobile: Compact hotline button -->
               <a :href="hotlineHref" class="sm:hidden inline-flex items-center gap-3 bg-white text-[#D84315] font-bold text-[15px] py-3.5 px-8 rounded-[50px] shadow-lg active:scale-[0.97] transition-transform w-full justify-center">
-                <span class="material-symbols-outlined text-[22px]">call</span>
+                <i class="fa text-[22px] fa-phone"></i>
                 {{ hotline }}
               </a>
             </div>

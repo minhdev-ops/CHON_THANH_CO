@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\ProductsExport;
 use App\Exports\ProductsTemplateExport;
-use App\Http\Controllers\Admin\Concerns\SyncsTranslations;
 use App\Http\Controllers\Controller;
 use App\Imports\ProductsImport;
 use App\Models\Application;
@@ -17,26 +16,48 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
-    use SyncsTranslations;
+    use Concerns\RendersAdminTables;
 
     public function index(Request $request)
     {
-        $query = Product::with('translations', 'category')->withCount('specs');
+        $baseQuery = fn () => Product::with('category')->withCount('specs');
 
-        if ($request->filled('q')) {
-            $search = $request->input('q');
-            $query->where(function ($q) use ($search) {
-                $q->where('code', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%")
-                    ->orWhereHas('translations', function ($t) use ($search) {
-                        $t->where('name', 'like', "%{$search}%");
-                    });
-            });
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('q')) {
+                $search = $request->input('q');
+                $query->where(function ($q) use ($search) {
+                    $q->where('code', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('category')) {
+                $query->where('category_id', $request->input('category'));
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.products.rows',
+                sortable: [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'category_id' => 'category_id',
+                    'strength_min' => 'strength_min',
+                    'specs_count' => 'specs_count',
+                    'is_featured' => 'is_featured',
+                    'is_active' => 'is_active',
+                ],
+                defaultOrder: ['category_id' => 'asc', 'sort_order' => 'asc'],
+            );
         }
 
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->input('category'));
-        }
+        $query = $baseQuery();
+        $applyFilters($query, $request);
 
         $products = $query->orderBy('category_id')->orderBy('sort_order')->paginate(15)->withQueryString();
         $categories = Category::all();
@@ -60,6 +81,11 @@ class ProductController extends Controller
             'category_id' => $data['category_id'],
             'slug' => $this->makeSlug($data),
             'code' => $data['code'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'strength_label' => $data['strength_label'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
             'image' => $data['image'],
             'strength_min' => $data['strength_min'] ?? null,
             'strength_max' => $data['strength_max'] ?? null,
@@ -76,7 +102,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return view('admin.products.form', [
-            'product' => $product->load('translations', 'specs.translations', 'images', 'applications'),
+            'product' => $product->load('specs', 'images', 'applications'),
             'categories' => Category::all(),
             'applications' => Application::all(),
         ]);
@@ -89,6 +115,11 @@ class ProductController extends Controller
             'category_id' => $data['category_id'],
             'slug' => $this->makeSlug($data, $product),
             'code' => $data['code'],
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'strength_label' => $data['strength_label'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
             'image' => $data['image'],
             'strength_min' => $data['strength_min'] ?? null,
             'strength_max' => $data['strength_max'] ?? null,
@@ -170,10 +201,6 @@ class ProductController extends Controller
 
     private function saveRelations(Product $product, array $data): void
     {
-        $this->syncTranslations($product, $data['translations'], [
-            'name', 'description', 'strength_label', 'meta_title', 'meta_description',
-        ]);
-
         $product->applications()->sync($data['applications'] ?? []);
 
         $product->specs()->delete();
@@ -181,15 +208,12 @@ class ProductController extends Controller
             if (empty($row['value'])) {
                 continue;
             }
-            $spec = $product->specs()->create([
+            $product->specs()->create([
                 'icon' => $row['icon'] ?? null,
                 'value' => $row['value'],
+                'label' => $row['label'] ?? null,
                 'sort_order' => $row['sort_order'] ?? 0,
             ]);
-            $this->syncTranslations($spec, [
-                'vi' => ['label' => $row['label_vi'] ?? null],
-                'en' => ['label' => $row['label_en'] ?? null],
-            ], ['label']);
         }
 
         $product->images()->delete();
@@ -216,6 +240,11 @@ class ProductController extends Controller
                 'max:100',
                 Rule::unique('products', 'code')->whereNull('deleted_at')->ignore($product?->id),
             ],
+            'name' => ['required', 'string', 'max:200'],
+            'description' => ['required', 'string'],
+            'strength_label' => ['nullable', 'string', 'max:50'],
+            'meta_title' => ['nullable', 'string', 'max:200'],
+            'meta_description' => ['nullable', 'string', 'max:300'],
             'image' => ['required', 'string', 'max:255'],
             'strength_min' => ['nullable', 'numeric'],
             'strength_max' => ['nullable', 'numeric'],
@@ -224,21 +253,10 @@ class ProductController extends Controller
             'is_active' => ['boolean'],
             'applications' => ['nullable', 'array'],
             'applications.*' => ['exists:applications,id'],
-            'translations.vi.name' => ['required', 'string', 'max:200'],
-            'translations.vi.description' => ['required', 'string'],
-            'translations.vi.strength_label' => ['nullable', 'string', 'max:50'],
-            'translations.vi.meta_title' => ['nullable', 'string', 'max:200'],
-            'translations.vi.meta_description' => ['nullable', 'string', 'max:300'],
-            'translations.en.name' => ['nullable', 'string', 'max:200'],
-            'translations.en.description' => ['nullable', 'string'],
-            'translations.en.strength_label' => ['nullable', 'string', 'max:50'],
-            'translations.en.meta_title' => ['nullable', 'string', 'max:200'],
-            'translations.en.meta_description' => ['nullable', 'string', 'max:300'],
             'specs' => ['nullable', 'array'],
             'specs.*.icon' => ['nullable', 'string', 'max:50'],
             'specs.*.value' => ['nullable', 'string', 'max:100'],
-            'specs.*.label_vi' => ['nullable', 'string', 'max:150'],
-            'specs.*.label_en' => ['nullable', 'string', 'max:150'],
+            'specs.*.label' => ['nullable', 'string', 'max:150'],
             'specs.*.sort_order' => ['nullable', 'integer'],
             'images' => ['nullable', 'array'],
             'images.*.image' => ['nullable', 'string', 'max:255'],
@@ -253,7 +271,7 @@ class ProductController extends Controller
             return Str::slug($data['slug']);
         }
 
-        $name = $data['translations']['vi']['name'] ?? '';
+        $name = $data['name'] ?? '';
 
         return Str::slug($name) ?: ($existing?->slug ?? 'product-'.Str::random(6));
     }

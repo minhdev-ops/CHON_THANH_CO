@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { faIcon } from '../utils/icons'
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { api } from '../api/client'
@@ -111,18 +112,18 @@ const breadcrumbs = computed(() => [
             </transition>
             <div v-if="galleryImages.length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 glass-premium rounded-full px-5 py-2.5 shadow-lg">
               <button type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-text-main hover:bg-surface-vlm transition-colors duration-300" @click="activeImage = (activeImage - 1 + galleryImages.length) % galleryImages.length">
-                <span class="material-symbols-outlined text-sm">chevron_left</span>
+                <i class="fa text-sm fa-chevron-left"></i>
               </button>
               <span class="text-xs font-bold text-text-secondary tabular-nums min-w-[3rem] text-center">{{ activeImage + 1 }}/{{ galleryImages.length }}</span>
               <button type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-text-main hover:bg-surface-vlm transition-colors duration-300" @click="activeImage = (activeImage + 1) % galleryImages.length">
-                <span class="material-symbols-outlined text-sm">chevron_right</span>
+                <i class="fa text-sm fa-chevron-right"></i>
               </button>
             </div>
           </div>
 
-          <div v-if="galleryImages.length > 1" class="grid grid-cols-5 gap-3 mt-4">
+          <div v-if="galleryImages.length > 1" class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4 overflow-x-auto scrollbar-hide pb-2">
             <button v-for="(img, i) in galleryImages" :key="i" type="button"
-              class="aspect-square border-2 rounded-xl overflow-hidden flex items-center justify-center bg-surface-bright transition-all duration-300 p-2 cursor-pointer"
+              class="aspect-square border-2 rounded-xl overflow-hidden flex items-center justify-center bg-surface-bright transition-all duration-300 p-2 cursor-pointer shrink-0 min-w-[80px]"
               :class="i === activeImage ? 'border-primary ring-2 ring-primary/20 shadow-md' : 'border-outline-variant hover:border-primary/50'"
               @click="activeImage = i">
               <LazyImage
@@ -150,7 +151,7 @@ const breadcrumbs = computed(() => [
 
           <div v-if="product.strength_label" class="flex items-center gap-4 mb-8 bg-primary/5 border border-primary/15 rounded-2xl px-6 py-5">
             <span class="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center">
-              <span class="material-symbols-outlined text-primary text-[24px]">compress</span>
+              <i class="fa text-primary text-[24px] fa-compress"></i>
             </span>
             <div>
               <div class="text-[11px] text-text-muted font-bold uppercase tracking-wider mb-1">{{ product.strength_label }}</div>
@@ -163,7 +164,7 @@ const breadcrumbs = computed(() => [
           <div v-if="product.specs?.length" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div v-for="spec in product.specs.slice(0, 3)" :key="spec.label" class="bg-surface-bright border border-outline-variant rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
               <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-4">
-                <span class="material-symbols-outlined text-primary-deep text-xl">{{ spec.icon || 'check' }}</span>
+                <i class="fa text-primary-deep text-xl" :class="faIcon(spec.icon || 'check')"></i>
               </div>
               <span class="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] mb-2">{{ spec.label }}</span>
               <span class="font-bold text-text-main text-[16px]">{{ spec.value }}</span>
@@ -171,11 +172,11 @@ const breadcrumbs = computed(() => [
           </div>
 
           <div class="flex flex-col sm:flex-row gap-4 mt-auto border-t border-outline-variant pt-8">
-            <router-link to="/contact" class="btn bg-primary text-primary-deep hover:bg-primary-dark rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center gap-3 shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-xl">request_quote</span> {{ t('product.quote') }}
+            <router-link to="/contact" class="btn btn-primary btn-magnetic rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+              <i class="fa text-xl fa-file-pen"></i> {{ t('product.quote') }}
             </router-link>
-            <a href="tel:0909292530" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center gap-3 transition-all duration-300">
-              <span class="material-symbols-outlined text-xl">call</span> Gọi tư vấn
+            <a href="tel:0909292530" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center justify-center gap-3 transition-all duration-300">
+              <i class="fa text-xl fa-phone"></i> Gọi tư vấn
             </a>
           </div>
         </div>
@@ -185,9 +186,9 @@ const breadcrumbs = computed(() => [
     <!-- Tabs -->
     <section class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop mb-20">
       <div class="bg-surface-bright border border-outline-variant rounded-3xl overflow-hidden">
-        <div class="flex flex-wrap border-b border-outline-variant bg-surface-vlm">
+        <div class="flex flex-wrap overflow-x-auto scrollbar-hide border-b border-outline-variant bg-surface-vlm">
           <button v-for="tab in ['specs','applications','description'] as const" :key="tab"
-            class="px-8 py-5 text-[14px] font-bold uppercase tracking-wider transition-colors duration-300 relative"
+            class="px-6 md:px-8 py-4 md:py-5 text-[12px] md:text-[14px] font-bold uppercase tracking-wider transition-colors duration-300 relative whitespace-nowrap shrink-0"
             :class="activeTab === tab ? 'text-primary-deep bg-surface-bright' : 'text-text-muted hover:text-primary'"
             @click="activeTab = tab">
             {{ tab === 'specs' ? t('product.specs') : tab === 'applications' ? t('product.applications') : 'Mô tả chi tiết' }}
@@ -197,10 +198,10 @@ const breadcrumbs = computed(() => [
         <div class="p-8 md:p-10">
           <transition name="page" mode="out-in">
             <div v-if="activeTab === 'specs' && product.specs?.length" key="specs">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 gap-4">
                 <div v-for="(spec, i) in product.specs" :key="i" class="flex items-start gap-4 p-5 bg-surface-vlm rounded-2xl border border-outline-variant hover:border-primary/30 hover:shadow-sm transition-all duration-300 group">
                   <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                    <span class="material-symbols-outlined text-primary group-hover:text-white">{{ spec.icon || 'check' }}</span>
+                    <i class="fa text-primary group-hover:text-white" :class="faIcon(spec.icon || 'check')"></i>
                   </div>
                   <div class="flex-grow min-w-0">
                     <div class="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1">{{ spec.label }}</div>
@@ -209,10 +210,10 @@ const breadcrumbs = computed(() => [
                 </div>
               </div>
             </div>
-            <div v-else-if="activeTab === 'applications' && product.applications?.length" key="applications" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div v-else-if="activeTab === 'applications' && product.applications?.length" key="applications" class="grid grid-cols-1 gap-5">
               <div v-for="app in product.applications" :key="app.slug" class="flex items-start gap-4 p-6 bg-surface-vlm border border-outline-variant rounded-2xl hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
                 <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-primary-deep shrink-0">
-                  <span class="material-symbols-outlined text-xl">{{ appIcons[app.slug] || 'check' }}</span>
+                  <i class="fa text-xl" :class="faIcon(appIcons[app.slug] || 'check')"></i>
                 </div>
                 <div>
                   <span class="text-[15px] font-bold text-text-main block mb-1.5">{{ app.name }}</span>
@@ -241,10 +242,10 @@ const breadcrumbs = computed(() => [
   </div>
 
   <div v-else-if="notFound" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 text-center">
-    <span class="material-symbols-outlined text-7xl text-outline-variant mb-6 block">inventory_2</span>
+    <i class="fa text-7xl text-outline-variant mb-6 block fa-boxes-stacked"></i>
     <h1 class="text-[28px] text-text-main font-bold mb-6">{{ t('product.notFound') }}</h1>
     <router-link to="/products" class="btn bg-primary text-primary-deep hover:bg-primary-dark rounded-full inline-flex items-center gap-2">
-      <span class="material-symbols-outlined text-lg">arrow_back</span> {{ t('product.backToList') }}
+      <i class="fa text-lg fa-arrow-left"></i> {{ t('product.backToList') }}
     </router-link>
   </div>
 </template>

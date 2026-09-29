@@ -23,7 +23,7 @@ beforeEach(function () {
     ]);
 });
 
-it('allows editing and updating hero banner translations in admin', function () {
+it('allows editing and updating hero banner in admin', function () {
     $this->seed(BannerSeeder::class);
 
     $hero = Banner::where('section', 'hero')->first();
@@ -41,35 +41,23 @@ it('allows editing and updating hero banner translations in admin', function () 
         'link_to' => '/contact',
         'sort_order' => 1,
         'is_active' => 1,
-        'translations' => [
-            'vi' => [
-                'title' => 'TIÊU ĐỀ HERO MỚI',
-                'subtitle' => 'Phụ đề hero tiếng Việt mới',
-                'text' => '',
-                'button_text' => 'TƯ VẤN NGAY',
-            ],
-            'en' => [
-                'title' => 'NEW HERO TITLE',
-                'subtitle' => 'New English Subtitle',
-                'text' => '',
-                'button_text' => 'CONTACT NOW',
-            ],
-        ],
+        'title' => 'TIÊU ĐỀ HERO MỚI',
+        'subtitle' => 'Phụ đề hero tiếng Việt mới',
+        'text' => '',
+        'button_text' => 'TƯ VẤN NGAY',
     ])->assertRedirect('/admin/banners');
 
     $hero->refresh();
     expect($hero->image)->toBe('/images/new-hero.jpg');
-    expect($hero->translation('vi')?->title)->toBe('TIÊU ĐỀ HERO MỚI');
-    expect($hero->translation('vi')?->subtitle)->toBe('Phụ đề hero tiếng Việt mới');
-    expect($hero->translation('vi')?->button_text)->toBe('TƯ VẤN NGAY');
-    expect($hero->translation('en')?->title)->toBe('NEW HERO TITLE');
-    expect($hero->translation('en')?->subtitle)->toBe('New English Subtitle');
+    expect($hero->title)->toBe('TIÊU ĐỀ HERO MỚI');
+    expect($hero->subtitle)->toBe('Phụ đề hero tiếng Việt mới');
+    expect($hero->button_text)->toBe('TƯ VẤN NGAY');
 });
 
 it('preserves specs in product create form when validation fails', function () {
-    $category = Category::create(['slug' => 'cat-test', 'sort_order' => 1, 'is_active' => true]);
+    $category = Category::create(['slug' => 'cat-test', 'name' => 'Cat Test', 'sort_order' => 1, 'is_active' => true]);
 
-    // Submit with missing required code and translations.vi.name to trigger validation error
+    // Submit with missing required code and name to trigger validation error
     $response = $this->from('/admin/products/create')->post('/admin/products', [
         'category_id' => $category->id,
         'code' => '', // missing
@@ -78,8 +66,7 @@ it('preserves specs in product create form when validation fails', function () {
             [
                 'value' => '45 kN/m',
                 'icon' => 'bolt',
-                'label_vi' => 'Cường độ kéo',
-                'label_en' => 'Tensile strength',
+                'label' => 'Cường độ kéo',
                 'sort_order' => 1,
             ],
         ],
@@ -89,7 +76,7 @@ it('preserves specs in product create form when validation fails', function () {
     ]);
 
     $response->assertRedirect('/admin/products/create');
-    $response->assertSessionHasErrors(['code', 'translations.vi.name']);
+    $response->assertSessionHasErrors(['code', 'name']);
 });
 
 it('preserves materials and gallery in project create form when validation fails', function () {
@@ -101,10 +88,8 @@ it('preserves materials and gallery in project create form when validation fails
             [
                 'product_id' => null,
                 'image' => '/userfiles/images/projects/mat.png',
-                'name_vi' => 'Vật liệu kiểm thử',
-                'detail_vi' => 'Chi tiết',
-                'name_en' => '',
-                'detail_en' => '',
+                'name' => 'Vật liệu kiểm thử',
+                'detail' => 'Chi tiết',
                 'sort_order' => 1,
             ],
         ],
@@ -148,13 +133,13 @@ it('filters contact messages by status', function () {
         'status' => 'replied',
     ]);
 
-    $this->get('/admin/contacts?status=new')
+    $this->getJson('/admin/contacts?status=new')
         ->assertStatus(200)
-        ->assertSee('Khách hàng 1')
-        ->assertDontSee('Khách hàng 2');
+        ->assertJsonPath('data.0.name', 'Khách hàng 1')
+        ->assertJsonCount(1, 'data');
 
-    $this->get('/admin/contacts?status=replied')
+    $this->getJson('/admin/contacts?status=replied')
         ->assertStatus(200)
-        ->assertSee('Khách hàng 2')
-        ->assertDontSee('Khách hàng 1');
+        ->assertJsonPath('data.0.name', 'Khách hàng 2')
+        ->assertJsonCount(1, 'data');
 });

@@ -2,20 +2,19 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Localizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectMaterial extends Model
 {
     use HasFactory;
-    use Localizable;
 
     protected $fillable = [
         'project_id',
         'product_id',
+        'name',
+        'detail',
         'image',
         'sort_order',
     ];
@@ -35,10 +34,5 @@ class ProjectMaterial extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function translations(): HasMany
-    {
-        return $this->hasMany(ProjectMaterialTranslation::class);
     }
 }

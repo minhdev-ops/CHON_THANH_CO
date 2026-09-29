@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { faIcon } from '../utils/icons'
 import GlobalBanner from '../components/GlobalBanner.vue'
 import CTABanner from '../components/CTABanner.vue'
 import { api } from '../api/client'
@@ -145,19 +146,19 @@ const displayStats = computed(() =>
           <SectionHeader align="center" kicker="Tại sao chọn chúng tôi" title="Năng lực vượt trội — Đồng hành bền vững"
             :subtitle="`Với hơn ${getYearsOfExperience()} năm kinh nghiệm, CHƠN THÀNH mang đến giải pháp toàn diện về tư vấn vật liệu, đạt chuẩn quốc tế.`" />
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           <div v-for="(f, i) in features" :key="i"
-            class="feature-card relative bg-surface-bright rounded-2xl p-6 md:p-8 pt-5 md:pt-10 text-center flex flex-col items-center h-full transition-all duration-500 group overflow-hidden reveal"
+            class="feature-card relative bg-surface-bright rounded-2xl p-4 md:p-6 pt-5 md:pt-10 text-center flex flex-col items-center h-full transition-all duration-500 group overflow-hidden reveal"
             :class="`reveal-delay-${i+1}`">
             <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div class="relative w-[48px] h-[48px] md:w-[72px] md:h-[72px] rounded-2xl bg-surface-vlm flex items-center justify-center mb-3 md:mb-6">
-              <span class="material-symbols-outlined text-[24px] md:text-[36px] text-primary">{{ f.icon }}</span>
+            <div class="relative w-[40px] h-[40px] md:w-[72px] md:h-[72px] rounded-2xl bg-surface-vlm flex items-center justify-center mb-3 md:mb-6">
+              <i class="fa text-[20px] md:text-[36px] text-primary" :class="faIcon(f.icon)"></i>
             </div>
-            <h3 class="relative z-10 font-extrabold text-text-main text-[14px] md:text-[18px] mb-2 md:mb-3 tracking-tight leading-tight">{{ f.title }}</h3>
-            <p class="relative z-10 text-text-secondary text-[12px] md:text-[14px] leading-relaxed mb-4 md:mb-6 flex-grow hidden sm:block">{{ f.desc }}</p>
-            <router-link to="/about" class="relative z-10 inline-flex items-center gap-1.5 text-primary font-semibold text-[12px] md:text-[14px] group-hover:text-primary-dark transition-colors duration-300">
+            <h3 class="relative z-10 font-extrabold text-text-main text-[13px] md:text-[18px] mb-2 md:mb-3 tracking-tight leading-tight">{{ f.title }}</h3>
+            <p class="relative z-10 text-text-secondary text-[11px] md:text-[14px] leading-relaxed mb-4 md:mb-6 flex-grow hidden sm:block">{{ f.desc }}</p>
+            <router-link to="/about" class="relative z-10 inline-flex items-center gap-1.5 text-primary font-semibold text-[11px] md:text-[14px] group-hover:text-primary-dark transition-colors duration-300">
               Chi tiết
-              <span class="material-symbols-outlined text-[16px] md:text-[18px] group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+              <i class="fa text-[14px] md:text-[18px] group-hover:translate-x-1 transition-transform duration-300 fa-arrow-right"></i>
             </router-link>
             <div class="absolute -bottom-10 -right-10 w-28 h-28 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-all duration-700 group-hover:scale-150"></div>
           </div>
@@ -188,7 +189,7 @@ const displayStats = computed(() =>
                 'Tư vấn, cung cấp thông tin về vật liệu và hỗ trợ kỹ thuật',
                 'Xuất khẩu CO/CQ đầy đủ sang Campuchia, Lào, Myanmar',
               ]" :key="i" class="flex items-start gap-3 text-text-main font-bold text-[15px]">
-                <span class="material-symbols-outlined text-primary font-bold">check_circle</span>
+                <i class="fa text-primary font-bold fa-circle-check"></i>
                 {{ c }}
               </div>
             </div>
@@ -209,14 +210,14 @@ const displayStats = computed(() =>
                   image-class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              <div class="grid grid-cols-2 gap-6">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div v-for="(s, i) in displayStats" :key="i" :ref="(el) => setCounterEl(el as HTMLElement | null)"
-                  class="bg-surface-bright rounded-[10px] p-6 pb-8 reveal flex flex-col justify-center h-full hover:shadow-xl transition-shadow border border-outline-variant/50" :class="`reveal-delay-${i+1}`">
+                  class="bg-surface-bright rounded-[10px] p-4 md:p-6 pb-8 reveal flex flex-col justify-center h-full hover:shadow-xl transition-shadow border border-outline-variant/50" :class="`reveal-delay-${i+1}`">
                   <div class="flex items-end gap-1 mb-2">
-                    <span class="text-[40px] font-extrabold text-primary tabular-nums leading-none">{{ formatAnimatedValue(i, s.value) }}</span>
-                    <span v-if="s.value.includes('+')" class="text-[32px] font-extrabold text-primary leading-none">+</span>
+                    <span class="text-[32px] md:text-[40px] font-extrabold text-primary tabular-nums leading-none">{{ formatAnimatedValue(i, s.value) }}</span>
+                    <span v-if="s.value.includes('+')" class="text-[24px] md:text-[32px] font-extrabold text-primary leading-none">+</span>
                   </div>
-                  <h3 class="text-[16px] text-text-main font-bold mt-1 mb-0">{{ s.label }}</h3>
+                  <h3 class="text-[13px] md:text-[16px] text-text-main font-bold mt-1 mb-0">{{ s.label }}</h3>
                 </div>
               </div>
             </div>
@@ -231,7 +232,7 @@ const displayStats = computed(() =>
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12 reveal">
           <SectionHeader kicker="Sản phẩm của chúng tôi" title="Sản phẩm tiêu biểu" />
           <router-link to="/products" class="btn-primary rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold hover:transform-none">
-            Tất cả sản phẩm <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
+            Tất cả sản phẩm <i class="fa text-lg ml-1 align-middle fa-arrow-right"></i>
           </router-link>
         </div>
         <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -265,7 +266,7 @@ const displayStats = computed(() =>
             >
               <div class="absolute inset-0 bg-gradient-to-t from-text-main/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div class="absolute -bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:-translate-y-2 transition-transform duration-500 z-10">
-                <span class="material-symbols-outlined text-[28px]">{{ s.icon }}</span>
+                <i class="fa text-[28px]" :class="faIcon(s.icon)"></i>
               </div>
             </LazyImage>
             <div class="p-6 md:p-8 flex flex-col flex-grow relative pt-10">
@@ -273,7 +274,7 @@ const displayStats = computed(() =>
               <p class="text-text-secondary text-[14px] leading-relaxed mb-6 flex-grow">{{ s.desc }}</p>
               <div class="mt-auto pt-5 border-t border-outline-variant/60">
                 <router-link to="/contact" class="inline-flex items-center gap-2 font-bold text-[13px] text-primary group-hover:text-primary-deep uppercase tracking-[0.12em] transition-colors duration-300">
-                  Tư vấn ngay <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  Tư vấn ngay <i class="fa text-[16px] group-hover:translate-x-1 transition-transform fa-arrow-right"></i>
                 </router-link>
               </div>
             </div>
@@ -284,14 +285,14 @@ const displayStats = computed(() =>
           <div v-for="(s, i) in services" :key="i"
             class="group flex items-center gap-4 bg-canvas border border-outline-variant rounded-2xl p-5 hover:shadow-md hover:border-primary/30 transition-all duration-300 reveal" :class="`reveal-delay-${(i%4)+1}`">
             <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-[24px] text-primary">{{ s.icon }}</span>
+              <i class="fa text-[24px] text-primary" :class="faIcon(s.icon)"></i>
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="font-extrabold text-[15px] text-text-main mb-1 group-hover:text-primary transition-colors duration-300 leading-tight">{{ s.title }}</h3>
               <p class="text-text-secondary text-[13px] leading-snug line-clamp-2">{{ s.desc }}</p>
             </div>
             <router-link to="/contact" class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
-              <span class="material-symbols-outlined text-[18px] text-primary group-hover:text-white">arrow_forward</span>
+              <i class="fa text-[18px] text-primary group-hover:text-white fa-arrow-right"></i>
             </router-link>
           </div>
         </div>
@@ -316,7 +317,7 @@ const displayStats = computed(() =>
               <div class="flex items-start justify-between mb-6">
                 <span class="text-[48px] md:text-[64px] font-bold text-primary/30 group-hover:text-primary transition-colors duration-500 leading-none tabular-nums drop-shadow-sm">{{ p.num }}</span>
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                  <span class="material-symbols-outlined text-[26px] text-primary-deep" style="font-variation-settings: 'FILL' 1;">{{ p.icon }}</span>
+                  <i class="fa text-[26px] text-primary-deep" :class="faIcon(p.icon)"></i>
                 </div>
               </div>
               <h3 class="font-extrabold text-text-main text-[19px] mb-3 tracking-tight">{{ p.title }}</h3>
@@ -334,7 +335,7 @@ const displayStats = computed(() =>
           ]" :key="i" class="flex items-center gap-3 bg-surface-bright border border-outline-variant rounded-2xl p-4 reveal" :class="`reveal-delay-${(i%4)+1}`">
             <span class="text-[28px] font-bold text-primary/40 leading-none tabular-nums shrink-0">{{ p.num }}</span>
             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">{{ p.icon }}</span>
+              <i class="fa text-[20px] text-primary" :class="faIcon(p.icon)"></i>
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="font-extrabold text-text-main text-[14px] leading-tight">{{ p.title }}</h3>
@@ -351,7 +352,7 @@ const displayStats = computed(() =>
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12 reveal">
           <SectionHeader kicker="Dự án của chúng tôi" title="Công trình hạ tầng tiêu biểu" />
           <router-link to="/projects" class="btn-primary rounded-full py-3.5 px-8 shrink-0 shadow-md transition-colors font-semibold hover:transform-none">
-            Tất cả dự án <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
+            Tất cả dự án <i class="fa text-lg ml-1 align-middle fa-arrow-right"></i>
           </router-link>
         </div>
         <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -382,7 +383,7 @@ const displayStats = computed(() =>
                   @click="openFaq = openFaq === i ? null : i">
                   <span class="font-bold text-[15px] md:text-[18px]">{{ faq.q }}</span>
                   <div class="w-10 h-10 flex items-center justify-center shrink-0 transition-colors">
-                    <span class="material-symbols-outlined text-[24px] transition-transform duration-300" :class="openFaq === i ? 'rotate-180 text-white' : 'text-primary'">expand_more</span>
+                    <i class="fa text-[24px] transition-transform duration-300 fa-chevron-down" :class="openFaq === i ? 'rotate-180 text-white' : 'text-primary'"></i>
                   </div>
                 </button>
                 <transition name="page">
@@ -425,7 +426,7 @@ const displayStats = computed(() =>
           <div v-for="(t, i) in testimonials" :key="i"
             class="testimonial-card bg-surface-1 border border-outline-variant rounded-2xl p-6 flex flex-col h-full reveal" :class="`reveal-delay-${(i%3)+1}`">
             <div class="flex items-center gap-1 mb-4">
-              <span v-for="s in 5" :key="s" class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <i v-for="s in 5" :key="s" class="fa text-primary text-[20px] fa-star"></i>
             </div>
             <p class="text-text-secondary text-[15px] leading-relaxed mb-6 flex-grow italic">"{{ t.text }}"</p>
             <div class="flex items-center gap-3 pt-4 border-t border-outline-variant">
@@ -448,7 +449,7 @@ const displayStats = computed(() =>
           <div v-for="(t, i) in testimonials" :key="i"
             class="testimonial-card bg-surface-1 border border-outline-variant rounded-2xl p-5 flex flex-col snap-start shrink-0 w-[85vw] max-w-[320px] reveal" :class="`reveal-delay-${(i%3)+1}`">
             <div class="flex items-center gap-1 mb-3">
-              <span v-for="s in 5" :key="s" class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <i v-for="s in 5" :key="s" class="fa text-primary text-[16px] fa-star"></i>
             </div>
             <p class="text-text-secondary text-[13px] leading-relaxed mb-4 flex-grow italic line-clamp-4">"{{ t.text }}"</p>
             <div class="flex items-center gap-3 pt-3 border-t border-outline-variant">
@@ -475,7 +476,7 @@ const displayStats = computed(() =>
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12 reveal">
           <SectionHeader kicker="Tin tức mới nhất" title="Tin tức & Sự kiện" />
           <router-link to="/news" class="btn-primary rounded-full py-3 px-6 md:py-3.5 md:px-8 shrink-0 shadow-md transition-colors font-semibold text-[14px]">
-            Xem tất cả <span class="material-symbols-outlined text-lg ml-1 align-middle">arrow_forward</span>
+            Xem tất cả <i class="fa text-lg ml-1 align-middle fa-arrow-right"></i>
           </router-link>
         </div>
         <!-- Desktop: 3-column grid -->
@@ -494,7 +495,7 @@ const displayStats = computed(() =>
               <h3 class="font-extrabold text-text-main text-[16px] md:text-[19px] mb-2 md:mb-3 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
               <p class="text-text-secondary text-[14px] leading-relaxed line-clamp-2 mb-5 flex-grow">{{ n.excerpt }}</p>
               <span class="inline-flex items-center gap-2 font-bold text-[13px] text-primary group-hover:text-primary-deep uppercase tracking-[0.12em] transition-colors duration-300 mt-auto">
-                Đọc tiếp <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                Đọc tiếp <i class="fa text-[16px] group-hover:translate-x-1 transition-transform fa-arrow-right"></i>
               </span>
             </div>
           </router-link>
@@ -515,7 +516,7 @@ const displayStats = computed(() =>
               <span class="text-[11px] font-bold text-primary uppercase tracking-[0.12em]">{{ n.category?.name || 'Tin tức' }}</span>
               <h3 class="font-extrabold text-text-main text-[14px] mt-1 group-hover:text-primary transition-colors duration-300 line-clamp-2 leading-snug">{{ n.title }}</h3>
               <span class="inline-flex items-center gap-1 font-bold text-[11px] text-primary mt-1.5 uppercase tracking-[0.1em]">
-                Đọc tiếp <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                Đọc tiếp <i class="fa text-[14px] fa-arrow-right"></i>
               </span>
             </div>
           </router-link>

@@ -17,7 +17,7 @@ import { t } from '../i18n'
         <span class="text-[160px] md:text-[220px] font-bold leading-none select-none tracking-tight text-primary/15">404</span>
         <div class="absolute inset-0 flex items-center justify-center">
           <div class="w-28 h-28 rounded-3xl bg-surface-bright border border-outline-variant flex items-center justify-center animate-float shadow-[0_8px_32px_rgba(184,155,136,0.12)]">
-            <span class="material-symbols-outlined text-[48px] text-primary-deep">explore_off</span>
+            <i class="fa text-[48px] text-primary-deep fa-compass"></i>
           </div>
         </div>
       </div>
@@ -27,15 +27,15 @@ import { t } from '../i18n'
 
       <div class="flex flex-wrap justify-center gap-4 mb-12">
         <router-link to="/" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg">
-          <span class="material-symbols-outlined text-[18px] group-hover:-translate-y-0.5 transition-transform">home</span>
+          <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform fa-house"></i>
           {{ t('nf.backHome') }}
         </router-link>
         <router-link to="/products" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold transition-all duration-300">
-          <span class="material-symbols-outlined text-[18px] group-hover:-translate-y-0.5 transition-transform">category</span>
+          <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform fa-boxes"></i>
           {{ t('nav.products') }}
         </router-link>
         <router-link to="/contact" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold transition-all duration-300">
-          <span class="material-symbols-outlined text-[18px] group-hover:-translate-y-0.5 transition-transform">mail</span>
+          <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform fa-envelope"></i>
           {{ t('nav.contact') }}
         </router-link>
       </div>
@@ -43,7 +43,7 @@ import { t } from '../i18n'
       <!-- Decorative line -->
       <div class="flex items-center justify-center gap-3 text-text-muted">
         <div class="w-12 h-px bg-outline-variant"></div>
-        <span class="material-symbols-outlined text-sm">more_horiz</span>
+        <i class="fa text-sm fa-ellipsis-h"></i>
         <div class="w-12 h-px bg-outline-variant"></div>
       </div>
     </div>

@@ -11,7 +11,7 @@ class ProductSpecResource extends JsonResource
     {
         return [
             'icon' => $this->icon,
-            'label' => $this->translation()?->label,
+            'label' => $this->label,
             'value' => $this->value,
         ];
     }

@@ -16,8 +16,8 @@
                     'value' => $s->value,
                     'icon' => $s->icon,
                     'sort_order' => $s->sort_order,
-                    'label_vi' => $s->translation('vi')?->label ?? '',
-                    'label_en' => $s->translation('en')?->label ?? '',
+                    'label_vi' => $s?->label ?? '',
+                    'label_en' => $s?->label ?? '',
                 ];
             }
         }
@@ -92,7 +92,7 @@
                             ['name' => 'meta_title', 'label' => 'Meta title (SEO)', 'max' => 200],
                             ['name' => 'meta_description', 'label' => 'Meta description (SEO)', 'type' => 'textarea', 'rows' => 2, 'max' => 300],
                         ]"
-                        :values="$product?->translation('vi')?->toArray() ?? []"
+                        :values="$product?->toArray() ?? []"
                     />
 
                     <x-admin.partials.translation-section
@@ -105,7 +105,7 @@
                             ['name' => 'meta_title', 'label' => 'Meta title', 'max' => 200],
                             ['name' => 'meta_description', 'label' => 'Meta description', 'type' => 'textarea', 'rows' => 2, 'max' => 300],
                         ]"
-                        :values="$product?->translation('en')?->toArray() ?? []"
+                        :values="$product?->toArray() ?? []"
                     />
                 </div>
             </div>
@@ -119,7 +119,7 @@
                         <select name="category_id" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">-- Chọn danh mục --</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" @selected(old('category_id', $product?->category_id) == $category->id)>{{ $category->translation('vi')?->name }}</option>
+                                <option value="{{ $category->id }}" @selected(old('category_id', $product?->category_id) == $category->id)>{{ $category?->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -132,7 +132,7 @@
                                     <input type="checkbox" name="applications[]" value="{{ $application->id }}"
                                         class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                         @checked(in_array($application->id, old('applications', $product?->applications?->pluck('id')->all() ?? [])))>
-                                    {{ $application->translation('vi')?->name }}
+                                    {{ $application?->name }}
                                 </label>
                             @endforeach
                         </div>

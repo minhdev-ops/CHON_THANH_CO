@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\Concerns\SyncsTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
 use Illuminate\Http\Request;
@@ -10,11 +9,43 @@ use Illuminate\Support\Str;
 
 class CertificateController extends Controller
 {
-    use SyncsTranslations;
+    use Concerns\RendersAdminTables;
 
-    public function index()
+    public function index(Request $request)
     {
-        $certificates = Certificate::with('translations')->orderBy('sort_order')->get();
+        $baseQuery = fn () => Certificate::query();
+
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('q')) {
+                $search = $request->input('q');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%");
+                });
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.certificates.rows',
+                itemsVar: 'certificates',
+                sortable: [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'sort_order' => 'sort_order',
+                    'is_active' => 'is_active',
+                ],
+                defaultOrder: ['sort_order' => 'asc'],
+            );
+        }
+
+        $query = $baseQuery();
+        $applyFilters($query, $request);
+
+        $certificates = $query->orderBy('sort_order')->paginate(15)->withQueryString();
 
         return view('admin.certificates.index', compact('certificates'));
     }
@@ -29,20 +60,20 @@ class CertificateController extends Controller
         $data = $this->validated($request);
         $certificate = Certificate::create([
             'slug' => $this->makeSlug($data),
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
             'image' => $data['image'],
             'file' => $data['file'] ?? null,
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        $this->syncTranslations($certificate, $data['translations'], ['name', 'description']);
-
         return redirect()->route('admin.certificates.index')->with('success', 'Đã tạo chứng chỉ.');
     }
 
     public function edit(Certificate $certificate)
     {
-        return view('admin.certificates.form', ['certificate' => $certificate->load('translations')]);
+        return view('admin.certificates.form', ['certificate' => $certificate]);
     }
 
     public function update(Request $request, Certificate $certificate)
@@ -50,13 +81,13 @@ class CertificateController extends Controller
         $data = $this->validated($request);
         $certificate->update([
             'slug' => $this->makeSlug($data, $certificate),
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
             'image' => $data['image'],
             'file' => $data['file'] ?? null,
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($certificate, $data['translations'], ['name', 'description']);
 
         return redirect()->route('admin.certificates.index')->with('success', 'Đã cập nhật chứng chỉ.');
     }
@@ -72,14 +103,12 @@ class CertificateController extends Controller
     {
         return $request->validate([
             'slug' => ['nullable', 'string', 'max:150'],
+            'name' => ['required', 'string', 'max:200'],
+            'description' => ['nullable', 'string'],
             'image' => ['required', 'string', 'max:255'],
             'file' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer'],
             'is_active' => ['boolean'],
-            'translations.vi.name' => ['required', 'string', 'max:200'],
-            'translations.vi.description' => ['nullable', 'string'],
-            'translations.en.name' => ['nullable', 'string', 'max:200'],
-            'translations.en.description' => ['nullable', 'string'],
         ]);
     }
 
@@ -89,8 +118,8 @@ class CertificateController extends Controller
             return Str::slug($data['slug']);
         }
 
-        $name = $data['translations']['vi']['name'] ?? '';
+        $name = $data['name'] ?? '';
 
-        return Str::slug($name) ?: ($existing?->slug ?? 'certificate-' . Str::random(6));
+        return Str::slug($name) ?: ($existing?->slug ?? 'certificate-'.Str::random(6));
     }
 }

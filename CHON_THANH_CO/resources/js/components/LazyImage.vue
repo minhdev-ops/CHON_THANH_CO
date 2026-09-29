@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
       class="absolute inset-0 w-full h-full bg-surface-vlm animate-shimmer flex items-center justify-center z-0"
     >
       <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center opacity-60">
-        <span class="material-symbols-outlined text-[18px] text-primary/40 animate-pulse">image</span>
+        <i class="fa text-[18px] text-primary/40 animate-pulse fa-image"></i>
       </div>
     </div>
 
