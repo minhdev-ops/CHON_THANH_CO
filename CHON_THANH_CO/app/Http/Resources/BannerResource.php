@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -11,7 +12,7 @@ class BannerResource extends JsonResource
     {
         return [
             'section' => $this->section,
-            'image' => $this->image,
+            'image' => MediaUrl::url($this->image),
             'link_to' => $this->link_to,
             'title' => $this->title,
             'subtitle' => $this->subtitle,

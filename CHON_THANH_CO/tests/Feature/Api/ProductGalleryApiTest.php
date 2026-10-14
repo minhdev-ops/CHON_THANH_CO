@@ -40,9 +40,9 @@ it('returns gallery images in product detail with image and alt', function () {
         ->assertStatus(200)
         ->assertJsonCount(2, 'data.images')
         ->assertJsonStructure(['data' => ['images' => ['*' => ['image', 'alt']]]])
-        ->assertJsonPath('data.images.0.image', '/images/products/gabion-1.jpg')
+        ->assertJsonPath('data.images.0.image', config('filesystems.disks.s3.url').'/images/products/gabion-1.jpg')
         ->assertJsonPath('data.images.0.alt', 'Lưới địa kỹ thuật cuộn')
-        ->assertJsonPath('data.images.1.image', '/images/products/industrial-1.jpg');
+        ->assertJsonPath('data.images.1.image', config('filesystems.disks.s3.url').'/images/products/industrial-1.jpg');
 });
 
 it('orders gallery images by sort_order', function () {
@@ -56,9 +56,9 @@ it('orders gallery images by sort_order', function () {
     getJson('/api/v1/products/ro-da-gabion')
         ->assertStatus(200)
         ->assertJsonCount(3, 'data.images')
-        ->assertJsonPath('data.images.0.image', '/images/1.jpg')
-        ->assertJsonPath('data.images.1.image', '/images/2.jpg')
-        ->assertJsonPath('data.images.2.image', '/images/3.jpg');
+        ->assertJsonPath('data.images.0.image', config('filesystems.disks.s3.url').'/images/1.jpg')
+        ->assertJsonPath('data.images.1.image', config('filesystems.disks.s3.url').'/images/2.jpg')
+        ->assertJsonPath('data.images.2.image', config('filesystems.disks.s3.url').'/images/3.jpg');
 });
 
 it('does not leak gallery images to other products', function () {

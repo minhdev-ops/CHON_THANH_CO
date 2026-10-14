@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,7 @@ class NewsResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'excerpt' => $this->excerpt,
-            'image' => $this->image,
+            'image' => MediaUrl::url($this->image),
             'published_at' => $this->published_at?->toIso8601String(),
             'category' => $this->whenLoaded('category') && $this->category !== null
                 ? [

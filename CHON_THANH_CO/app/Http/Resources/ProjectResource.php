@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,8 +18,8 @@ class ProjectResource extends JsonResource
             'location' => $this->location,
             'period' => $this->period,
             'area' => $this->area,
-            'hero_image' => $this->hero_image,
-            'desc_image' => $this->desc_image,
+            'hero_image' => MediaUrl::url($this->hero_image),
+            'desc_image' => MediaUrl::url($this->desc_image),
             $this->mergeWhen($detail, [
                 'description' => $this->description,
                 'meta_title' => $this->meta_title,

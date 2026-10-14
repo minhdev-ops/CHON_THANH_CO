@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -13,8 +14,8 @@ class CertificateResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->image,
-            'file' => $this->file,
+            'image' => MediaUrl::url($this->image),
+            'file' => MediaUrl::url($this->file),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,7 +13,7 @@ class ProjectMaterialResource extends JsonResource
         return [
             'name' => $this->name,
             'detail' => $this->detail,
-            'image' => $this->image,
+            'image' => MediaUrl::url($this->image),
             'product' => $this->whenLoaded('product', fn () => [
                 'slug' => $this->product->slug,
                 'code' => $this->product->code,

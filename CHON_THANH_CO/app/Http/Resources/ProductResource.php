@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,7 @@ class ProductResource extends JsonResource
             'slug' => $this->slug,
             'code' => $this->code,
             'name' => $this->name,
-            'image' => $this->image,
+            'image' => MediaUrl::url($this->image),
             'strength_label' => $this->strength_label,
             'strength_min' => $this->strength_min,
             'strength_max' => $this->strength_max,
@@ -27,7 +28,7 @@ class ProductResource extends JsonResource
                 'meta_description' => $this->meta_description,
                 'specs' => ProductSpecResource::collection($this->whenLoaded('specs')),
                 'images' => ProductImageResource::collection($this->whenLoaded('images')),
-                'documents' => $this->whenLoaded('documents'),
+                'documents' => ProductDocumentResource::collection($this->whenLoaded('documents')),
             ]),
         ];
     }
