@@ -4,7 +4,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
-    Storage::fake('public');
+    Storage::fake('s3');
 });
 
 test('profile-book get endpoint returns 404 when file does not exist', function () {
@@ -18,7 +18,7 @@ test('profile-book get endpoint returns 404 when file does not exist', function 
 });
 
 test('profile-book get endpoint returns 200 and url when file exists', function () {
-    Storage::disk('public')->put('profile/ho-so-nang-luc.pdf', 'fake-pdf-content');
+    Storage::disk('s3')->put('profile/ho-so-nang-luc.pdf', 'fake-pdf-content');
 
     $response = $this->getJson('/api/v1/profile-book');
 
@@ -56,7 +56,7 @@ test('authenticated admin can upload profile book pdf', function () {
             'message' => 'Upload hồ sơ năng lực thành công.',
         ]);
 
-    Storage::disk('public')->assertExists('profile/ho-so-nang-luc.pdf');
+    Storage::disk('s3')->assertExists('profile/ho-so-nang-luc.pdf');
 });
 
 test('upload profile book rejects non-pdf files', function () {
