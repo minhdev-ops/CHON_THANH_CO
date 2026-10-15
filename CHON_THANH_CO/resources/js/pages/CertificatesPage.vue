@@ -11,6 +11,7 @@ import PdfFlipbook from '../components/PdfFlipbook.vue'
 import LazyImage from '../components/LazyImage.vue'
 import { t } from '../i18n'
 import { fallbackCertificates } from '../types/fallback'
+import { buildContactLink } from '../utils/contactLink'
 
 const { data: certificates, loading, error, load } = useApiData(
   async () => (await api.certificates()).data,
@@ -89,7 +90,11 @@ const breadcrumbs = computed(() => [
                   <i class="fa text-[18px] fa-download"></i> {{ t('certs.download') }}
                 </a>
               </div>
-              <router-link v-else to="/contact" class="flex-1 btn-primary py-3 px-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg">
+              <router-link
+                v-else
+                :to="buildContactLink({ subject: 'certificate', product: cert.name })"
+                class="flex-1 btn-primary py-3 px-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg"
+              >
                 <i class="fa text-[18px] fa-download"></i> {{ t('certs.request') }}
               </router-link>
             </div>
@@ -123,7 +128,10 @@ const breadcrumbs = computed(() => [
           <h2 class="text-[28px] md:text-[34px] text-text-main font-extrabold mb-3 tracking-tight">{{ t('certs.ctaTitle') }}</h2>
           <p class="text-[16px] text-text-secondary leading-relaxed">{{ t('certs.ctaText') }}</p>
         </div>
-        <router-link to="/contact" class="btn-primary rounded-full inline-flex items-center gap-2 group shrink-0 py-4 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg">
+        <router-link
+          :to="buildContactLink({ subject: 'certificate' })"
+          class="btn-primary rounded-full inline-flex items-center gap-2 group shrink-0 py-4 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg"
+        >
           <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform duration-300 fa-headset"></i> {{ t('certs.ctaButton') }}
         </router-link>
       </div>

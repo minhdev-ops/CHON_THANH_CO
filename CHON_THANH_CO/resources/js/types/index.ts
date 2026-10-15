@@ -28,9 +28,31 @@ export interface Product {
   category?: Category
   applications?: Application[]
   description?: string
+  applications_text?: string | null
+  functions?: string | null
   specs?: ProductSpec[]
   images?: ProductImage[]
   documents?: ProductDocument[]
+  parent?: ProductVariant | null
+  variants?: ProductVariant[]
+  strength_grades?: ProductStrengthGrade[]
+  related_products?: ProductVariant[]
+  projects?: ProjectSummary[]
+}
+
+/** Sản phẩm cha: dòng sản phẩm mà các mã cụ thể thuộc về. */
+export interface ProductVariant {
+  slug: string
+  code: string
+  name: string
+  image: string
+}
+
+/** Một cấp cường độ trong bảng cấp của dòng (ART, GET...). */
+export interface ProductStrengthGrade {
+  grade: string
+  unit?: string | null
+  note?: string | null
 }
 
 export interface ProductDocument {
@@ -73,6 +95,14 @@ export interface ProjectMaterial {
 export interface ProjectImage {
   image: string
   alt?: string
+}
+
+/** Công trình dùng vật liệu của dòng sản phẩm đang xem. */
+export interface ProjectSummary {
+  slug: string
+  name: string
+  location: string
+  hero_image: string
 }
 
 export interface Certificate {
@@ -123,6 +153,11 @@ export interface Banner {
   subtitle?: string | null
   text?: string | null
   button_text?: string | null
+}
+
+export interface Partner {
+  name: string
+  image?: string | null
 }
 
 export interface HomeData {

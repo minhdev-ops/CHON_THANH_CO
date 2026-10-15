@@ -58,6 +58,7 @@ class ApplicationController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $application = Application::create([
             'slug' => $this->makeSlug($data),
@@ -77,6 +78,7 @@ class ApplicationController extends Controller
 
     public function update(Request $request, Application $application)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $application->update([
             'slug' => $this->makeSlug($data, $application),
@@ -98,6 +100,20 @@ class ApplicationController extends Controller
         $application->delete();
 
         return redirect()->route('admin.applications.index')->with('success', 'Đã xóa ứng dụng.');
+    }
+
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['name', 'description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request): array

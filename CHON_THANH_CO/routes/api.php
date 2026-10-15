@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\ProfileBookController;
@@ -38,6 +39,8 @@ Route::middleware('set.locale')
         Route::get('news/categories', [NewsController::class, 'categories']);
         Route::get('news', [NewsController::class, 'index']);
         Route::get('news/{slug}', [NewsController::class, 'show']);
+
+        Route::get('partners', [PartnerController::class, 'index']);
 
         Route::get('faqs', [FaqController::class, 'index']);
 

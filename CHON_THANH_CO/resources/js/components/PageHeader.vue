@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
-import ParticleBackground from './ParticleBackground.vue'
-import WireframeTerrain from './WireframeTerrain.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -30,8 +28,6 @@ const paddingClass = computed(() => {
     class="relative overflow-hidden hero-parallax"
     :class="[paddingClass, variant === 'cinematic' ? 'noise-overlay' : '']"
   >
-    <WireframeTerrain />
-
     <div
       class="absolute inset-0 pointer-events-none"
       :style="{
@@ -41,8 +37,6 @@ const paddingClass = computed(() => {
         transform: variant === 'cinematic' ? `translateY(${scrollY * 0.15 + 20}px) scale(1.1)` : 'none',
       }"
     />
-
-    <ParticleBackground v-if="variant === 'cinematic'" />
 
     <div
       v-if="variant === 'cinematic'"

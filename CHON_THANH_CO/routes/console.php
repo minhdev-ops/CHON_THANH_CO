@@ -74,3 +74,4 @@ Schedule::command('sitemap:generate')->daily();
 // Run backup every day at 1:00 AM
 Schedule::command('backup:clean')->dailyAt('01:00');
 Schedule::command('backup:run')->dailyAt('01:30');
+Schedule::command('news:import')->dailyAt('03:30');

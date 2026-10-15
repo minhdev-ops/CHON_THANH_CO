@@ -10,6 +10,7 @@ import Pagination from '../components/Pagination.vue'
 import LazyImage from '../components/LazyImage.vue'
 import { t, locale } from '../i18n'
 import { fallbackNews } from '../types/fallback'
+import { buildContactLink } from '../utils/contactLink'
 
 const news = ref<NewsItem[]>([...fallbackNews])
 const newsLoading = ref(false)
@@ -36,12 +37,15 @@ const loadNews = async () => {
   newsLoading.value = true
   loadError.value = null
   try {
-    const res = await api.news({ limit: 50 })
-    if (res.data && res.data.length > 0) {
-      news.value = res.data
-    } else {
-      news.value = [...fallbackNews]
+    const all: NewsItem[] = []
+    let cursor: string | undefined
+    while (true) {
+      const res = await api.news({ limit: 50, ...(cursor ? { cursor } : {}) })
+      all.push(...res.data)
+      if (res.next_cursor == null || all.length > 3000) break
+      cursor = res.next_cursor
     }
+    news.value = all.length ? all : [...fallbackNews]
   } catch (e) {
     news.value = [...fallbackNews]
     loadError.value = null
@@ -102,7 +106,13 @@ const formatDateLong = (iso?: string) => {
 }
 
 const recentNews = computed(() => {
-  return [...fallbackNews].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()).slice(0, 3)
+  return [...news.value].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()).slice(0, 3)
+})
+
+// Chỉ hiện danh mục thực sự có bài viết.
+const visibleCategories = computed(() => {
+  const used = new Set(news.value.map((n) => n.category?.slug).filter(Boolean))
+  return (categories.value ?? []).filter((c) => used.has(c.slug))
 })
 
 // Editorial layout removed in favor of standard grid
@@ -143,7 +153,7 @@ const activeCategoryName = computed(() => {
               {{ t('news.all') }}
               <div v-if="selectedCategory === null" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
             </button>
-            <button v-for="cat in categories" :key="cat.slug"
+            <button v-for="cat in visibleCategories" :key="cat.slug"
               class="pb-3 md:pb-4 text-[13px] md:text-[14px] font-bold transition-colors relative"
               :class="selectedCategory === cat.slug ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = cat.slug"
@@ -276,7 +286,10 @@ const activeCategoryName = computed(() => {
               <div class="relative">
                 <div class="font-bold text-[15px] text-text-main tracking-widest uppercase mb-5">{{ t('news.subscribeTitle') }}</div>
                 <p class="text-text-secondary text-[15px] mb-7 leading-relaxed">{{ t('news.subscribeText') }}</p>
-                <router-link to="/contact" class="group flex items-center justify-center gap-2 btn-primary px-5 py-3.5 text-[14px] font-bold tracking-wider uppercase shadow-sm hover:shadow transition-all rounded-md w-full">
+                <router-link
+                  :to="buildContactLink({ subject: 'general' })"
+                  class="group flex items-center justify-center gap-2 btn-primary px-5 py-3.5 text-[14px] font-bold tracking-wider uppercase shadow-sm hover:shadow transition-all rounded-md w-full"
+                >
                   <span>{{ t('news.contactUs') }}</span>
                 </router-link>
               </div>

@@ -61,6 +61,7 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item = News::create([
             'news_category_id' => $data['news_category_id'] ?? null,
@@ -86,6 +87,7 @@ class NewsController extends Controller
 
     public function update(Request $request, News $item)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item->update([
             'news_category_id' => $data['news_category_id'] ?? null,
@@ -132,6 +134,26 @@ class NewsController extends Controller
         ];
 
         return redirect()->route('admin.news.index')->with('success', $messages[$data['action']]);
+    }
+
+    /**
+     * Form dùng partial translation-section nên title/excerpt/content đi theo
+     * translations[vi][...]. Copy chúng sang khóa thường để validate() hoạt
+     * động. Nếu thiếu hàm này, mọi lần lưu bài từ form đều báo lỗi "title is
+     * required" dù admin đã điền đủ.
+     */
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['title', 'excerpt', 'content'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request): array

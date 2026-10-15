@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader.vue'
 import CTABanner from '../components/CTABanner.vue'
 import PdfFlipbook from '../components/PdfFlipbook.vue'
 import { t } from '../i18n'
+import { buildContactLink } from '../utils/contactLink'
 
 const { settings, load } = useSettings()
 load()
@@ -59,7 +60,10 @@ const breadcrumbs = computed(() => [
             </div>
             <h2 class="text-[24px] text-text-main font-bold mb-4">Yêu cầu hồ sơ kiểm định</h2>
             <p class="text-text-secondary mb-8 text-[16px] leading-relaxed">Liên hệ với chúng tôi để nhận hồ sơ kiểm định chi tiết cho sản phẩm và dự án của bạn.</p>
-            <router-link to="/contact" class="btn btn-primary btn-magnetic inline-flex items-center gap-2 group">
+            <router-link
+              :to="buildContactLink({ subject: 'certificate' })"
+              class="btn btn-primary btn-magnetic inline-flex items-center gap-2 group"
+            >
               <i class="fa text-[18px] group-hover:translate-y-0.5 transition-transform duration-300 fa-download"></i>
               Yêu cầu hồ sơ
             </router-link>

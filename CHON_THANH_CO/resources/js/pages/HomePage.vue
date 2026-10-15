@@ -4,8 +4,9 @@ import GlobalBanner from '../components/GlobalBanner.vue'
 import CTABanner from '../components/CTABanner.vue'
 import { api } from '../api/client'
 import { useApiData } from '../composables/useApiData'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import type { Banner, Product, Project, NewsItem } from '../types'
+import { ref, computed, onMounted } from 'vue'
+import type { Banner, Product, Project, NewsItem, Partner } from '../types'
+import HomeStats from '../components/HomeStats.vue'
 import ErrorState from '../components/ErrorState.vue'
 import Carousel from '../components/Carousel.vue'
 import SectionHeader from '../components/SectionHeader.vue'
@@ -21,6 +22,8 @@ import {
   fallbackNews,
 } from '../types/fallback'
 import { useSettings } from '../composables/useSettings'
+import { t } from '../i18n'
+import { buildContactLink } from '../utils/contactLink'
 
 const { settings, load: loadSettings } = useSettings()
 loadSettings()
@@ -37,33 +40,20 @@ const cta = computed<Banner | undefined>(() => home.value?.banners?.find((b) => 
 const featuredProducts = computed<Product[]>(() => home.value?.featured_products?.filter((p) => p.slug) ?? fallbackProducts.slice(0, 4))
 const latestProjects = computed<Project[]>(() => home.value?.latest_projects?.filter((p) => p.slug) ?? fallbackProjects.slice(0, 6))
 
-// Counter animation
-const countersVisible = ref(false)
-const animatedValues = ref<Record<number, number>>({})
-const parseIntValue = (val: string) => { const m = val.match(/(\d[\d.,]*)/); return m ? parseInt(m[1].replace(/[.,]/g,''),10) : 0 }
-const animateCounter = (index: number, target: number) => {
-  const duration = 2200, startTime = performance.now()
-  const step = (now: number) => {
-    const p = Math.min((now - startTime) / duration, 1)
-    animatedValues.value[index] = Math.round((1 - Math.pow(1-p,4)) * target)
-    if (p < 1) requestAnimationFrame(step)
-  }
-  requestAnimationFrame(step)
-}
-const handleCounterIntersection = (entries: IntersectionObserverEntry[]) => {
-  entries.forEach(e => {
-    if (e.isIntersecting && !countersVisible.value) {
-      countersVisible.value = true
-      home.value?.stats?.forEach((s, i) => { const v = parseIntValue(s.value); if (v > 0) animateCounter(i, v) })
-    }
-  })
-}
-let counterObserver: IntersectionObserver | null = null
-onMounted(() => { counterObserver = new IntersectionObserver(handleCounterIntersection, { threshold: 0.3 }) })
-onUnmounted(() => counterObserver?.disconnect())
-const setCounterEl = (el: HTMLElement | null) => { if (el) counterObserver?.observe(el) }
-const formatAnimatedValue = (i: number, original: string) =>
-  animatedValues.value[i] === undefined ? original : original.replace(/(\d[\d.,]*)/, String(animatedValues.value[i]))
+// Đối tác — marquee "Đối tác" lấy từ API, fallback danh sách tĩnh.
+const partners = ref<Partner[]>([])
+const marqueeItems = computed(() =>
+  partners.value.length
+    ? partners.value.map((p) => ({ name: p.name, image: p.image || null }))
+    : clients.map((c) => ({ name: c, image: null as string | null }))
+)
+onMounted(async () => {
+  try {
+    const res = await api.partners()
+    if (res.data?.length) partners.value = res.data
+  } catch { /* giữ danh sách statically */ }
+  await loadNews()
+})
 
 // Features (4 cards)
 const features = [
@@ -76,9 +66,9 @@ const features = [
 // Services
 const services = [
   { icon: 'engineering', title: 'Tư vấn kỹ thuật', desc: 'Phân tích địa chất, tư vấn giải pháp vật liệu tối ưu cho từng loại công trình hạ tầng.', image: '/images/products/geotextile-roll.jpg' },
-  { icon: 'category', title: 'Cung cấp vật liệu', desc: 'Nguồn hàng ổn định, 35+ mã sản phẩm: vải KT không dệt, vải KT dệt, geogrid, rọ đá, màng HDPE.', image: '/images/products/gabion-1.jpg' },
-  { icon: 'construction', title: 'Hỗ trợ thi công', desc: 'Đội ngũ kỹ sư giám sát lắp đặt đúng kỹ thuật, đảm bảo tiến độ và chất lượng công trình.', image: '/images/products/industrial-1.jpg' },
-  { icon: 'workspace_premium', title: 'Bảo hành & hậu mãi', desc: 'Cam kết chất lượng theo TCVN 9844:2013, ISO 9001:2015, đồng hành lâu dài cùng khách hàng.', image: '/images/projects/bridge-1.jpg' },
+  { icon: 'category', title: 'Cung cấp vật liệu', desc: 'Nguồn hàng ổn định, 35+ mã sản phẩm: vải KT không dệt, vải KT dệt, geogrid, rọ đá, màng HDPE.', image: '/images/projects/factory-a-chau.jpg' },
+  { icon: 'construction', title: 'Hỗ trợ thi công', desc: 'Đội ngũ kỹ sư giám sát lắp đặt đúng kỹ thuật, đảm bảo tiến độ và chất lượng công trình.', image: '/images/projects/site-gabion.jpg' },
+  { icon: 'workspace_premium', title: 'Bảo hành & hậu mãi', desc: 'Cam kết chất lượng theo TCVN 9844:2013, ISO 9001:2015, đồng hành lâu dài cùng khách hàng.', image: '/images/projects/highway-1.jpg' },
 ]
 
 // FAQ
@@ -101,8 +91,23 @@ const testimonials = [
 // Clients marquee
 const clients = ['HOCK Technology', 'ARITEX', 'Petrovietnam', 'Vingroup', 'Coteccons', 'Vinaconex', 'Hoà Bình', 'Delta', 'Trung Nam', 'CIENCO 4', 'CIENCO 6', 'Sông Đà']
 
-// News preview
-const newsPreview = computed<NewsItem[]>(() => fallbackNews.slice(0, 3))
+// News preview — fetch from API on mount, fallback to static data.
+const news = ref<NewsItem[]>([...fallbackNews])
+const newsLoading = ref(false)
+
+const loadNews = async () => {
+  newsLoading.value = true
+  try {
+    const res = await api.news({ limit: 3 })
+    news.value = res.data.length ? res.data : [...fallbackNews]
+  } catch {
+    news.value = [...fallbackNews]
+  } finally {
+    newsLoading.value = false
+  }
+}
+
+const newsPreview = computed<NewsItem[]>(() => news.value.slice(0, 3))
 
 // Stats for about section
 const defaultStats = [
@@ -124,15 +129,18 @@ const displayStats = computed(() =>
     <GlobalBanner />
 
     <!-- ── 2. Client Trust Bar ───────────────────────── -->
-    <section class="w-full border-y border-white/40 bg-canvas pt-4 md:pt-8 pb-3 md:pb-4">
-      <div class="max-w-max-width mx-auto px-4 md:px-margin-desktop flex items-center gap-4 md:gap-6">
-        <span class="font-bold text-text-main text-[12px] md:text-[15px] whitespace-nowrap shrink-0 uppercase tracking-wide">Đối tác</span>
-        <span class="w-px h-4 md:h-5 bg-border shrink-0 hidden md:block"></span>
+    <section class="w-full border-y border-white/40 bg-canvas py-6 md:py-14">
+      <div class="max-w-max-width mx-auto px-4 md:px-margin-desktop flex items-center gap-4 md:gap-8">
+        <span class="font-bold text-text-main text-[14px] md:text-[20px] whitespace-nowrap shrink-0 uppercase tracking-wide">Đối tác</span>
+        <span class="w-px h-6 md:h-7 bg-border shrink-0 hidden md:block"></span>
         <div class="relative flex overflow-hidden flex-grow mask-edges">
-          <div class="flex animate-marquee whitespace-nowrap items-center gap-8 md:gap-12">
+          <div class="flex animate-marquee whitespace-nowrap items-center gap-10 md:gap-16">
             <template v-for="i in 3" :key="i">
-              <span v-for="c in clients" :key="c+i" class="text-text-muted font-bold text-[12px] md:text-[14px] tracking-wide">{{ c }}</span>
-              <span class="text-accent/40 text-xs">◆</span>
+              <template v-for="c in marqueeItems" :key="c.name + i">
+                <img v-if="c.image" :src="c.image" :alt="c.name" class="h-9 md:h-12 w-auto object-contain">
+                <span v-else class="text-text-muted font-bold text-[14px] md:text-[20px] tracking-wide">{{ c.name }}</span>
+              </template>
+              <span class="text-accent/40 text-base md:text-lg">◆</span>
             </template>
           </div>
         </div>
@@ -203,23 +211,14 @@ const displayStats = computed(() =>
             <div class="grid gap-6">
               <div class="rounded-[10px] overflow-hidden bg-surface-vlm shadow-md">
                 <LazyImage
-                  src="/images/home-distribution.jpg"
+                  src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
                   alt="CHƠN THÀNH nhà máy"
-                  fallback-src="/images/home-distribution.jpg"
+                  fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
                   aspect-ratio="aspect-[16/9]"
                   image-class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div v-for="(s, i) in displayStats" :key="i" :ref="(el) => setCounterEl(el as HTMLElement | null)"
-                  class="bg-surface-bright rounded-[10px] p-4 md:p-6 pb-8 reveal flex flex-col justify-center h-full hover:shadow-xl transition-shadow border border-outline-variant/50" :class="`reveal-delay-${i+1}`">
-                  <div class="flex items-end gap-1 mb-2">
-                    <span class="text-[32px] md:text-[40px] font-extrabold text-primary tabular-nums leading-none">{{ formatAnimatedValue(i, s.value) }}</span>
-                    <span v-if="s.value.includes('+')" class="text-[24px] md:text-[32px] font-extrabold text-primary leading-none">+</span>
-                  </div>
-                  <h3 class="text-[13px] md:text-[16px] text-text-main font-bold mt-1 mb-0">{{ s.label }}</h3>
-                </div>
-              </div>
+              <HomeStats :stats="displayStats" />
             </div>
           </div>
         </div>
@@ -273,7 +272,10 @@ const displayStats = computed(() =>
               <h3 class="font-extrabold text-[20px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug">{{ s.title }}</h3>
               <p class="text-text-secondary text-[14px] leading-relaxed mb-6 flex-grow">{{ s.desc }}</p>
               <div class="mt-auto pt-5 border-t border-outline-variant/60">
-                <router-link to="/contact" class="inline-flex items-center gap-2 font-bold text-[13px] text-primary group-hover:text-primary-deep uppercase tracking-[0.12em] transition-colors duration-300">
+                <router-link
+                  :to="buildContactLink({ subject: 'quote-24h' })"
+                  class="inline-flex items-center gap-2 font-bold text-[13px] text-primary group-hover:text-primary-deep uppercase tracking-[0.12em] transition-colors duration-300"
+                >
                   Tư vấn ngay <i class="fa text-[16px] group-hover:translate-x-1 transition-transform fa-arrow-right"></i>
                 </router-link>
               </div>
@@ -291,7 +293,10 @@ const displayStats = computed(() =>
               <h3 class="font-extrabold text-[15px] text-text-main mb-1 group-hover:text-primary transition-colors duration-300 leading-tight">{{ s.title }}</h3>
               <p class="text-text-secondary text-[13px] leading-snug line-clamp-2">{{ s.desc }}</p>
             </div>
-            <router-link to="/contact" class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
+            <router-link
+              :to="buildContactLink({ subject: 'quote-24h' })"
+              class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300"
+            >
               <i class="fa text-[18px] text-primary group-hover:text-white fa-arrow-right"></i>
             </router-link>
           </div>
@@ -395,9 +400,9 @@ const displayStats = computed(() =>
           <div class="reveal-right">
             <div class="relative rounded-[10px] overflow-hidden">
               <LazyImage
-                src="/images/projects/highway-1.jpg"
+                src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
                 alt="Công trình địa kỹ thuật"
-                fallback-src="/images/projects/highway-1.jpg"
+                fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
                 aspect-ratio="aspect-[4/5]"
                 image-class="w-full h-full object-cover"
               >
@@ -480,7 +485,10 @@ const displayStats = computed(() =>
           </router-link>
         </div>
         <!-- Desktop: 3-column grid -->
-        <div class="hidden md:grid grid-cols-3 gap-8 stagger-grid">
+        <div v-if="newsLoading" class="hidden md:grid grid-cols-3 gap-8">
+          <div v-for="i in 3" :key="i" class="h-80 bg-surface-vlm animate-shimmer rounded-3xl border border-outline-variant"></div>
+        </div>
+        <div v-else class="hidden md:grid grid-cols-3 gap-8 stagger-grid">
           <router-link v-for="(n, i) in newsPreview" :key="n.slug" :to="`/news/${n.slug}`"
             class="bg-surface-bright border border-outline-variant rounded-3xl overflow-hidden group hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-primary/30 transition-all duration-500 flex flex-col reveal" :class="`reveal-delay-${(i%3)+1}`">
             <LazyImage
@@ -501,7 +509,10 @@ const displayStats = computed(() =>
           </router-link>
         </div>
         <!-- Mobile: horizontal cards -->
-        <div class="flex flex-col gap-3 md:hidden stagger-grid">
+        <div v-if="newsLoading" class="flex flex-col gap-3 md:hidden">
+          <div v-for="i in 3" :key="i" class="h-24 bg-surface-vlm animate-shimmer rounded-2xl border border-outline-variant"></div>
+        </div>
+        <div v-else class="flex flex-col gap-3 md:hidden stagger-grid">
           <router-link v-for="(n, i) in newsPreview" :key="n.slug" :to="`/news/${n.slug}`"
             class="flex items-center gap-3 bg-surface-bright border border-outline-variant rounded-2xl p-4 group hover:shadow-md hover:border-primary/30 transition-all duration-300 reveal" :class="`reveal-delay-${(i%3)+1}`">
             <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
@@ -528,8 +539,9 @@ const displayStats = computed(() =>
     <CTABanner
       :title="cta?.title || 'Sẵn sàng hợp tác cùng CHƠN THÀNH?'"
       :text="cta?.text || 'Liên hệ ngay để được tư vấn kỹ thuật miễn phí và nhận báo giá tốt nhất cho dự án của bạn.'"
-      :link-to="cta?.link_to || '/contact'"
+      :link-to="cta?.link_to || ''"
       :link-label="cta?.button_text || 'Nhận báo giá ngay'"
+      subject="quote-24h"
     />
   </div>
 </template>

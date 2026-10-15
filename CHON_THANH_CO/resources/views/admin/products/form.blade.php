@@ -4,6 +4,8 @@
 
 @section('content')
     @php
+        $richTextHint = 'Dòng bắt đầu bằng "## " tạo tiêu đề, "### " tạo tiêu đề nhỏ hơn, "- " tạo gạch đầu dòng, "1. " tạo danh sách đánh số, "**chữ**" in đậm, dòng trống tách đoạn.';
+
         $productSpecs = $product?->specs ?? collect();
         $productImages = $product?->images ?? collect();
 
@@ -16,8 +18,7 @@
                     'value' => $s->value,
                     'icon' => $s->icon,
                     'sort_order' => $s->sort_order,
-                    'label_vi' => $s?->label ?? '',
-                    'label_en' => $s?->label ?? '',
+                    'label' => $s?->label ?? '',
                 ];
             }
         }
@@ -34,10 +35,26 @@
                 ];
             }
         }
+    $productStrengthGrades = $product?->strengthGrades ?? collect();
+
+        if (old('strength_grades') !== null) {
+            $productStrengthGradesData = old('strength_grades');
+        } else {
+            $productStrengthGradesData = [];
+            foreach ($productStrengthGrades as $g) {
+                $productStrengthGradesData[] = [
+                    'grade' => $g->grade,
+                    'unit' => $g->unit,
+                    'note' => $g->note,
+                    'sort_order' => $g->sort_order,
+                ];
+            }
+        }
     @endphp
 
     <form method="POST" action="{{ $product ? route('admin.products.update', $product) : route('admin.products.store') }}"
-        x-data="productForm({ specs: @json($productSpecsData), images: @json($productImagesData) })" @submit="mergeDynamic()">
+        x-data="productForm({ specs: @json($productSpecsData), images: @json($productImagesData), strengthGrades: @json($productStrengthGradesData) })"
+        @submit="mergeDynamic()">
         @csrf
         @if ($product)
             @method('PUT')
@@ -87,7 +104,7 @@
                         label="Tiếng Việt"
                         :fields="[
                             ['name' => 'name', 'label' => 'Tên sản phẩm', 'required' => true, 'max' => 200],
-                            ['name' => 'description', 'label' => 'Mô tả', 'type' => 'textarea', 'required' => true, 'rows' => 8],
+                            ['name' => 'description', 'label' => 'Mô tả', 'type' => 'textarea', 'required' => true, 'rows' => 8, 'hint' => 'Đoạn đầu tiên hiện làm câu dẫn ở đầu trang chi tiết. '.$richTextHint],
                             ['name' => 'strength_label', 'label' => 'Nhãn cường độ', 'max' => 50, 'hint' => 'VD: Cường độ 30 kN/m'],
                             ['name' => 'meta_title', 'label' => 'Meta title (SEO)', 'max' => 200],
                             ['name' => 'meta_description', 'label' => 'Meta description (SEO)', 'type' => 'textarea', 'rows' => 2, 'max' => 300],
@@ -108,11 +125,54 @@
                         :values="$product?->toArray() ?? []"
                     />
                 </div>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <h2 class="font-semibold mb-1">Nội dung hiển thị</h2>
+                    <p class="text-xs text-gray-500 mb-4">
+                        Hai tab riêng trên trang chi tiết: <strong>Chức năng</strong> và phần
+                        <strong>Ứng dụng chi tiết</strong> nằm dưới danh sách ứng dụng đã chọn.
+                    </p>
+
+                    <x-admin.partials.input
+                        name="functions"
+                        label="Chức năng"
+                        type="textarea"
+                        :value="$product?->functions"
+                        :rows="8"
+                        :hint="$richTextHint"
+                    />
+
+                    <x-admin.partials.input
+                        name="applications_text"
+                        label="Ứng dụng (chi tiết)"
+                        type="textarea"
+                        :value="$product?->applications_text"
+                        :rows="6"
+                        :hint="'Hiển thị dưới danh sách ứng dụng đã chọn ở trên. Nên viết về bối cảnh sử dụng cụ thể, tránh lặp lại tên ứng dụng. '.$richTextHint"
+                    />
+                </div>
             </div>
 
             <div class="space-y-6">
                 <div class="bg-white border border-gray-200 rounded-lg p-6">
                     <h2 class="font-semibold mb-4">Danh mục & Ứng dụng</h2>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-1.5">Thuộc dòng sản phẩm</label>
+                        <select name="parent_id" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Sản phẩm độc lập --</option>
+                            @foreach ($parentCandidates as $candidate)
+                                <option value="{{ $candidate->id }}" @selected(old('parent_id', $product?->parent_id) == $candidate->id)>
+                                    {{ $candidate?->name }} ({{ $candidate?->code }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1.5">
+                            Chọn dòng để gom các mã cùng loại (ví dụ các độ dày màng HDPE).
+                            Trang chi tiết sẽ hiện bảng chọn loại cho người xem.
+                            Danh sách này không chứa chính sản phẩm đang sửa và các biến thể của nó.
+                        </p>
+                    </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-semibold mb-1.5">Danh mục <span class="text-red-500">*</span></label>
@@ -141,9 +201,52 @@
 
                 <div class="bg-white border border-gray-200 rounded-lg p-6">
                     <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="font-semibold">Các cấp cường độ</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                Dùng cho dòng có nhiều cấp nằm trong cùng một sản phẩm (ART, GET...).
+                                Trang chi tiết hiện thành bảng so sánh cho khách chọn.
+                            </p>
+                        </div>
+                        <button type="button" @click="addStrengthGrade()" class="text-blue-600 hover:underline text-sm shrink-0">+ Thêm cấp</button>
+                    </div>
+
+                    <template x-for="(grade, i) in strengthGrades" :key="i">
+                        <div class="flex items-start gap-2 mb-3">
+                            <div class="flex-1">
+                                <label class="block text-xs font-semibold mb-1">Cấp (VD: 12, 25, 100)</label>
+                                <input x-model="grade.grade" type="text" placeholder="VD: 12"
+                                    class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                            <div class="w-32">
+                                <label class="block text-xs font-semibold mb-1">Đơn vị</label>
+                                <input x-model="grade.unit" type="text" placeholder="kN/m"
+                                    class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                            <div class="w-16">
+                                <label class="block text-xs font-semibold mb-1">Thứ tự</label>
+                                <input x-model="grade.sort_order" type="number"
+                                    class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                            <button type="button" @click="strengthGrades.splice(i, 1)" class="text-red-500 mt-6">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
+                    </template>
+
+                    <p x-show="strengthGrades.length === 0" class="text-xs text-gray-500">
+                        Chưa có cấp cường độ nào.
+                    </p>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
                         <h2 class="font-semibold">Thông số kỹ thuật</h2>
                         <button type="button" @click="addSpec()" class="text-blue-600 hover:underline text-sm">+ Thêm dòng</button>
                     </div>
+                    <p class="text-xs text-gray-500 mb-4 -mt-2">
+                        Nhãn nên ngắn gọn. Trang chi tiết hiển thị thông số thành lưới 2 cột, để trống giá trị thì dòng đó bị bỏ qua.
+                    </p>
 
                     <template x-for="(spec, i) in specs" :key="i">
                         <div class="border border-gray-200 rounded p-3 mb-3 bg-gray-50">
@@ -168,9 +271,7 @@
                                 </button>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
-                                <input x-model="spec.label_vi" type="text" placeholder="Nhãn tiếng Việt (VD: Cường độ kéo)"
-                                    class="border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                <input x-model="spec.label_en" type="text" placeholder="Label English"
+                                <input x-model="spec.label" type="text" placeholder="Nhãn (VD: Cường độ kéo)"
                                     class="border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             </div>
                         </div>
@@ -231,9 +332,19 @@
             lang: 'vi',
             specs: initial.specs ?? [],
             images: initial.images ?? [],
+            strengthGrades: initial.strengthGrades ?? [],
 
             addSpec() {
-                this.specs.push({ value: '', icon: '', sort_order: this.specs.length, label_vi: '', label_en: '' });
+                this.specs.push({ value: '', icon: '', sort_order: this.specs.length, label: '' });
+            },
+
+            addStrengthGrade() {
+                this.strengthGrades.push({
+                    grade: '',
+                    unit: '',
+                    note: '',
+                    sort_order: this.strengthGrades.length,
+                });
             },
             addImage() {
                 this.images.push({ image: '', alt: '', sort_order: this.images.length });
@@ -246,7 +357,7 @@
                     input.value = spec.value;
                     this.$el.appendChild(input);
 
-                    for (const key of ['icon', 'sort_order', 'label_vi', 'label_en']) {
+                    for (const key of ['icon', 'sort_order', 'label']) {
                         const el = document.createElement('input');
                         el.type = 'hidden';
                         el.name = `specs[${i}][${key}]`;
@@ -260,6 +371,15 @@
                         el.type = 'hidden';
                         el.name = `images[${i}][${key}]`;
                         el.value = img[key];
+                        this.$el.appendChild(el);
+                    }
+                });
+                this.strengthGrades.forEach((grade, i) => {
+                    for (const key of ['grade', 'unit', 'note', 'sort_order']) {
+                        const el = document.createElement('input');
+                        el.type = 'hidden';
+                        el.name = `strength_grades[${i}][${key}]`;
+                        el.value = grade[key];
                         this.$el.appendChild(el);
                     }
                 });

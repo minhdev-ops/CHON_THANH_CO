@@ -260,6 +260,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
     <CTABanner
       :title="t('projects.ctaTitle')"
       :linkLabel="t('projects.ctaButton')"
+      subject="project"
     />
   </div>
 </template>

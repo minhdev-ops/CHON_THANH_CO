@@ -7,6 +7,7 @@ import type {
   HomeData,
   NewsCategory,
   NewsItem,
+  Partner,
   Product,
   Project,
 } from '../types'
@@ -60,6 +61,15 @@ interface CursorResponse<T> {
   next_cursor: number | null
 }
 
+/**
+ * Tin tức phân trang theo "ngày đăng|id" nên cursor là chuỗi, khác với sản
+ * phẩm và dự án vốn phân trang theo id.
+ */
+interface NewsCursorResponse<T> {
+  data: T[]
+  next_cursor: string | null
+}
+
 export const api = {
   home: () => get<HomeData>('/home'),
   settings: () => get<Record<string, string>>('/settings'),
@@ -75,9 +85,11 @@ export const api = {
 
   certificates: () => get<{ data: Certificate[] }>('/certificates'),
 
-  news: (params: QueryParams = {}) => get<CursorResponse<NewsItem>>('/news', params),
+  news: (params: QueryParams = {}) => get<NewsCursorResponse<NewsItem>>('/news', params),
   newsItem: (slug: string) => get<{ data: NewsItem }>(`/news/${slug}`),
   newsCategories: () => get<NewsCategory[]>('/news/categories'),
+
+  partners: () => get<{ data: Partner[] }>('/partners'),
 
   faqs: () => get<{ data: FaqItem[] }>('/faqs'),
 

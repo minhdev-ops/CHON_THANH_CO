@@ -8,7 +8,7 @@ const props = defineProps<{ project: Project }>()
 const heroImage = computed(() =>
   props.project.gallery?.[0]?.image
   || props.project.hero_image
-  || '/images/projects/highway-1.jpg'
+  || 'https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png'
 )
 </script>
 
@@ -21,14 +21,14 @@ const heroImage = computed(() =>
     <LazyImage
       :src="heroImage"
       :alt="project.name"
-      fallback-src="/images/projects/highway-1.jpg"
+      fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
       aspect-ratio="aspect-[4/3]"
       container-class="rounded-[10px]"
       image-class="w-full h-full object-cover"
     >
       <!-- Dark gradient for readability -->
       <div class="absolute inset-0 bg-gradient-to-t from-[#16243D]/90 via-[#16243D]/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
-      
+
       <!-- Category badge -->
       <div class="absolute bottom-6 left-6 right-6 z-20">
         <h3 class="font-bold text-white text-[18px] leading-tight mb-3 group-hover:text-[#B89B88] transition-colors duration-200 line-clamp-2">
@@ -45,7 +45,7 @@ const heroImage = computed(() =>
           </span>
         </p>
       </div>
-      
+
       <!-- Hover View button icon -->
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#B89B88] rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 shadow-xl">
         <i class="fa text-[24px] fa-eye"></i>

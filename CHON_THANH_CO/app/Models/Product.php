@@ -13,15 +13,18 @@ use Laravel\Scout\Searchable;
 class Product extends Model
 {
     use HasFactory;
-    use SoftDeletes;
     use Searchable;
+    use SoftDeletes;
 
     protected $fillable = [
         'category_id',
+        'parent_id',
         'slug',
         'code',
         'name',
         'description',
+        'functions',
+        'applications_text',
         'strength_label',
         'meta_title',
         'meta_description',
@@ -47,6 +50,49 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Sản phẩm cha đại diện cho cả dòng (ví dụ dòng ART).
+     * Sản phẩm độc lập thì parent_id = null.
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    /** Các mã cùng dòng, không gồm chính nó. */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id')->orderBy('sort_order');
+    }
+
+    /** id của sản phẩm cha, tự trả về chính nó khi không có cha. */
+    public function lineId(): int
+    {
+        return $this->parent_id ?? $this->id;
+    }
+
+    /** Các cấp cường độ của dòng (ART 7/9/12 kN/m...), nhập trong admin. */
+    public function strengthGrades(): HasMany
+    {
+        return $this->hasMany(ProductStrengthGrade::class)->orderBy('sort_order');
+    }
+
+    public function projectMaterials(): HasMany
+    {
+        return $this->hasMany(ProjectMaterial::class);
+    }
+
+    /** Công trình đã dùng sản phẩm này. */
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Project::class,
+            'project_materials',
+            'product_id',
+            'project_id'
+        )->withTimestamps();
     }
 
     public function applications(): BelongsToMany
@@ -78,6 +124,7 @@ class Product extends Model
             'code' => $this->code,
             'slug' => $this->slug,
             'category' => $this->category?->name,
+            'parent_id' => $this->parent_id,
             'strength_min' => $this->strength_min,
             'strength_max' => $this->strength_max,
             'is_active' => $this->is_active,

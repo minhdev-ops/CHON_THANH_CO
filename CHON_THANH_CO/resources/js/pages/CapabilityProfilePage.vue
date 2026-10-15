@@ -68,6 +68,6 @@ const breadcrumbs = computed(() => [
       </div>
     </section>
 
-    <CTABanner />
+    <CTABanner subject="capability" />
   </div>
 </template>

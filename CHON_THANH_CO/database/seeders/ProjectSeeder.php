@@ -49,7 +49,7 @@ class ProjectSeeder extends Seeder
                 ],
                 'gallery' => [
                     '/images/projects/lake-1.jpg',
-                    '/images/projects/highway-1.jpg',
+                    'https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png',
                     '/images/projects/highway-2.jpg',
                 ],
             ],
@@ -57,7 +57,7 @@ class ProjectSeeder extends Seeder
                 'slug' => 'khu-cong-nghiep-ha-noi',
                 'period' => '2024',
                 'area' => '100,000 m²',
-                'hero_image' => '/images/projects/highway-1.jpg',
+                'hero_image' => 'https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png',
                 'desc_image' => '/images/projects/highway-2.jpg',
                 'sort_order' => 3,
                 'name' => 'Khu công nghiệp Hà Nội',
@@ -68,7 +68,7 @@ class ProjectSeeder extends Seeder
                     ['name' => 'Vải địa kỹ thuật không dệt', 'detail' => 'Phân cách và lọc thoát nền đường khu công nghiệp.', 'img' => '/images/products/geotextile-roll.jpg'],
                 ],
                 'gallery' => [
-                    '/images/projects/highway-1.jpg',
+                    'https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png',
                     '/images/projects/highway-2.jpg',
                 ],
             ],

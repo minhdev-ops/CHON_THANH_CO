@@ -53,6 +53,7 @@ class WhyChooseUsController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item = WhyChooseUs::create([
             'icon' => $data['icon'],
@@ -72,6 +73,7 @@ class WhyChooseUsController extends Controller
 
     public function update(Request $request, WhyChooseUs $item)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item->update([
             'icon' => $data['icon'],
@@ -89,6 +91,20 @@ class WhyChooseUsController extends Controller
         $item->delete();
 
         return redirect()->route('admin.why-choose-us.index')->with('success', 'Đã xóa mục.');
+    }
+
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['title', 'description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request): array

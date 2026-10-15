@@ -10,6 +10,7 @@ use App\Models\Application;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
@@ -71,21 +72,26 @@ class ProductController extends Controller
             'product' => null,
             'categories' => Category::all(),
             'applications' => Application::all(),
+            'parentCandidates' => $this->parentCandidates(null),
         ]);
     }
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $product = Product::create([
             'category_id' => $data['category_id'],
+            'parent_id' => $data['parent_id'] ?? null,
             'slug' => $this->makeSlug($data),
             'code' => $data['code'],
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
+            'functions' => $data['functions'] ?? null,
             'strength_label' => $data['strength_label'] ?? null,
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
+            'applications_text' => $data['applications_text'] ?? null,
             'image' => $data['image'],
             'strength_min' => $data['strength_min'] ?? null,
             'strength_max' => $data['strength_max'] ?? null,
@@ -102,24 +108,59 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return view('admin.products.form', [
-            'product' => $product->load('specs', 'images', 'applications'),
+            'product' => $product->load('specs', 'images', 'applications', 'strengthGrades'),
             'categories' => Category::all(),
             'applications' => Application::all(),
+            'parentCandidates' => $this->parentCandidates($product),
         ]);
+    }
+
+    /**
+     * Danh sách sản phẩm có thể chọn làm dòng (cha).
+     *
+     * Loại bỏ chính sản phẩm đang sửa và toàn bộ biến thể của nó, nếu không
+     * sẽ tạo được vòng lặp cha–con.
+     */
+    private function parentCandidates(?Product $product): Collection
+    {
+        $query = Product::query()->whereNull('deleted_at')->orderBy('name');
+
+        if ($product) {
+            $excludeIds = Product::query()
+                ->where(function ($q) use ($product) {
+                    $q->where('id', $product->id)
+                        ->orWhere('parent_id', $product->id);
+                })
+                ->pluck('id')
+                ->all();
+
+            $query->whereNotIn('id', $excludeIds);
+
+            // Không cho chọn chính dòng hiện tại làm cha của chính nó.
+            if ($product->parent_id) {
+                $query->where('id', '!=', $product->parent_id);
+            }
+        }
+
+        return $query->get();
     }
 
     public function update(Request $request, Product $product)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request, $product);
         $product->update([
             'category_id' => $data['category_id'],
+            'parent_id' => $data['parent_id'] ?? null,
             'slug' => $this->makeSlug($data, $product),
             'code' => $data['code'],
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
+            'functions' => $data['functions'] ?? null,
             'strength_label' => $data['strength_label'] ?? null,
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,
+            'applications_text' => $data['applications_text'] ?? null,
             'image' => $data['image'],
             'strength_min' => $data['strength_min'] ?? null,
             'strength_max' => $data['strength_max'] ?? null,
@@ -211,7 +252,7 @@ class ProductController extends Controller
             $product->specs()->create([
                 'icon' => $row['icon'] ?? null,
                 'value' => $row['value'],
-                'label' => $row['label'] ?? null,
+                'label' => $row['label'] ?? '',
                 'sort_order' => $row['sort_order'] ?? 0,
             ]);
         }
@@ -227,12 +268,59 @@ class ProductController extends Controller
                 'sort_order' => $row['sort_order'] ?? 0,
             ]);
         }
+
+        $product->strengthGrades()->delete();
+        foreach (($data['strength_grades'] ?? []) as $row) {
+            if (blank($row['grade'] ?? null)) {
+                continue;
+            }
+            $product->strengthGrades()->create([
+                'grade' => trim($row['grade']),
+                'unit' => $row['unit'] ?? null,
+                'note' => $row['note'] ?? null,
+                'sort_order' => $row['sort_order'] ?? 0,
+            ]);
+        }
+    }
+
+    /**
+     * Form dùng partial translation-section nên name/description đi theo
+     * translations[vi][...]. Bản vá đơn giản: copy chúng sang khóa thường
+     * để validate() của controller này hoạt động.
+     */
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['name', 'description', 'strength_label', 'meta_title', 'meta_description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request, ?Product $product = null): array
     {
         return $request->validate([
             'category_id' => ['required', 'exists:categories,id'],
+            'parent_id' => [
+                'nullable',
+                'exists:products,id',
+                // Không cho tự làm cha của chính mình.
+                Rule::notIn([$product?->id]),
+                // Không cho chọn con của chính mình, tránh vòng lặp cha–con.
+                function ($attribute, $value, $fail) use ($product) {
+                    if (! $product || ! $value) {
+                        return;
+                    }
+                    if (Product::where('id', $value)->where('parent_id', $product->id)->exists()) {
+                        $fail('Sản phẩm cha không được là một biến thể của sản phẩm này.');
+                    }
+                },
+            ],
             'slug' => ['nullable', 'string', 'max:150'],
             'code' => [
                 'required',
@@ -245,6 +333,8 @@ class ProductController extends Controller
             'strength_label' => ['nullable', 'string', 'max:50'],
             'meta_title' => ['nullable', 'string', 'max:200'],
             'meta_description' => ['nullable', 'string', 'max:300'],
+            'applications_text' => ['nullable', 'string'],
+            'functions' => ['nullable', 'string'],
             'image' => ['required', 'string', 'max:255'],
             'strength_min' => ['nullable', 'numeric'],
             'strength_max' => ['nullable', 'numeric'],
@@ -255,13 +345,20 @@ class ProductController extends Controller
             'applications.*' => ['exists:applications,id'],
             'specs' => ['nullable', 'array'],
             'specs.*.icon' => ['nullable', 'string', 'max:50'],
-            'specs.*.value' => ['nullable', 'string', 'max:100'],
+            'specs.*.value' => ['nullable', 'string', 'max:500'],
             'specs.*.label' => ['nullable', 'string', 'max:150'],
             'specs.*.sort_order' => ['nullable', 'integer'],
             'images' => ['nullable', 'array'],
             'images.*.image' => ['nullable', 'string', 'max:255'],
             'images.*.alt' => ['nullable', 'string', 'max:255'],
             'images.*.sort_order' => ['nullable', 'integer'],
+            'strength_grades' => ['nullable', 'array'],
+            // Dòng để trống (admin bấm "+ Thêm cấp" rồi không điền) bị bỏ qua
+            // khi lưu, nên không bắt buộc ở tầng validate.
+            'strength_grades.*.grade' => ['nullable', 'string', 'max:50'],
+            'strength_grades.*.unit' => ['nullable', 'string', 'max:30'],
+            'strength_grades.*.note' => ['nullable', 'string', 'max:255'],
+            'strength_grades.*.sort_order' => ['nullable', 'integer'],
         ]);
     }
 

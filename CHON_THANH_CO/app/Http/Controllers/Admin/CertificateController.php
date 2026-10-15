@@ -57,6 +57,7 @@ class CertificateController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $certificate = Certificate::create([
             'slug' => $this->makeSlug($data),
@@ -78,6 +79,7 @@ class CertificateController extends Controller
 
     public function update(Request $request, Certificate $certificate)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $certificate->update([
             'slug' => $this->makeSlug($data, $certificate),
@@ -97,6 +99,20 @@ class CertificateController extends Controller
         $certificate->delete();
 
         return redirect()->route('admin.certificates.index')->with('success', 'Đã xóa chứng chỉ.');
+    }
+
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['name', 'description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request): array

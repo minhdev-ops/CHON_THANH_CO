@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\FileManagerController;
 use App\Http\Controllers\Admin\HomeStatController;
 use App\Http\Controllers\Admin\NewsCategoryController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\SettingController;
@@ -42,6 +43,9 @@ Route::prefix(config('admin.path', 'admin'))->name('admin.')->group(function () 
             ->parameters(['news' => 'item']);
         Route::post('news/bulk', [NewsController::class, 'bulk'])->name('news.bulk');
         Route::resource('news-categories', NewsCategoryController::class)->except(['show']);
+        Route::resource('partners', PartnerController::class)->except(['show'])
+            ->parameters(['partners' => 'partner']);
+        Route::post('partners/bulk', [PartnerController::class, 'bulk'])->name('partners.bulk');
         Route::resource('faqs', FaqController::class)->except(['show']);
         Route::resource('home-stats', HomeStatController::class)->except(['show'])
             ->parameters(['home-stats' => 'stat']);

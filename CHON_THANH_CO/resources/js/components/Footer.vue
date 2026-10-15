@@ -3,7 +3,7 @@ import { computed, onMounted } from 'vue'
 import { useSettings } from '../composables/useSettings'
 import { getYearsOfExperience } from '../utils/experience'
 
-const { settings, load } = useSettings()
+const { settings, load, socialSettings } = useSettings()
 
 const phones = computed(() => {
   const raw = settings.value?.['contact.phone']?.trim() || '0909 292 530'
@@ -158,6 +158,14 @@ onMounted(() => load())
           <i class="fa text-[#2A2420]/60 text-[20px] shrink-0 fa-clock"></i>
           <span class="text-[#2A2420]/80 text-[15px]">{{ settings?.['contact.working_hours'] || 'T2 – T6: 8:30 AM – 5:30 PM' }}</span>
         </div>
+      </div>
+
+      <div v-if="socialSettings.length" class="px-6 flex justify-center gap-2.5 mt-4">
+        <a v-for="social in socialSettings" :key="social.name" :href="social.url" target="_blank" rel="noopener noreferrer"
+          class="w-11 h-11 rounded-xl bg-[#2A2420]/10 border border-[#2A2420]/15 text-[#2A2420] flex items-center justify-center hover:bg-[#2A2420] hover:text-white hover:-translate-y-0.5 transition-all duration-300"
+          :aria-label="social.name" :title="social.name">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" v-html="social.icon"></svg>
+        </a>
       </div>
 
       <div class="px-6 pt-5 border-t border-[#2A2420]/15">

@@ -7,9 +7,11 @@ import type { Product } from '../types'
 import ProductCard from '../components/ProductCard.vue'
 import PageHeader from '../components/PageHeader.vue'
 import LazyImage from '../components/LazyImage.vue'
+import RichText from '../components/RichText.vue'
 import { t } from '../i18n'
 import { fallbackProducts } from '../types/fallback'
 import { getYearsOfExperience } from '../utils/experience'
+import { buildContactLink } from '../utils/contactLink'
 
 const route = useRoute()
 const product = ref<Product | null>(null)
@@ -17,7 +19,8 @@ const related = ref<Product[]>([])
 const loading = ref(true)
 const notFound = ref(false)
 const activeImage = ref(0)
-const activeTab = ref<'specs' | 'applications' | 'description'>('specs')
+type TabKey = 'specs' | 'applications' | 'functions' | 'description'
+const activeTab = ref<TabKey>('specs')
 let loadSeq = 0
 
 const galleryImages = computed(() => {
@@ -25,6 +28,44 @@ const galleryImages = computed(() => {
   const main = product.value.image
   const extras = (product.value.images ?? []).map((img) => img.image).filter(Boolean)
   return [main, ...extras].filter((url): url is string => !!url)
+})
+
+// Nút báo giá → liên hệ, nội dung tư vấn đã điền sẵn kèm tên sản phẩm.
+const quoteLink = computed(() =>
+  buildContactLink({ subject: 'product', product: product.value?.name }),
+)
+
+/**
+ * Các mã cùng dòng để khách chuyển nhanh, ví dụ các độ dày màng HDPE.
+ * Bản đã xem luôn nằm trong danh sách và được đánh dấu.
+ */
+const lineProducts = computed(() => product.value?.variants ?? [])
+
+/** Bảng cấp cường độ của dòng (ART, GET...). */
+const strengthGrades = computed(() => product.value?.strength_grades ?? [])
+
+/** Công trình đã dùng vật liệu của dòng này. */
+const lineProjects = computed(() => product.value?.projects ?? [])
+
+/** Nội dung ứng dụng gõ tự do, hiển thị dưới danh sách ứng dụng có cấu trúc. */
+const hasAppText = computed(() => !!(product.value?.applications_text ?? '').trim())
+
+const tabs = computed(() => {
+  const p = product.value
+  if (!p) return [] as { key: TabKey; label: string }[]
+  const list: { key: TabKey; label: string }[] = []
+  if (p.specs?.length) list.push({ key: 'specs', label: t('product.specs') })
+  if (p.applications?.length || p.applications_text) list.push({ key: 'applications', label: t('product.applications') })
+  if (p.functions?.trim()) list.push({ key: 'functions', label: t('product.functions') })
+  list.push({ key: 'description', label: t('product.description') })
+  return list
+})
+
+watch(product, (p) => {
+  if (!p) return
+  if (!tabs.value.some((tab) => tab.key === activeTab.value)) {
+    activeTab.value = tabs.value[0]?.key ?? 'description'
+  }
 })
 
 const onKeydown = (e: KeyboardEvent) => {
@@ -57,9 +98,9 @@ const load = async (slug: string) => {
     const res = await api.product(slug)
     if (requestId !== loadSeq) return
     product.value = res.data
-    const list = await api.products({ category: res.data.category?.slug, limit: 50 })
-    if (requestId !== loadSeq) return
-    related.value = list.data.filter((p) => p.slug !== slug).slice(0, 3)
+    // API đã xếp hạng sẵn theo mức độ liên quan (cùng dòng → chung ứng
+    // dụng → cùng danh mục), không cần gọi thêm danh sách sản phẩm.
+    related.value = (res.data.related_products ?? []) as Product[]
     if (!related.value.length) {
       related.value = fallbackProducts.filter((p) => p.slug !== slug && p.category?.slug === res.data.category?.slug).slice(0, 3)
     }
@@ -159,20 +200,63 @@ const breadcrumbs = computed(() => [
             </div>
           </div>
 
-          <div class="text-text-secondary mb-10 leading-[1.8] text-[16px] max-w-2xl"><p>{{ product.description }}</p></div>
+          <div class="text-text-secondary mb-10 leading-[1.8] text-[16px] max-w-2xl">
+            <RichText :text="product.description" mode="lead" />
+          </div>
 
-          <div v-if="product.specs?.length" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-            <div v-for="spec in product.specs.slice(0, 3)" :key="spec.label" class="bg-surface-bright border border-outline-variant rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
-              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-4">
-                <i class="fa text-primary-deep text-xl" :class="faIcon(spec.icon || 'check')"></i>
-              </div>
-              <span class="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] mb-2">{{ spec.label }}</span>
-              <span class="font-bold text-text-main text-[16px]">{{ spec.value }}</span>
+          <!-- Các mã cùng dòng: chuyển nhanh giữa các thông số -->
+          <div v-if="lineProducts.length" class="mb-10">
+            <h2 class="text-[13px] font-bold text-text-muted uppercase tracking-[0.15em] mb-3">
+              {{ product.parent ? 'Các loại trong dòng' : 'Các mã cùng dòng' }}
+            </h2>
+            <div class="flex flex-wrap gap-2">
+              <router-link
+                v-for="item in lineProducts"
+                :key="item.slug"
+                :to="`/products/${item.slug}`"
+                class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[13px] font-bold transition-all duration-300"
+                :class="item.slug === product.slug
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-surface-vlm border-outline-variant text-text-secondary hover:border-primary hover:text-primary'"
+              >
+                <span class="font-mono">{{ item.code }}</span>
+                <span class="font-medium">{{ item.name }}</span>
+              </router-link>
+            </div>
+          </div>
+
+          <!-- Bảng cấp cường độ -->
+          <div v-if="strengthGrades.length" class="mb-10">
+            <h2 class="text-[13px] font-bold text-text-muted uppercase tracking-[0.15em] mb-3">Các cấp cường độ</h2>
+            <div class="overflow-x-auto border border-outline-variant rounded-2xl">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-surface-vlm text-text-muted">
+                    <th class="px-5 py-3 text-[11px] font-bold uppercase tracking-wider">Cấp</th>
+                    <th class="px-5 py-3 text-[11px] font-bold uppercase tracking-wider">Đơn vị</th>
+                    <th class="px-5 py-3 text-[11px] font-bold uppercase tracking-wider">Ghi chú</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="grade in strengthGrades"
+                    :key="grade.grade"
+                    class="border-t border-outline-variant hover:bg-surface-bright transition-colors"
+                  >
+                    <td class="px-5 py-3.5 font-mono font-bold text-text-main tabular-nums whitespace-nowrap">{{ grade.grade }}</td>
+                    <td class="px-5 py-3.5 text-text-secondary whitespace-nowrap">{{ grade.unit || '—' }}</td>
+                    <td class="px-5 py-3.5 text-text-secondary">{{ grade.note || '—' }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
           <div class="flex flex-col sm:flex-row gap-4 mt-auto border-t border-outline-variant pt-8">
-            <router-link to="/contact" class="btn btn-primary btn-magnetic rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+            <router-link
+              :to="quoteLink"
+              class="btn btn-primary btn-magnetic rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+            >
               <i class="fa text-xl fa-file-pen"></i> {{ t('product.quote') }}
             </router-link>
             <a href="tel:0909292530" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full py-4 px-8 text-[15px] font-bold inline-flex items-center justify-center gap-3 transition-all duration-300">
@@ -187,46 +271,93 @@ const breadcrumbs = computed(() => [
     <section class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop mb-20">
       <div class="bg-surface-bright border border-outline-variant rounded-3xl overflow-hidden">
         <div class="flex flex-wrap overflow-x-auto scrollbar-hide border-b border-outline-variant bg-surface-vlm">
-          <button v-for="tab in ['specs','applications','description'] as const" :key="tab"
+          <button v-for="tab in tabs" :key="tab.key"
             class="px-6 md:px-8 py-4 md:py-5 text-[12px] md:text-[14px] font-bold uppercase tracking-wider transition-colors duration-300 relative whitespace-nowrap shrink-0"
-            :class="activeTab === tab ? 'text-primary-deep bg-surface-bright' : 'text-text-muted hover:text-primary'"
-            @click="activeTab = tab">
-            {{ tab === 'specs' ? t('product.specs') : tab === 'applications' ? t('product.applications') : 'Mô tả chi tiết' }}
-            <span v-if="activeTab === tab" class="absolute bottom-0 left-0 right-0 h-1 bg-primary"></span>
+            :class="activeTab === tab.key ? 'text-primary-deep bg-surface-bright' : 'text-text-muted hover:text-primary'"
+            @click="activeTab = tab.key">
+            {{ tab.label }}
+            <span v-if="activeTab === tab.key" class="absolute bottom-0 left-0 right-0 h-1 bg-primary"></span>
           </button>
         </div>
         <div class="p-8 md:p-10">
           <transition name="page" mode="out-in">
             <div v-if="activeTab === 'specs' && product.specs?.length" key="specs">
-              <div class="grid grid-cols-1 gap-4">
-                <div v-for="(spec, i) in product.specs" :key="i" class="flex items-start gap-4 p-5 bg-surface-vlm rounded-2xl border border-outline-variant hover:border-primary/30 hover:shadow-sm transition-all duration-300 group">
-                  <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                    <i class="fa text-primary group-hover:text-white" :class="faIcon(spec.icon || 'check')"></i>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  v-for="(spec, i) in product.specs"
+                  :key="`${spec.label}-${i}`"
+                  class="bg-surface-bright border border-outline-variant rounded-2xl p-5 flex items-start gap-4 hover:border-primary/30 transition-colors duration-300"
+                >
+                  <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <i class="fa text-primary text-sm" :class="faIcon(spec.icon || 'check')"></i>
                   </div>
                   <div class="flex-grow min-w-0">
-                    <div class="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1">{{ spec.label }}</div>
-                    <div class="text-text-main font-bold text-[16px]">{{ spec.value }}</div>
+                    <div class="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1">{{ spec.label?.trim() || '—' }}</div>
+                    <div class="text-text-main font-bold text-[16px] break-words max-w-[40ch]">{{ spec.value }}</div>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-else-if="activeTab === 'applications' && product.applications?.length" key="applications" class="grid grid-cols-1 gap-5">
-              <div v-for="app in product.applications" :key="app.slug" class="flex items-start gap-4 p-6 bg-surface-vlm border border-outline-variant rounded-2xl hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-primary-deep shrink-0">
-                  <i class="fa text-xl" :class="faIcon(appIcons[app.slug] || 'check')"></i>
-                </div>
-                <div>
-                  <span class="text-[15px] font-bold text-text-main block mb-1.5">{{ app.name }}</span>
-                  <span class="text-[13px] text-text-secondary leading-relaxed">{{ app.description }}</span>
+            <div v-else-if="activeTab === 'applications'" key="applications" class="space-y-8">
+              <!-- Nguồn 1: các bản ghi ứng dụng đã cấu trúc (chọn ở admin) -->
+              <div v-if="product.applications?.length" class="grid grid-cols-1 gap-5">
+                <div v-for="app in product.applications" :key="app.slug" class="flex items-start gap-4 p-6 bg-surface-vlm border border-outline-variant rounded-2xl hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] hover:border-primary/30 transition-all duration-500 group card-shine">
+                  <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center text-primary-deep shrink-0">
+                    <i class="fa text-xl" :class="faIcon(appIcons[app.slug] || 'check')"></i>
+                  </div>
+                  <div>
+                    <span class="text-[15px] font-bold text-text-main block mb-1.5">{{ app.name }}</span>
+                    <span class="text-[13px] text-text-secondary leading-relaxed">{{ app.description }}</span>
+                  </div>
                 </div>
               </div>
+
+              <!-- Nguồn 2: nội dung gõ tự do, hiện dưới danh sách ứng dụng -->
+              <div>
+                <h3
+                  v-if="product.applications?.length && hasAppText"
+                  class="text-[12px] font-bold text-text-muted uppercase tracking-[0.15em] mb-4"
+                >
+                  {{ t('product.applicationsDetail') }}
+                </h3>
+                <RichText :text="product.applications_text" class="text-text-secondary text-[16px]" />
+              </div>
             </div>
-            <div v-else-if="activeTab === 'description'" key="description" class="prose max-w-none text-text-secondary leading-[1.8] text-[16px]">
-              <p>{{ product.description }}</p>
-              <p class="mt-4">Với hơn {{ getYearsOfExperience() }} năm kinh nghiệm, CHƠN THÀNH cam kết cung cấp sản phẩm {{ product.name }} đạt tiêu chuẩn ISO 9001:2015, TCVN 9844:2013 và tiêu chuẩn Châu Âu EN, ASTM. Đội ngũ kỹ sư hỗ trợ tư vấn kỹ thuật miễn phí từ khâu thiết kế đến thi công.</p>
+            <div v-else-if="activeTab === 'functions'" key="functions">
+              <RichText :text="product.functions" class="text-text-secondary text-[16px]" />
+            </div>
+            <div v-else-if="activeTab === 'description'" key="description">
+              <RichText :text="product.description" mode="rest" class="text-text-secondary text-[16px]" />
+              <p class="mt-6 border-t border-outline-variant pt-6 text-text-secondary leading-[1.8] text-[15px]">Với hơn {{ getYearsOfExperience() }} năm kinh nghiệm, CHƠN THÀNH cam kết cung cấp sản phẩm {{ product.name }} đạt tiêu chuẩn ISO 9001:2015, TCVN 9844:2013 và tiêu chuẩn Châu Âu EN, ASTM. Đội ngũ kỹ sư hỗ trợ tư vấn kỹ thuật miễn phí từ khâu thiết kế đến thi công.</p>
             </div>
           </transition>
         </div>
+      </div>
+    </section>
+
+    <!-- Công trình đã dùng vật liệu của dòng này -->
+    <section v-if="lineProjects.length" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop pb-20">
+      <div class="text-center mb-12 reveal">
+        <h2 class="text-[32px] md:text-[40px] font-extrabold text-text-main tracking-tight">Công trình đã áp dụng</h2>
+        <p class="text-text-secondary mt-3">Sản phẩm của dòng Lưới địa kỹ thuật đã được sử dụng tại các công trình sau.</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-grid">
+        <router-link
+          v-for="proj in lineProjects"
+          :key="proj.slug"
+          :to="`/projects/${proj.slug}`"
+          class="group bg-surface-bright border border-outline-variant rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-[0_12px_32px_rgba(184,155,136,0.12)] transition-all duration-500"
+        >
+          <div class="relative bg-surface-vlm select-none overflow-hidden w-full h-40 object-cover transition-transform duration-700 group-hover:scale-105">
+            <img :src="proj.hero_image" :alt="proj.name" class="w-full h-full object-cover transition-opacity duration-500 ease-out opacity-100" loading="lazy" decoding="async">
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-text-main text-[15px] leading-snug mb-2 group-hover:text-primary transition-colors">{{ proj.name }}</h3>
+            <p v-if="proj.location" class="text-text-muted text-[13px] flex items-center gap-2">
+              <i class="fa fa-location-dot text-primary"></i>{{ proj.location }}
+            </p>
+          </div>
+        </router-link>
       </div>
     </section>
 

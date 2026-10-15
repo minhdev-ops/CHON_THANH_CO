@@ -34,7 +34,6 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    'three': ['three'],
                     'vendor-vue': ['vue', 'vue-router'],
                     'vendor-utils': ['axios', '@vueuse/core'],
                 },

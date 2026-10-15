@@ -53,6 +53,7 @@ class FaqController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $faq = Faq::create([
             'question' => $data['question'],
@@ -71,6 +72,7 @@ class FaqController extends Controller
 
     public function update(Request $request, Faq $faq)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $faq->update([
             'question' => $data['question'],
@@ -87,6 +89,20 @@ class FaqController extends Controller
         $faq->delete();
 
         return redirect()->route('admin.faqs.index')->with('success', 'Đã xóa FAQ.');
+    }
+
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['question', 'answer'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request): array

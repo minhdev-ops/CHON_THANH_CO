@@ -118,6 +118,31 @@ class ProductSeeder extends Seeder
                 'apps' => ['gia-co-nen', 'on-dinh-mai-doc'],
                 'name' => 'Lưới địa kỹ thuật Geogrid',
                 'description' => 'Lưới địa kỹ thuật sản xuất từ polymer cường độ cao hoặc sợi thủy tinh, có cấu trúc mạng lưới đồng nhất giúp phân tán tải trọng và tăng cường sức chịu tải của nền đất. Ứng dụng gia cố nền đường, tường chắn đất và ổn định mái dốc.',
+                'functions' => <<<'TEXT'
+                    ## Ưu điểm nổi bật
+
+                    - Cấu trúc mạng lưới **đồng nhất** giúp phân tán tải trọng theo nhiều phương
+                    - **Giảm độ dốc mái**, tiết kiệm khối lượng đất đắp so với giải pháp truyền thống
+                    - Lắp dựng nhanh bằng **cọc đóng ghim**, không cần vữa xây
+                    - Chịu được tải động và biến dạng lớn trong thời gian dài
+
+                    ## Lưu ý khi thi công
+
+                    1. Mở phẳng lưới trước khi định vị, **càng phẳng càng tốt**
+                    2. Mũi lưới giữa hai cuộn **chồng lấn tối thiểu 30 cm**
+                    3. Lớp đệm đá đầm kỹ trước khi đổ đất đánh ốp
+                    TEXT,
+                'applications_text' => <<<'TEXT'
+                    Trong thi công giao thông và thủy lợn, geogrid thường làm lớp gia cố nằm trong móng cấp phối, cho phép điều chỉnh chiều dày nền theo từng vị trí thay vì bải phẳng toàn tuyến.
+
+                    ## Gợi ý bố trí theo vị trí
+
+                    - Nền đường ô tô: trải ở **lớp dưới cùng** của móng cấp phối đá dăm
+                    - Kè bảo vệ bờ: lưới đi kèm lớp đá hộc bọc **tường chắn**, giữ đất khỏi xói mòn
+                    - Mái dốc trồng cỏ: lưới làm khung **giữ lớp đất màu** và rễ cây bám chặt
+
+                    Nhân viên kỹ thuật của CHƠN THÀNH sẽ tư vấn vị trí đặt lưới cho công trình cụ thể.
+                    TEXT,
                 'specs' => [
                     ['icon' => 'ruler', 'value' => '1m – 5m', 'label' => 'Khổ rộng', 'sort_order' => 1],
                     ['icon' => 'scroll-text', 'value' => '50m', 'label' => 'Chiều dài', 'sort_order' => 2],
@@ -150,6 +175,29 @@ class ProductSeeder extends Seeder
                 'apps' => ['chong-xoi-mon', 'on-dinh-mai-doc'],
                 'name' => 'Rọ đá (Gabion)',
                 'description' => 'Rọ đá chế tạo từ lưới thép xoắn kép mạ kẽm nhúng nóng hoặc bọc PVC, đổ đầy đá để gia cố bờ kè, mái dốc và tường chắn. Sản phẩm có độ bền cao, khả năng thoát nước tự nhiên và thân thiện với môi trường. Sản xuất tại nhà máy Rọ đá Á Châu, Hóc Môn.',
+                'functions' => <<<'TEXT'
+                    ## Đặc điểm
+
+                    - Lưới thép xoắn kép **chịu lực tốt** trong điều kiện khắc nghiệt
+                    - Đá trong lồng tạo khối **cứng và thoát nước tự nhiên**, không gây áp lực nước ngầm
+                    - Có thể **dỡ đổ dạng khối**, tận dụng lại quay vòng khi cần tu bổ
+                    - Tự thích nghi với biến dạng nền do động đất mà không bị nứt vỡ
+
+                    ## Chọn lớp bảo vệ
+
+                    1. Mạ kẽm nhúng nóng — phù hợp điều kiện bình thường, giá thành thấp
+                    2. Bọc PVC — dành cho công trình ven biển, đất xâm thủy, vùng nước mặn
+                    TEXT,
+                'applications_text' => <<<'TEXT'
+                    Rọ đá thường xuất hiện ở những vị trí cấp phối đắn quá tốn kém nhưng phải giữ được bề mặt tự nhiên: trước đê, quanh móng cầu, hay trên sườn mái dốc có trồng cây.
+
+                    ## Kinh nghiệm lắp đặt
+
+                    - Dựng khung rọ trước, **đổ đá từng lớp** và gõ chặt từng lớp để rọ không mềm
+                    - Không dùng đá có góc sắc nhọn, tránh cắt đứt dây lưới
+                    - Lưới đáy và lưới vách phải **liên kết với nhau**, tuyệt đối không để hở
+                    - Sau trận mưa lớn cần bổ sung đá ở những chỗ bị lún cục bộ
+                    TEXT,
                 'specs' => [
                     ['icon' => 'box', 'value' => '1x1x1m / 2x1x1m', 'label' => 'Kích thước', 'sort_order' => 1],
                     ['icon' => 'cable', 'value' => '2.0 – 3.0 mm', 'label' => 'Đường kính dây', 'sort_order' => 2],
@@ -182,6 +230,29 @@ class ProductSeeder extends Seeder
                 'apps' => ['chong-tham'],
                 'name' => 'Màng chống thấm HDPE',
                 'description' => 'Màng chống thấm HDPE sản xuất từ nhựa polyethylene mật độ cao, có khả năng chống thấm tuyệt đối, chịu hóa chất và tia UV. Ứng dụng trong hồ chứa, ao hồ, bãi chôn lấp, kênh mương và các công trình bảo vệ môi trường.',
+                'functions' => <<<'TEXT'
+                    ## Tính năng
+
+                    - **Chống thấm tuyệt đối**, không hấp thụ nước
+                    - Chịu hóa chất tốt với dung dịch muối, axit loãng và nước thải công nghiệp
+                    - Ổn định dưới tia **UV** trong thời gian dài
+                    - Có thể **hàn nhiệt** mối nối bằng máy hàn, tạo mặt phẳng liền mạch
+
+                    ## Các kiểu màng
+
+                    1. Màng một lớp — dùng cho nền thông thường, tiết kiệm chi phí
+                    2. Màng hai lớp — dùng cho bãi chôn lấp, đáy ao hồ, nơi nguy cơ rò rỉ cao
+                    TEXT,
+                'applications_text' => <<<'TEXT'
+                    Màng HDPE thường làm lớp chống thấm thứ hai, đặt bên dưới lớp bảo vệ geotextile để tránh cát đá gây rách màng trong lúc thi công.
+
+                    ## Kinh nghiệm thi công
+
+                    - **Đổ cát sanh và làm phẳng** trước khi trải màng, không để sỏi sắc nhọn
+                    - Nối mối bằng cách **hàn nhiệt**, không dùng keo dán
+                    - Kho màng ở chỗ râm mát, trải **không quá 20 m** một lượt trước khi hàn
+                    - Phủ lớp bảo vệ xong phải **thử nghiệm rò rỉ** trước khi nghiệm thu
+                    TEXT,
                 'specs' => [
                     ['icon' => 'ruler', 'value' => '5.8m – 7.5m', 'label' => 'Khổ rộng', 'sort_order' => 1],
                     ['icon' => 'scroll-text', 'value' => '50m – 100m', 'label' => 'Chiều dài', 'sort_order' => 2],
@@ -243,7 +314,7 @@ class ProductSeeder extends Seeder
         foreach ($items as $data) {
             $specs = $data['specs'];
 
-            $this->createProduct([
+            $attributes = [
                 'category_id' => $categories[$data['category']],
                 'slug' => $data['slug'],
                 'code' => $data['code'],
@@ -254,7 +325,17 @@ class ProductSeeder extends Seeder
                 'sort_order' => $sort++,
                 'name' => $data['name'],
                 'description' => $data['description'],
-            ], $specs, $data['apps']);
+            ];
+
+            // Hai nội dung tab dưới là tùy chọn: chỉ ghi khi sản phẩm có,
+            // không ghi null để không xoá nội dung admin đã nhập tay.
+            foreach (['functions', 'applications_text'] as $optional) {
+                if (array_key_exists($optional, $data)) {
+                    $attributes[$optional] = $data[$optional];
+                }
+            }
+
+            $this->createProduct($attributes, $specs, $data['apps']);
         }
     }
 

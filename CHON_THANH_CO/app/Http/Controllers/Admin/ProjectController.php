@@ -63,6 +63,7 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $project = Project::create([
             'slug' => $this->makeSlug($data),
@@ -95,6 +96,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $project->update([
             'slug' => $this->makeSlug($data, $project),
@@ -180,6 +182,20 @@ class ProjectController extends Controller
                 'alt' => $row['alt'] ?? null,
                 'sort_order' => $row['sort_order'] ?? 0,
             ]);
+        }
+    }
+
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['name', 'location', 'description', 'meta_title', 'meta_description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
         }
     }
 

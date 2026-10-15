@@ -77,6 +77,8 @@ it('returns full product detail with description, specs, applications and catego
                 'category' => ['slug', 'name'],
                 'applications' => ['*' => ['slug', 'name']],
                 'description',
+                'functions',
+                'applications_text',
                 'specs' => ['*' => ['icon', 'label', 'value']],
             ],
         ])
@@ -92,4 +94,19 @@ it('returns full product detail with description, specs, applications and catego
 it('can fetch product details by slug', function () {
     getJson('/api/v1/products/non-existent-slug')
         ->assertStatus(404);
+});
+
+it('returns seeded functions and applications text for the sample products', function () {
+    seed([CategorySeeder::class, ApplicationSeeder::class, ProductSeeder::class]);
+
+    getJson('/api/v1/products/luoi-dia-ky-thuat-geogrid')
+        ->assertOk()
+        ->assertJsonPath('data.functions', fn (string $value) => str_contains($value, '## Ưu điểm nổi bật'))
+        ->assertJsonPath('data.applications_text', fn (string $value) => str_contains($value, '## Gợi ý bố trí theo vị trí'));
+
+    // Sản phẩm không seed nội dung mẫu vẫn phải trả khoá với giá trị null.
+    getJson('/api/v1/products/day-kem-gai')
+        ->assertOk()
+        ->assertJsonPath('data.functions', null)
+        ->assertJsonPath('data.applications_text', null);
 });

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Aws\S3\S3Client;
+use DateTimeImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -111,27 +113,29 @@ class FileManagerController extends Controller
             return response()->json(['error' => 'Thư mục không hợp lệ.'], 422);
         }
 
-        $type = $this->normalizeType($request->input('type'));
-        $folder = $this->cleanFolder($request->input('folder', ''));
+        $data = $request->validate([
+            'type' => ['nullable', 'string', 'in:Images,Files'],
+            'folder' => ['nullable', 'string', 'max:255'],
+            'filename' => ['required', 'string', 'max:255'],
+            'size' => ['required', 'integer', 'min:1'],
+            'content_type' => ['nullable', 'string', 'max:255'],
+        ]);
 
-        if (! $request->hasFile('file') || ! $request->file('file')->isValid()) {
-            return response()->json(['error' => 'Vui lòng chọn một file hợp lệ.'], 422);
-        }
+        $type = $this->normalizeType($data['type']);
+        $folder = $this->cleanFolder($data['folder']);
 
-        $file = $request->file('file');
-
-        if ($file->getSize() > 20 * 1024 * 1024) {
-            return response()->json(['error' => 'File vượt quá dung lượng tối đa 20MB.'], 422);
-        }
-
-        $ext = strtolower($file->getClientOriginalExtension());
+        $ext = strtolower(pathinfo($data['filename'], PATHINFO_EXTENSION));
         $allowed = $type === 'Files' ? self::FILE_EXTENSIONS : self::IMAGE_EXTENSIONS;
 
-        if (! in_array($ext, $allowed, true) || in_array($ext, self::DANGEROUS_EXTENSIONS, true)) {
+        if ($ext === '' || ! in_array($ext, $allowed, true) || in_array($ext, self::DANGEROUS_EXTENSIONS, true)) {
             return response()->json(['error' => 'Định dạng file không được phép ('.implode(', ', $allowed).').'], 422);
         }
 
-        $base = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), '-', 'vi');
+        if ($data['size'] > 20 * 1024 * 1024) {
+            return response()->json(['error' => 'File vượt quá dung lượng tối đa 20MB.'], 422);
+        }
+
+        $base = Str::slug(pathinfo($data['filename'], PATHINFO_FILENAME), '-', 'vi');
         $base = $base === '' ? 'file' : Str::limit($base, 60, '');
 
         $name = $base.'-'.Str::lower(Str::random(6)).'.'.$ext;
@@ -146,14 +150,15 @@ class FileManagerController extends Controller
             $attempts++;
         }
 
-        $file->storeAs(rtrim($this->keyPrefix($type, $folder), '/'), $name, 's3');
-
         return response()->json([
             'success' => true,
             'file' => [
                 'name' => $name,
+                'key' => $key,
                 'url' => $disk->url($key),
+                'content_type' => $data['content_type'] ?? 'application/octet-stream',
             ],
+            'upload_url' => $this->s3PresignedPutUrl($key),
         ]);
     }
 
@@ -323,5 +328,29 @@ class FileManagerController extends Controller
         }
 
         return $bytes.' B';
+    }
+
+    private function s3PresignedPutUrl(string $key): string
+    {
+        $cfg = config('filesystems.disks.s3');
+
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region' => $cfg['region'] ?? 'us-east-1',
+            'endpoint' => $cfg['endpoint'] ?? null,
+            'use_path_style_endpoint' => (bool) ($cfg['use_path_style_endpoint'] ?? false),
+            'credentials' => [
+                'key' => $cfg['key'],
+                'secret' => $cfg['secret'],
+            ],
+        ]);
+
+        $cmd = $s3->getCommand('PutObject', [
+            'Bucket' => $cfg['bucket'],
+            'Key' => $key,
+            'ACL' => 'public-read',
+        ]);
+
+        return (string) $s3->createPresignedRequest($cmd, new DateTimeImmutable('+10 minutes'))->getUri();
     }
 }

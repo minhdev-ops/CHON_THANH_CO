@@ -45,6 +45,9 @@
                 <a href="{{ route('admin.news-categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.news-categories.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">topic</span> Danh mục tin
                 </a>
+                <a href="{{ route('admin.partners.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.partners.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">handshake</span> Đối tác
+                </a>
                 <a href="{{ route('admin.faqs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.faqs.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">help</span> FAQ
                 </a>

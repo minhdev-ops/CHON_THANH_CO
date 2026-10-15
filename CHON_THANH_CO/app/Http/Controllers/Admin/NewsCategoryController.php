@@ -58,6 +58,7 @@ class NewsCategoryController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $category = NewsCategory::create([
             'slug' => $this->makeSlug($data),
@@ -76,6 +77,7 @@ class NewsCategoryController extends Controller
 
     public function update(Request $request, NewsCategory $news_category)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $news_category->update([
             'slug' => $this->makeSlug($data, $news_category),
@@ -96,6 +98,20 @@ class NewsCategoryController extends Controller
         $news_category->delete();
 
         return redirect()->route('admin.news-categories.index')->with('success', 'Đã xóa danh mục tin tức.');
+    }
+
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['name'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request): array

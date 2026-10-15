@@ -18,6 +18,10 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ApplicationSeeder::class,
             ProductSeeder::class,
+            // Phải sau ProductSeeder: gom các mã cùng dòng về sản phẩm cha.
+            ProductVariantSeeder::class,
+            // Phải sau ProductVariantSeeder: mọi biến thể dùng chung ứng dụng với cha.
+            ProductApplicationSeeder::class,
             CertificateSeeder::class,
             SettingSeeder::class,
             HomeStatSeeder::class,
@@ -25,6 +29,9 @@ class DatabaseSeeder extends Seeder
             NewsSeeder::class,
             FaqSeeder::class,
             ProjectSeeder::class,
+            // Phải sau ProjectSeeder: gắn product_id cho vật liệu dự án.
+            ProjectMaterialLinkSeeder::class,
+            PartnerSeeder::class,
             UserSeeder::class,
         ]);
     }

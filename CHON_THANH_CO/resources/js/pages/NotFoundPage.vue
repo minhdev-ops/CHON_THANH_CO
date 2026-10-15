@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { t } from '../i18n'
+import { buildContactLink } from '../utils/contactLink'
 </script>
 
 <template>
@@ -34,7 +35,10 @@ import { t } from '../i18n'
           <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform fa-boxes"></i>
           {{ t('nav.products') }}
         </router-link>
-        <router-link to="/contact" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold transition-all duration-300">
+        <router-link
+          :to="buildContactLink({ subject: 'general' })"
+          class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold transition-all duration-300"
+        >
           <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform fa-envelope"></i>
           {{ t('nav.contact') }}
         </router-link>

@@ -7,6 +7,7 @@ import ErrorState from '../components/ErrorState.vue'
 import CTABanner from '../components/CTABanner.vue'
 import { t } from '../i18n'
 import { fallbackFaqs } from '../types/fallback'
+import { buildContactLink } from '../utils/contactLink'
 
 const { data: faqs, error, load } = useApiData(
   async () => (await api.faqs()).data,
@@ -134,7 +135,10 @@ const breadcrumbs = computed(() => [
               </div>
               <h3 class="font-extrabold text-[17px] mb-2">Vẫn chưa tìm thấy?</h3>
               <p class="text-white/80 text-[14px] mb-5 leading-relaxed">Đội ngũ hỗ trợ sẵn sàng giải đáp mọi thắc mắc.</p>
-              <router-link to="/contact" class="inline-flex items-center gap-2 bg-white text-primary-dark px-5 py-2.5 rounded-full font-bold text-[13px] hover:bg-white/90 transition-all duration-300 hover:shadow-lg hover:scale-105">
+              <router-link
+                :to="buildContactLink({ subject: 'general' })"
+                class="inline-flex items-center gap-2 bg-white text-primary-dark px-5 py-2.5 rounded-full font-bold text-[13px] hover:bg-white/90 transition-all duration-300 hover:shadow-lg hover:scale-105"
+              >
                 {{ t('faq.ctaButton') }}
                 <i class="fa text-[16px] fa-arrow-right"></i>
               </router-link>
@@ -148,6 +152,7 @@ const breadcrumbs = computed(() => [
       :title="t('faq.ctaTitle')"
       :text="t('faq.ctaText')"
       :linkLabel="t('faq.ctaButton')"
+      subject="general"
     />
   </div>
 </template>

@@ -4,7 +4,8 @@ import type { Category } from '../types'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useSettings } from '../composables/useSettings'
-import { t, locale, setLocale } from '../i18n'
+import { t, locale, setLocale, localeNames } from '../i18n'
+import type { Locale } from '../i18n'
 
 interface NavLinkItem     { type: 'link';     labelKey: string; to: string }
 interface NavDropdownItem { type: 'dropdown'; name: 'about' | 'products'; labelKey: string; to: string }
@@ -16,6 +17,8 @@ const isScrolled    = ref(false)
 const isMobileOpen  = ref(false)
 const mobileSection = ref<string | null>(null)
 const openDropdown  = ref<string | null>(null)
+const langOpen      = ref(false)
+const langRef       = ref<HTMLElement | null>(null)
 const categories    = ref<Category[]>([])
 const { settings, load } = useSettings()
 
@@ -40,14 +43,23 @@ const navItems: NavItem[] = [
 
 const handleScroll = () => { isScrolled.value = window.scrollY > 40 }
 
+const switchLocale = (code: Locale) => { setLocale(code); langOpen.value = false }
+const onDocClick = (e: MouseEvent) => {
+  if (langOpen.value && langRef.value && !langRef.value.contains(e.target as Node)) langOpen.value = false
+}
+
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll, { passive: true })
+  document.addEventListener('click', onDocClick)
   handleScroll()
   load()
   try { const res = await api.categories(); categories.value = res.data } catch {}
 })
-onUnmounted(() => window.removeEventListener('scroll', handleScroll))
-watch(() => route.path, () => { closeDropdown(); isMobileOpen.value = false })
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  document.removeEventListener('click', onDocClick)
+})
+watch(() => route.path, () => { closeDropdown(); isMobileOpen.value = false; langOpen.value = false })
 
 const isActive = (path: string) => {
   if (path === '/') return route.path === '/'
@@ -109,10 +121,32 @@ watch(isMobileOpen, (open) => {
 
           <span class="w-px h-4 bg-[#E4D8D0]"></span>
 
-          <div class="flex items-center gap-1 cursor-pointer hover:text-[#B89B88]">
-            <i class="fa text-[16px] text-[#B89B88] fa-globe"></i>
-            <span>English</span>
-            <i class="fa text-[16px] fa-chevron-down"></i>
+          <div class="relative" ref="langRef">
+            <button
+              type="button"
+              class="flex items-center gap-1 cursor-pointer hover:text-[#B89B88] focus:outline-none"
+              @click.stop="langOpen = !langOpen"
+            >
+              <i class="fa text-[16px] text-[#B89B88] fa-globe"></i>
+              <span>{{ localeNames[locale] }}</span>
+              <i class="fa text-[16px] fa-chevron-down transition-transform duration-300" :class="langOpen ? 'rotate-180' : ''"></i>
+            </button>
+            <div
+              v-if="langOpen"
+              class="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-[#E4D8D0] py-1 min-w-[150px] z-[60]"
+            >
+              <button
+                v-for="(name, code) in localeNames"
+                :key="code"
+                type="button"
+                class="w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors"
+                :class="locale === code ? 'text-[#B89B88] font-bold bg-[#F5EDE6]' : 'text-[#4A403B] hover:bg-[#F5EDE6]'"
+                @click="switchLocale(code)"
+              >
+                {{ name }}
+                <i v-if="locale === code" class="fa fa-check text-[12px]"></i>
+              </button>
+            </div>
           </div>
 
         </div>

@@ -56,6 +56,7 @@ class HomeStatController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $stat = HomeStat::create([
             'icon' => $data['icon'],
@@ -75,6 +76,7 @@ class HomeStatController extends Controller
 
     public function update(Request $request, HomeStat $stat)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $stat->update([
             'icon' => $data['icon'],
@@ -92,6 +94,20 @@ class HomeStatController extends Controller
         $stat->delete();
 
         return redirect()->route('admin.home-stats.index')->with('success', 'Đã xóa số liệu.');
+    }
+
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['label'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
     }
 
     private function validated(Request $request): array
