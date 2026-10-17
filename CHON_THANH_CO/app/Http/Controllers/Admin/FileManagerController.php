@@ -3,39 +3,34 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Aws\S3\S3Client;
+use DateTimeImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class FileManagerController extends Controller
 {
-    /** Các thư mục con theo từng mục nội dung (tạo sẵn để phân loại ảnh). */
     public const SHORTCUT_FOLDERS = [
         'products', 'projects', 'news', 'certificates', 'banners',
         'categories', 'applications', 'why-choose-us', 'home', 'misc',
     ];
 
     private const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+
     private const FILE_EXTENSIONS = [
         'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
         'zip', 'rar', '7z', 'txt', 'csv', 'mp4', 'mp3',
     ];
 
-    /** Extension nguy hiểm luôn bị chặn khi upload/đổi tên. */
     private const DANGEROUS_EXTENSIONS = [
         'php', 'phtml', 'phar', 'php3', 'php4', 'php5', 'php7', 'pht', 'shtml', 'cgi', 'pl', 'py', 'sh', 'asp', 'aspx', 'jsp',
     ];
 
     public function index(Request $request)
     {
-        // Mặc định mở tab "Tài liệu" (Files) để dễ thấy file PDF đã upload;
-        // tab "Ảnh" vẫn dùng cho ảnh khi chọn từ các form có truyền type=Images.
         $type = $request->has('type') ? $this->normalizeType($request->input('type')) : 'Files';
         $folder = $this->cleanFolder($request->input('folder', ''));
-
-        // Nếu thư mục được chỉ định không tồn tại (vd đã bị xóa), quay về thư mục gốc
-        if ($folder !== '' && ! $this->resolveDir($type, $folder)) {
-            $folder = '';
-        }
 
         return view('admin.files.index', [
             'shortcuts' => self::SHORTCUT_FOLDERS,
@@ -62,6 +57,10 @@ class FileManagerController extends Controller
 
     public function browse(Request $request)
     {
+        if ($this->hasTraversal($request->input('folder'))) {
+            return response()->json(['error' => 'Thư mục không hợp lệ.'], 422);
+        }
+
         $type = $this->normalizeType($request->input('type'));
         $folder = $this->cleanFolder($request->input('folder', ''));
 
@@ -69,40 +68,31 @@ class FileManagerController extends Controller
             return response()->json(['error' => 'Đường dẫn thư mục quá dài.'], 422);
         }
 
-        $dir = $this->resolveDir($type, $folder);
-
-        if (! $dir) {
-            return response()->json(['error' => 'Thư mục không hợp lệ.'], 422);
-        }
+        $prefix = $this->keyPrefix($type, $folder);
+        $disk = Storage::disk('s3');
 
         $folders = [];
+        foreach ($disk->directories($prefix) as $dir) {
+            $name = basename($dir);
+            $count = count($disk->files($dir)) + count($disk->directories($dir));
+            $folders[] = ['name' => $name, 'count' => $count];
+        }
+
         $files = [];
-
-        foreach (scandir($dir) as $item) {
-            if ($item === '.' || $item === '..') {
+        foreach ($disk->files($prefix) as $key) {
+            $name = basename($key);
+            if ($name === '.keep') {
                 continue;
             }
 
-            $path = $dir . DIRECTORY_SEPARATOR . $item;
-
-            if (is_dir($path)) {
-                $folders[] = ['name' => $item, 'count' => count(array_diff(scandir($path), ['.', '..']))];
-                continue;
-            }
-
-            if (! is_file($path)) {
-                continue;
-            }
-
-            $size = filesize($path);
-
+            $size = $disk->size($key);
             $files[] = [
-                'name' => $item,
+                'name' => $name,
                 'size' => $size,
                 'size_label' => $this->humanSize($size),
-                'url' => $this->fileUrl($type, $folder, $item),
-                'is_image' => in_array(strtolower(pathinfo($item, PATHINFO_EXTENSION)), self::IMAGE_EXTENSIONS, true),
-                'modified' => date('d/m/Y H:i', filemtime($path)),
+                'url' => $disk->url($key),
+                'is_image' => in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), self::IMAGE_EXTENSIONS, true),
+                'modified' => date('d/m/Y H:i', $disk->lastModified($key)),
             ];
         }
 
@@ -119,62 +109,67 @@ class FileManagerController extends Controller
 
     public function upload(Request $request)
     {
-        $type = $this->normalizeType($request->input('type'));
-        $folder = $this->cleanFolder($request->input('folder', ''));
-        $dir = $this->resolveDir($type, $folder);
-
-        if (! $dir) {
+        if ($this->hasTraversal($request->input('folder'))) {
             return response()->json(['error' => 'Thư mục không hợp lệ.'], 422);
         }
 
-        if (! $request->hasFile('file') || ! $request->file('file')->isValid()) {
-            return response()->json(['error' => 'Vui lòng chọn một file hợp lệ.'], 422);
+        $data = $request->validate([
+            'type' => ['nullable', 'string', 'in:Images,Files'],
+            'folder' => ['nullable', 'string', 'max:255'],
+            'filename' => ['required', 'string', 'max:255'],
+            'size' => ['required', 'integer', 'min:1'],
+            'content_type' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $type = $this->normalizeType($data['type']);
+        $folder = $this->cleanFolder($data['folder']);
+
+        $ext = strtolower(pathinfo($data['filename'], PATHINFO_EXTENSION));
+        $allowed = $type === 'Files' ? self::FILE_EXTENSIONS : self::IMAGE_EXTENSIONS;
+
+        if ($ext === '' || ! in_array($ext, $allowed, true) || in_array($ext, self::DANGEROUS_EXTENSIONS, true)) {
+            return response()->json(['error' => 'Định dạng file không được phép ('.implode(', ', $allowed).').'], 422);
         }
 
-        $file = $request->file('file');
-
-        if ($file->getSize() > 20 * 1024 * 1024) {
+        if ($data['size'] > 20 * 1024 * 1024) {
             return response()->json(['error' => 'File vượt quá dung lượng tối đa 20MB.'], 422);
         }
 
-        $ext = strtolower($file->getClientOriginalExtension());
-        $allowed = $type === 'Files' ? self::FILE_EXTENSIONS : self::IMAGE_EXTENSIONS;
-
-        if (! in_array($ext, $allowed, true) || in_array($ext, self::DANGEROUS_EXTENSIONS, true)) {
-            return response()->json(['error' => 'Định dạng file không được phép (' . implode(', ', $allowed) . ').'], 422);
-        }
-
-        $base = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), '-', 'vi');
+        $base = Str::slug(pathinfo($data['filename'], PATHINFO_FILENAME), '-', 'vi');
         $base = $base === '' ? 'file' : Str::limit($base, 60, '');
 
-        $name = $base . '-' . Str::lower(Str::random(6)) . '.' . $ext;
+        $name = $base.'-'.Str::lower(Str::random(6)).'.'.$ext;
+
+        $disk = Storage::disk('s3');
+        $key = $this->keyPrefix($type, $folder).'/'.$name;
 
         $attempts = 0;
-        while (file_exists($dir . DIRECTORY_SEPARATOR . $name) && $attempts < 20) {
-            $name = $base . '-' . Str::lower(Str::random(6)) . '.' . $ext;
+        while ($disk->exists($key) && $attempts < 20) {
+            $name = $base.'-'.Str::lower(Str::random(6)).'.'.$ext;
+            $key = $this->keyPrefix($type, $folder).'/'.$name;
             $attempts++;
         }
-
-        $file->move($dir, $name);
 
         return response()->json([
             'success' => true,
             'file' => [
                 'name' => $name,
-                'url' => $this->fileUrl($type, $folder, $name),
+                'key' => $key,
+                'url' => $disk->url($key),
+                'content_type' => $data['content_type'] ?? 'application/octet-stream',
             ],
+            'upload_url' => $this->s3PresignedPutUrl($key),
         ]);
     }
 
     public function createFolder(Request $request)
     {
-        $type = $this->normalizeType($request->input('type'));
-        $folder = $this->cleanFolder($request->input('folder', ''));
-        $dir = $this->resolveDir($type, $folder);
-
-        if (! $dir) {
+        if ($this->hasTraversal($request->input('folder'))) {
             return response()->json(['error' => 'Thư mục không hợp lệ.'], 422);
         }
+
+        $type = $this->normalizeType($request->input('type'));
+        $folder = $this->cleanFolder($request->input('folder', ''));
 
         $name = $request->validate(['name' => ['required', 'string', 'max:80']])['name'];
         $name = Str::slug($name, '-', 'vi');
@@ -183,28 +178,25 @@ class FileManagerController extends Controller
             return response()->json(['error' => 'Tên thư mục không hợp lệ.'], 422);
         }
 
-        $target = $dir . DIRECTORY_SEPARATOR . $name;
+        $key = $this->keyPrefix($type, ($folder !== '' ? $folder.'/' : '').$name).'/.keep';
 
-        if (file_exists($target)) {
+        if (Storage::disk('s3')->exists($key)) {
             return response()->json(['error' => 'Đã tồn tại thư mục cùng tên.'], 422);
         }
 
-        if (! mkdir($target, 0755, true)) {
-            return response()->json(['error' => 'Không tạo được thư mục.'], 422);
-        }
+        Storage::disk('s3')->put($key, '');
 
         return response()->json(['success' => true, 'name' => $name]);
     }
 
     public function rename(Request $request)
     {
-        $type = $this->normalizeType($request->input('type'));
-        $folder = $this->cleanFolder($request->input('folder', ''));
-        $dir = $this->resolveDir($type, $folder);
-
-        if (! $dir) {
+        if ($this->hasTraversal($request->input('folder'))) {
             return response()->json(['error' => 'Thư mục không hợp lệ.'], 422);
         }
+
+        $type = $this->normalizeType($request->input('type'));
+        $folder = $this->cleanFolder($request->input('folder', ''));
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
@@ -218,29 +210,38 @@ class FileManagerController extends Controller
             return response()->json(['error' => 'Tên mới không hợp lệ.'], 422);
         }
 
-        $source = $dir . DIRECTORY_SEPARATOR . $oldName;
-        $target = $dir . DIRECTORY_SEPARATOR . $newName;
+        $disk = Storage::disk('s3');
+        $prefix = $this->keyPrefix($type, $folder);
+        $oldKey = $prefix.'/'.$oldName;
+        $newKey = $prefix.'/'.$newName;
 
-        if (! file_exists($source)) {
+        $isFile = $disk->getDriver()->fileExists($oldKey);
+        $isFolder = ! $isFile && count($disk->allFiles($oldKey)) > 0;
+
+        if (! $isFile && ! $isFolder) {
             return response()->json(['error' => 'Không tìm thấy file/thư mục.'], 422);
         }
 
-        if (file_exists($target)) {
+        if ($disk->exists($newKey) || count($disk->allFiles($newKey)) > 0) {
             return response()->json(['error' => 'Đã tồn tại tên trùng.'], 422);
         }
 
-        // Nếu đổi tên FILE: ép buộc đúng whitelist extension + chặn extension nguy hiểm
-        if (is_file($source)) {
+        if ($isFile) {
             $newExt = strtolower(pathinfo($newName, PATHINFO_EXTENSION));
             $allowed = $type === 'Files' ? self::FILE_EXTENSIONS : self::IMAGE_EXTENSIONS;
 
             if (! in_array($newExt, $allowed, true) || in_array($newExt, self::DANGEROUS_EXTENSIONS, true)) {
                 return response()->json(['error' => 'Định dạng file mới không được phép.'], 422);
             }
-        }
 
-        if (! rename($source, $target)) {
-            return response()->json(['error' => 'Không đổi tên được.'], 422);
+            $disk->copy($oldKey, $newKey);
+            $disk->delete($oldKey);
+        } else {
+            foreach ($disk->allFiles($oldKey) as $sourceKey) {
+                $targetKey = $newKey.substr($sourceKey, strlen($oldKey));
+                $disk->copy($sourceKey, $targetKey);
+                $disk->delete($sourceKey);
+            }
         }
 
         return response()->json(['success' => true]);
@@ -248,13 +249,12 @@ class FileManagerController extends Controller
 
     public function destroy(Request $request)
     {
-        $type = $this->normalizeType($request->input('type'));
-        $folder = $this->cleanFolder($request->input('folder', ''));
-        $dir = $this->resolveDir($type, $folder);
-
-        if (! $dir) {
+        if ($this->hasTraversal($request->input('folder'))) {
             return response()->json(['error' => 'Thư mục không hợp lệ.'], 422);
         }
+
+        $type = $this->normalizeType($request->input('type'));
+        $folder = $this->cleanFolder($request->input('folder', ''));
 
         $name = basename((string) $request->input('name', ''));
 
@@ -262,38 +262,23 @@ class FileManagerController extends Controller
             return response()->json(['error' => 'Tên file/thư mục không hợp lệ.'], 422);
         }
 
-        $target = $dir . DIRECTORY_SEPARATOR . $name;
+        $disk = Storage::disk('s3');
+        $key = $this->keyPrefix($type, $folder).'/'.$name;
 
-        if ($target === $dir || (! is_file($target) && ! is_dir($target))) {
-            return response()->json(['error' => 'Không tìm thấy file/thư mục.'], 422);
+        $children = $disk->allFiles($key);
+        if ($children !== []) {
+            $disk->delete($children);
+
+            return response()->json(['success' => true]);
         }
 
-        if (is_dir($target)) {
-            $this->deleteDirectory($target);
-        } else {
-            unlink($target);
+        if ($disk->getDriver()->fileExists($key)) {
+            $disk->delete($key);
+
+            return response()->json(['success' => true]);
         }
 
-        return response()->json(['success' => true]);
-    }
-
-    private function deleteDirectory(string $dir): void
-    {
-        foreach (scandir($dir) as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
-            }
-
-            $path = $dir . DIRECTORY_SEPARATOR . $item;
-
-            if (is_dir($path)) {
-                $this->deleteDirectory($path);
-            } else {
-                unlink($path);
-            }
-        }
-
-        rmdir($dir);
+        return response()->json(['error' => 'Không tìm thấy file/thư mục.'], 422);
     }
 
     private function normalizeType(?string $type): string
@@ -301,9 +286,11 @@ class FileManagerController extends Controller
         return ($type ?? '') === 'Files' ? 'Files' : 'Images';
     }
 
-    private function resourceRoot(string $type): string
+    private function keyPrefix(string $type, string $folder = ''): string
     {
-        return public_path('userfiles') . DIRECTORY_SEPARATOR . ($type === 'Files' ? 'files' : 'images');
+        $prefix = $type === 'Files' ? 'files' : 'images';
+
+        return $folder !== '' ? $prefix.'/'.$folder : $prefix;
     }
 
     private function cleanFolder(?string $folder): string
@@ -318,44 +305,52 @@ class FileManagerController extends Controller
         return implode('/', $parts);
     }
 
-    private function resolveDir(string $type, string $folder): ?string
+    /** Phát hiện segment ".." trong folder thô trước khi sanitize. */
+    private function hasTraversal(mixed $folder): bool
     {
-        $root = realpath($this->resourceRoot($type));
-
-        if ($root === false) {
-            return null;
+        foreach (explode('/', str_replace('\\', '/', (string) $folder)) as $segment) {
+            if ($segment === '..') {
+                return true;
+            }
         }
 
-        $target = realpath($root . ($folder !== '' ? DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $folder) : ''));
-
-        if ($target === false || ! is_dir($target)) {
-            return null;
-        }
-
-        if ($target !== $root && ! str_starts_with($target, $root . DIRECTORY_SEPARATOR)) {
-            return null;
-        }
-
-        return $target;
-    }
-
-    private function fileUrl(string $type, string $folder, string $name): string
-    {
-        $base = '/userfiles/' . ($type === 'Files' ? 'files' : 'images');
-
-        return $base . ($folder !== '' ? '/' . str_replace('/', '/', $folder) : '') . '/' . rawurlencode($name);
+        return false;
     }
 
     private function humanSize(int $bytes): string
     {
         if ($bytes >= 1048576) {
-            return number_format($bytes / 1048576, 1) . ' MB';
+            return number_format($bytes / 1048576, 1).' MB';
         }
 
         if ($bytes >= 1024) {
-            return number_format($bytes / 1024, 0) . ' KB';
+            return number_format($bytes / 1024, 0).' KB';
         }
 
-        return $bytes . ' B';
+        return $bytes.' B';
+    }
+
+    private function s3PresignedPutUrl(string $key): string
+    {
+        $cfg = config('filesystems.disks.s3');
+
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region' => $cfg['region'] ?? 'us-east-1',
+            'endpoint' => $cfg['endpoint'] ?? null,
+            'use_path_style_endpoint' => (bool) ($cfg['use_path_style_endpoint'] ?? false),
+            'credentials' => [
+                'key' => $cfg['key'],
+                'secret' => $cfg['secret'],
+            ],
+        ]);
+
+        $cmd = $s3->getCommand('PutObject', [
+            'Bucket' => $cfg['bucket'],
+            'Key' => $key,
+            'ACL' => 'public-read',
+        ]);
+
+        return (string) $s3->createPresignedRequest($cmd, new DateTimeImmutable('+10 minutes'))->getUri();
     }
 }

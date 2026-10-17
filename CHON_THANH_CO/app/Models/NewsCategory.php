@@ -16,6 +16,7 @@ class NewsCategory extends Model
 
     protected $fillable = [
         'slug',
+        'name',
         'sort_order',
         'is_active',
     ];
@@ -30,7 +31,7 @@ class NewsCategory extends Model
 
     public function news(): HasMany
     {
-        return $this->hasMany(News::class);
+        return $this->hasMany(News::class, 'news_category_id');
     }
 
     public function translations(): HasMany

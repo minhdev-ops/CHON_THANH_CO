@@ -2,18 +2,46 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\Concerns\SyncsTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\WhyChooseUs;
 use Illuminate\Http\Request;
 
 class WhyChooseUsController extends Controller
 {
-    use SyncsTranslations;
+    use Concerns\RendersAdminTables;
 
-    public function index()
+    public function index(Request $request)
     {
-        $items = WhyChooseUs::with('translations')->orderBy('sort_order')->get();
+        $baseQuery = fn () => WhyChooseUs::query();
+
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('q')) {
+                $search = $request->input('q');
+                $query->where('title', 'like', "%{$search}%");
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.why-choose-us.rows',
+                itemsVar: 'items',
+                sortable: [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'sort_order' => 'sort_order',
+                    'is_active' => 'is_active',
+                ],
+                defaultOrder: ['sort_order' => 'asc'],
+            );
+        }
+
+        $query = $baseQuery();
+        $applyFilters($query, $request);
+
+        $items = $query->orderBy('sort_order')->paginate(15)->withQueryString();
 
         return view('admin.why-choose-us.index', compact('items'));
     }
@@ -25,33 +53,35 @@ class WhyChooseUsController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item = WhyChooseUs::create([
             'icon' => $data['icon'],
+            'title' => $data['title'],
+            'description' => $data['description'],
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($item, $data['translations'], ['title', 'description']);
 
         return redirect()->route('admin.why-choose-us.index')->with('success', 'Đã tạo mục.');
     }
 
     public function edit(WhyChooseUs $item)
     {
-        return view('admin.why-choose-us.form', ['item' => $item->load('translations')]);
+        return view('admin.why-choose-us.form', ['item' => $item]);
     }
 
     public function update(Request $request, WhyChooseUs $item)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item->update([
             'icon' => $data['icon'],
+            'title' => $data['title'],
+            'description' => $data['description'],
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($item, $data['translations'], ['title', 'description']);
 
         return redirect()->route('admin.why-choose-us.index')->with('success', 'Đã cập nhật mục.');
     }
@@ -63,16 +93,28 @@ class WhyChooseUsController extends Controller
         return redirect()->route('admin.why-choose-us.index')->with('success', 'Đã xóa mục.');
     }
 
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['title', 'description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
+    }
+
     private function validated(Request $request): array
     {
         return $request->validate([
             'icon' => ['required', 'string', 'max:50'],
+            'title' => ['required', 'string', 'max:200'],
+            'description' => ['required', 'string'],
             'sort_order' => ['nullable', 'integer'],
             'is_active' => ['boolean'],
-            'translations.vi.title' => ['required', 'string', 'max:200'],
-            'translations.vi.description' => ['required', 'string'],
-            'translations.en.title' => ['nullable', 'string', 'max:200'],
-            'translations.en.description' => ['nullable', 'string'],
         ]);
     }
 }

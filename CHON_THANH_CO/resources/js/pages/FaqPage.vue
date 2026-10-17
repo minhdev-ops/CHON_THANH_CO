@@ -7,6 +7,7 @@ import ErrorState from '../components/ErrorState.vue'
 import CTABanner from '../components/CTABanner.vue'
 import { t } from '../i18n'
 import { fallbackFaqs } from '../types/fallback'
+import { buildContactLink } from '../utils/contactLink'
 
 const { data: faqs, error, load } = useApiData(
   async () => (await api.faqs()).data,
@@ -58,7 +59,9 @@ const breadcrumbs = computed(() => [
       <div class="absolute inset-0 mesh-bg opacity-40"></div>
       <div class="relative max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop">
         <div class="text-center mb-14 reveal">
-          <span class="kicker mb-4 block">FAQ</span>
+          <div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5">
+            <span class="text-primary text-[11px] font-extrabold tracking-[0.15em] uppercase">FAQ</span>
+          </div>
           <h2 class="text-[32px] md:text-[42px] text-text-main font-extrabold tracking-tight mb-5">Câu hỏi thường gặp</h2>
           <p class="text-text-secondary text-[16px] md:text-[17px] leading-relaxed max-w-xl mx-auto">Những câu hỏi phổ biến về sản phẩm và dịch vụ của chúng tôi.</p>
         </div>
@@ -79,8 +82,8 @@ const breadcrumbs = computed(() => [
                     :class="openIndex === i ? 'text-primary-deep' : 'text-text-main group-hover/btn:text-primary'">{{ faq.question }}</span>
                 </div>
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500"
-                  :class="openIndex === i ? 'bg-primary text-white rotate-180 shadow-[0_4px_16px_rgba(184,155,136,0.3)]' : 'bg-surface-vlm text-text-muted group-hover/btn:bg-primary/10 group-hover/btn:text-primary'">
-                  <span class="material-symbols-outlined text-xl">expand_more</span>
+                  :class="openIndex === i ? 'bg-primary text-[#2A2420] rotate-180 shadow-[0_4px_16px_rgba(184,155,136,0.3)]' : 'bg-surface-vlm text-text-muted group-hover/btn:bg-primary/10 group-hover/btn:text-primary'">
+                  <i class="fa text-xl fa-chevron-down"></i>
                 </div>
               </button>
               <div class="overflow-hidden transition-all duration-500 ease-in-out"
@@ -92,34 +95,34 @@ const breadcrumbs = computed(() => [
             </div>
 
             <div v-if="filteredFaqs.length === 0" class="py-16 text-center bg-surface-bright border border-outline-variant rounded-3xl card-shine glow-card">
-              <span class="material-symbols-outlined text-6xl text-outline-variant mb-4 block">search_off</span>
+              <i class="fa text-6xl text-outline-variant mb-4 block fa-magnifying-glass-minus"></i>
               <p class="text-text-secondary font-medium mb-6 text-[16px]">Không tìm thấy câu hỏi phù hợp với từ khóa "{{ searchQuery }}".</p>
-              <button class="btn bg-primary text-white hover:bg-primary-dark rounded-full px-6 py-3 font-bold text-[14px]" @click="searchQuery = ''">Xóa bộ lọc</button>
+              <button class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full px-6 py-3 font-bold text-[14px]" @click="searchQuery = ''">Xóa bộ lọc</button>
             </div>
           </div>
 
           <div class="lg:col-span-3 space-y-6">
             <div class="bg-surface-bright border border-outline-variant rounded-3xl p-6 card-shine glow-card reveal reveal-delay-1">
               <div class="flex items-center gap-3 mb-4">
-                <span class="material-symbols-outlined text-primary text-[22px]">search</span>
+                <i class="fa text-primary text-[22px] fa-magnifying-glass"></i>
                 <h3 class="font-extrabold text-text-main text-[16px]">Tìm kiếm</h3>
               </div>
               <div class="relative">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+                <i class="fa absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[18px] fa-magnifying-glass"></i>
                 <input v-model="searchQuery" type="text" placeholder="Nhập từ khóa..."
-                  class="w-full bg-canvas border border-outline-variant rounded-full pl-11 pr-4 py-3.5 text-[14px] text-text-main outline-none focus:border-primary focus:ring-4 focus:ring-primary/15 transition-all duration-300">
+                  class="w-full bg-canvas border border-outline-variant rounded-full pl-11 pr-4 py-3.5 text-[14px] text-text-main outline-none focus:border-primary focus:ring-4 focus:ring-primary/15 transition-all duration-300 fa-arrow-right">
               </div>
             </div>
 
             <div class="bg-surface-bright border border-outline-variant rounded-3xl p-6 card-shine glow-card reveal reveal-delay-2">
               <div class="flex items-center gap-3 mb-4">
-                <span class="material-symbols-outlined text-primary text-[22px]">category</span>
+                <i class="fa text-primary text-[22px] fa-boxes"></i>
                 <h3 class="font-extrabold text-text-main text-[16px]">Danh mục</h3>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button v-for="cat in categories" :key="cat"
                   class="px-4 py-2 rounded-full font-bold text-[11px] uppercase tracking-[0.1em] transition-all duration-300"
-                  :class="activeCategory === cat ? 'bg-primary text-white shadow-md shadow-primary/20' : 'bg-canvas text-text-secondary border border-outline-variant hover:border-primary/40 hover:text-primary-deep'"
+                  :class="activeCategory === cat ? 'bg-primary text-[#2A2420] shadow-md shadow-primary/20' : 'bg-canvas text-text-secondary border border-outline-variant hover:border-primary/40 hover:text-primary-deep'"
                   @click="activeCategory = cat">
                   {{ cat }}
                 </button>
@@ -128,13 +131,16 @@ const breadcrumbs = computed(() => [
 
             <div class="bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-6 text-white reveal reveal-delay-3">
               <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
-                <span class="material-symbols-outlined text-[24px]">help_center</span>
+                <i class="fa text-[24px] fa-circle-question"></i>
               </div>
               <h3 class="font-extrabold text-[17px] mb-2">Vẫn chưa tìm thấy?</h3>
               <p class="text-white/80 text-[14px] mb-5 leading-relaxed">Đội ngũ hỗ trợ sẵn sàng giải đáp mọi thắc mắc.</p>
-              <router-link to="/contact" class="inline-flex items-center gap-2 bg-white text-primary-dark px-5 py-2.5 rounded-full font-bold text-[13px] hover:bg-white/90 transition-all duration-300 hover:shadow-lg hover:scale-105">
+              <router-link
+                :to="buildContactLink({ subject: 'general' })"
+                class="inline-flex items-center gap-2 bg-white text-primary-dark px-5 py-2.5 rounded-full font-bold text-[13px] hover:bg-white/90 transition-all duration-300 hover:shadow-lg hover:scale-105"
+              >
                 {{ t('faq.ctaButton') }}
-                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <i class="fa text-[16px] fa-arrow-right"></i>
               </router-link>
             </div>
           </div>
@@ -146,6 +152,7 @@ const breadcrumbs = computed(() => [
       :title="t('faq.ctaTitle')"
       :text="t('faq.ctaText')"
       :linkLabel="t('faq.ctaButton')"
+      subject="general"
     />
   </div>
 </template>

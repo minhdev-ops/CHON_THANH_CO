@@ -20,12 +20,12 @@ it('returns faqs ordered by sort_order', function () {
         ->assertJsonPath('data.6.question', 'Các sản phẩm của CHON THANH có bảo hành không?');
 });
 
-it('serves faqs in english', function () {
+it('serves faqs in vietnamese', function () {
     seed(FaqSeeder::class);
 
-    getJson('/api/v1/faqs', ['X-Locale' => 'en'])
+    getJson('/api/v1/faqs', ['X-Locale' => 'vi'])
         ->assertStatus(200)
-        ->assertJsonPath('data.0.question', 'What types of geosynthetic materials does CHON THANH supply?');
+        ->assertJsonPath('data.0.question', 'CHON THANH cung cấp những loại vật liệu địa kỹ thuật nào?');
 });
 
 it('excludes inactive faqs', function () {

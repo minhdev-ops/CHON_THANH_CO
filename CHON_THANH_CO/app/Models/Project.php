@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Localizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\ProjectTranslation;
 
 class Project extends Model
 {
     use HasFactory;
-    use Localizable;
     use SoftDeletes;
 
     protected $fillable = [
         'slug',
+        'name',
+        'location',
+        'description',
         'period',
         'area',
         'hero_image',
@@ -23,6 +25,8 @@ class Project extends Model
         'is_featured',
         'is_active',
         'sort_order',
+        'meta_title',
+        'meta_description',
     ];
 
     protected function casts(): array
@@ -34,11 +38,6 @@ class Project extends Model
         ];
     }
 
-    public function translations(): HasMany
-    {
-        return $this->hasMany(ProjectTranslation::class);
-    }
-
     public function materials(): HasMany
     {
         return $this->hasMany(ProjectMaterial::class)->orderBy('sort_order');
@@ -48,4 +47,10 @@ class Project extends Model
     {
         return $this->hasMany(ProjectImage::class)->orderBy('sort_order');
     }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(ProjectTranslation::class);
+    }
 }
+

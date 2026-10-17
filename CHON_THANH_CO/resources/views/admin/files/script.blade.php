@@ -193,19 +193,42 @@
             },
 
             async uploadOne(file) {
-                const fd = new FormData();
-                fd.append('type', this.type);
-                fd.append('folder', this.folder);
-                fd.append('file', file);
+                const meta = new URLSearchParams();
+                meta.append('type', this.type);
+                meta.append('folder', this.folder);
+                meta.append('filename', file.name);
+                meta.append('size', String(file.size));
+                meta.append('content_type', file.type || '');
+
                 try {
-                    const res = await fetch(@json(route('admin.files.upload')), {
+                    const presignRes = await fetch(@json(route('admin.files.upload')), {
                         method: 'POST',
                         headers: this.apiHeaders(),
-                        body: fd,
+                        body: meta,
                     });
-                    const data = await this.parseResponse(res);
-                    if (!res.ok) {
-                        this.uploadResults.push({ name: file.name, ok: false, error: this.errorText(data) });
+                    const presignData = await this.parseResponse(presignRes);
+                    if (!presignRes.ok) {
+                        this.uploadResults.push({ name: file.name, ok: false, error: this.errorText(presignData) });
+                        return;
+                    }
+
+                    const uploadRes = await fetch(presignData.upload_url, {
+                        method: 'PUT',
+                        headers: {
+                            'x-amz-acl': 'public-read',
+                            'Content-Type': presignData.file.content_type || 'application/octet-stream',
+                        },
+                        body: file,
+                    });
+
+                    if (!uploadRes.ok) {
+                        let detail = '';
+                        try { detail = await uploadRes.text(); } catch (e) { detail = ''; }
+                        this.uploadResults.push({
+                            name: file.name,
+                            ok: false,
+                            error: `Tải lên S3 thất bại (${uploadRes.status})${detail ? ': ' + detail : ''}`,
+                        });
                         return;
                     }
                     this.uploadResults.push({ name: file.name, ok: true });

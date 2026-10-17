@@ -37,7 +37,7 @@
                         ['name' => 'name', 'label' => 'Tên ứng dụng', 'required' => true, 'max' => 150],
                         ['name' => 'description', 'label' => 'Mô tả', 'type' => 'textarea'],
                     ]"
-                    :values="$application?->translation('vi')?->toArray() ?? []"
+                    :values="$application?->toArray() ?? []"
                 />
 
                 <x-admin.partials.translation-section
@@ -47,7 +47,7 @@
                         ['name' => 'name', 'label' => 'Name', 'max' => 150],
                         ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
                     ]"
-                    :values="$application?->translation('en')?->toArray() ?? []"
+                    :values="$application?->toArray() ?? []"
                 />
             </div>
 

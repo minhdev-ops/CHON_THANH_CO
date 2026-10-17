@@ -7,9 +7,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script defer src="{{ asset('js/admin-table.js') }}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
     <style>[x-cloak] { display: none !important; }</style>
     @vite(['resources/css/app.css'])
+    @stack('styles')
 </head>
 <body class="bg-[#f8fafc] text-gray-900 antialiased">
     <div class="min-h-screen flex">
@@ -42,6 +44,9 @@
                 </a>
                 <a href="{{ route('admin.news-categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.news-categories.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">topic</span> Danh mục tin
+                </a>
+                <a href="{{ route('admin.partners.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.partners.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">handshake</span> Đối tác
                 </a>
                 <a href="{{ route('admin.faqs.index') }}" class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-gray-100 hover:text-gray-900 {{ request()->routeIs('admin.faqs.*') ? 'bg-primary/10 text-primary font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">help</span> FAQ

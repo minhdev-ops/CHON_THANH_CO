@@ -20,7 +20,7 @@ it('shows the settings form', function () {
     $this->get('/admin/settings')
         ->assertStatus(200)
         ->assertSee('Thông tin công ty')
-        ->assertSee('company.name_vi');
+        ->assertSee('company.name');
 });
 
 it('updates a setting value', function () {
@@ -69,7 +69,20 @@ it('lists contact messages', function () {
         'status' => 'new',
     ]);
 
-    $this->get('/admin/contacts')->assertStatus(200)->assertSee('Nguyễn Văn A');
+    $this->getJson('/admin/contacts')->assertStatus(200)
+        ->assertJsonPath('data.0.name', 'Nguyễn Văn A');
+});
+
+it('lists contact messages (HTML)', function () {
+    ContactMessage::create([
+        'name' => 'Nguyễn Văn A',
+        'phone' => '0912345678',
+        'email' => 'a@example.com',
+        'message' => 'Xin báo giá',
+        'status' => 'new',
+    ]);
+
+    $this->get('/admin/contacts')->assertStatus(200)->assertSee('DataTables');
 });
 
 it('shows a contact message detail', function () {
@@ -138,9 +151,10 @@ it('shows the audit logs page', function () {
 
 it('records an audit log when creating a category', function () {
     $this->post('/admin/categories', [
+        'name' => 'Danh mục audit',
+        'description' => '',
         'sort_order' => 1,
         'is_active' => 1,
-        'translations' => ['vi' => ['name' => 'Danh mục audit', 'description' => '']],
     ])->assertRedirect('/admin/categories');
 
     expect(AuditLog::count())->toBeGreaterThan(0);

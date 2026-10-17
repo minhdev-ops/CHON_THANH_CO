@@ -42,10 +42,10 @@ class ProductsImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
                 continue;
             }
 
-            $nameVi = trim((string) ($row['name_vi'] ?? ''));
+            $name = trim((string) ($row['name'] ?? $row['name_vi'] ?? ''));
 
-            if ($nameVi === '') {
-                $this->errors[] = "Dòng {$this->excelRow} ({$code}): thiếu tên sản phẩm tiếng Việt (name_vi).";
+            if ($name === '') {
+                $this->errors[] = "Dòng {$this->excelRow} ({$code}): thiếu tên sản phẩm (name).";
 
                 continue;
             }
@@ -66,12 +66,15 @@ class ProductsImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
 
             $wasExisting = (bool) $existing;
 
-            $slug = $this->resolveSlug($row['slug'] ?? null, $nameVi, $existing);
+            $slug = $this->resolveSlug($row['slug'] ?? null, $name, $existing);
 
             $data = [
                 'category_id' => $category->id,
                 'code' => $code,
                 'slug' => $slug,
+                'name' => $name,
+                'description' => trim((string) ($row['description'] ?? $row['description_vi'] ?? '')),
+                'strength_label' => trim((string) ($row['strength_label'] ?? $row['strength_label_vi'] ?? '')),
             ];
 
             if ($this->hasValue($row['image'] ?? null) || ! $wasExisting) {
@@ -112,9 +115,6 @@ class ProductsImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
             if (! $wasExisting || $rawApps !== '') {
                 $product->applications()->sync($this->resolveApplications($rawApps, $applications, $code));
             }
-
-            $this->syncTranslation($product, 'vi', $nameVi, $row['description_vi'] ?? null, $row['strength_label_vi'] ?? null);
-            $this->syncTranslation($product, 'en', trim((string) ($row['name_en'] ?? '')), $row['description_en'] ?? null, $row['strength_label_en'] ?? null);
         }
     }
 
@@ -132,7 +132,7 @@ class ProductsImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
         }
 
         return $categories->first(fn ($c) => strtolower($c->slug) === $raw)
-            ?? $categories->first(fn ($c) => strtolower(trim((string) $c->translation('vi')?->name)) === $raw);
+            ?? $categories->first(fn ($c) => strtolower(trim((string) $c->name)) === $raw);
     }
 
     private function resolveApplications(string $raw, Collection $applications, string $code): array
@@ -151,7 +151,7 @@ class ProductsImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
             }
 
             $app = $applications->first(fn ($a) => strtolower($a->slug) === $piece)
-                ?? $applications->first(fn ($a) => strtolower(trim((string) $a->translation('vi')?->name)) === $piece);
+                ?? $applications->first(fn ($a) => strtolower(trim((string) $a->name)) === $piece);
 
             if ($app) {
                 $ids[] = $app->id;
@@ -163,12 +163,12 @@ class ProductsImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
         return $ids;
     }
 
-    private function resolveSlug(mixed $value, string $nameVi, ?Product $existing): string
+    private function resolveSlug(mixed $value, string $name, ?Product $existing): string
     {
         $slug = Str::slug(trim((string) $value));
 
         if ($slug === '') {
-            $slug = Str::slug($nameVi);
+            $slug = Str::slug($name);
         }
 
         $slug = $slug ?: 'product-'.Str::random(6);
@@ -191,50 +191,6 @@ class ProductsImport implements SkipsEmptyRows, ToCollection, WithHeadingRow
         }
 
         return $slug;
-    }
-
-    private function syncTranslation(Product $product, string $locale, string $name, mixed $description, mixed $strengthLabel): void
-    {
-        $description = trim((string) $description);
-        $strengthLabel = trim((string) $strengthLabel);
-
-        if ($name === '' && $description === '' && $strengthLabel === '') {
-            if ($locale === 'en') {
-                return;
-            }
-
-            $product->translations()->where('locale', $locale)->delete();
-
-            return;
-        }
-
-        $translation = $product->translations()->where('locale', $locale)->first();
-
-        $data = [];
-
-        if ($name !== '') {
-            $data['name'] = $name;
-        }
-
-        if ($description !== '') {
-            $data['description'] = $description;
-        }
-
-        if ($strengthLabel !== '') {
-            $data['strength_label'] = $strengthLabel;
-        }
-
-        if ($translation) {
-            $data['name'] = $data['name'] ?? $translation->name;
-            $data['description'] = $data['description'] ?? $translation->description;
-            $data['strength_label'] = $data['strength_label'] ?? $translation->strength_label;
-            $translation->update($data);
-        } else {
-            $data['name'] = $data['name'] ?? ($locale === 'vi' ? 'Chưa đặt tên' : $name);
-            $data['description'] = $data['description'] ?? '';
-            $data['strength_label'] = $data['strength_label'] ?? '';
-            $product->translations()->create(array_merge(['locale' => $locale], $data));
-        }
     }
 
     private function hasValue(mixed $value): bool

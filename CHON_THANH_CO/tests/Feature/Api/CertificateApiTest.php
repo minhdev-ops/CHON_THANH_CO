@@ -18,15 +18,15 @@ it('returns active certificates with the correct structure', function () {
         ->assertJsonStructure(['data' => ['*' => ['slug', 'name', 'description', 'image', 'file']]])
         ->assertJsonPath('data.0.slug', 'giay-uy-quyen-hock')
         ->assertJsonPath('data.0.name', 'Giấy uỷ quyền phân phối HOCK')
-        ->assertJsonPath('data.0.image', '/images/certificates/authorization-hock.jpg');
+        ->assertJsonPath('data.0.image', config('filesystems.disks.s3.url').'/images/certificates/authorization-hock.jpg');
 });
 
-it('serves certificates in english', function () {
+it('serves certificates in vietnamese', function () {
     seed(CertificateSeeder::class);
 
-    getJson('/api/v1/certificates', ['X-Locale' => 'en'])
+    getJson('/api/v1/certificates', ['X-Locale' => 'vi'])
         ->assertStatus(200)
-        ->assertJsonPath('data.0.name', 'HOCK Authorized Distributor Letter');
+        ->assertJsonPath('data.0.name', 'Giấy uỷ quyền phân phối HOCK');
 });
 
 it('excludes inactive certificates', function () {

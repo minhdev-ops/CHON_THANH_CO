@@ -19,7 +19,7 @@
                     <select id="news_category_id" name="news_category_id" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">-- Không chọn --</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" @selected(old('news_category_id', $item?->news_category_id) == $category->id)>{{ $category->translation('vi')?->name }}</option>
+                            <option value="{{ $category->id }}" @selected(old('news_category_id', $item?->news_category_id) == $category->id)>{{ $category?->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -48,7 +48,7 @@
                         ['name' => 'excerpt', 'label' => 'Tóm tắt', 'type' => 'textarea', 'required' => true, 'rows' => 6],
                         ['name' => 'content', 'label' => 'Nội dung bài viết', 'type' => 'textarea', 'rows' => 12, 'hint' => 'Toàn bộ nội dung bài viết. Xuống dòng 2 lần để tách đoạn.'],
                     ]"
-                    :values="$item?->translation('vi')?->toArray() ?? []"
+                    :values="$item?->toArray() ?? []"
                 />
 
                 <x-admin.partials.translation-section
@@ -59,7 +59,7 @@
                         ['name' => 'excerpt', 'label' => 'Excerpt', 'type' => 'textarea', 'rows' => 6],
                         ['name' => 'content', 'label' => 'Content', 'type' => 'textarea', 'rows' => 12, 'hint' => 'Full article content. Double newline to split paragraphs.'],
                     ]"
-                    :values="$item?->translation('en')?->toArray() ?? []"
+                    :values="$item?->toArray() ?? []"
                 />
             </div>
 

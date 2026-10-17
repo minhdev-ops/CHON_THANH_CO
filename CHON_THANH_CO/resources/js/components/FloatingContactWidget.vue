@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useSettings } from '../composables/useSettings'
 import { t } from '../i18n'
 import ggMapImg from '../../image/gg_map.png'
@@ -55,6 +55,16 @@ const contacts = computed(() => [
     variant: 'map',
   },
 ])
+
+const isVisible = ref(true)
+
+const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: string; pulseColor: string }> = {
+  hotline: { bg: 'bg-[#D84315]', shadow: 'shadow-[0_4px_20px_rgba(216,67,21,0.5)]', hoverShadow: 'shadow-[0_8px_32px_rgba(216,67,21,0.6)]', pulseColor: 'rgba(216,67,21,0.6)' },
+  zalo: { bg: 'bg-[#0068FF]', shadow: 'shadow-[0_4px_20px_rgba(0,104,255,0.4)]', hoverShadow: 'shadow-[0_8px_32px_rgba(0,104,255,0.5)]', pulseColor: 'rgba(0,104,255,0.5)' },
+  whatsapp: { bg: 'bg-[#25D366]', shadow: 'shadow-[0_4px_20px_rgba(37,211,102,0.4)]', hoverShadow: 'shadow-[0_8px_32px_rgba(37,211,102,0.5)]', pulseColor: 'rgba(37,211,102,0.5)' },
+  wechat: { bg: 'bg-[#07C160]', shadow: 'shadow-[0_4px_20px_rgba(7,193,96,0.4)]', hoverShadow: 'shadow-[0_8px_32px_rgba(7,193,96,0.5)]', pulseColor: 'rgba(7,193,96,0.5)' },
+  map: { bg: 'bg-white', shadow: 'shadow-[0_4px_20px_rgba(0,0,0,0.15)]', hoverShadow: 'shadow-[0_8px_32px_rgba(0,0,0,0.2)]', pulseColor: 'rgba(0,0,0,0.15)' },
+}
 </script>
 
 <template>
@@ -67,7 +77,7 @@ const contacts = computed(() => [
         :href="contact.url"
         :target="contact.external ? '_blank' : undefined"
         :rel="contact.external ? 'noopener noreferrer' : undefined"
-        class="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-all duration-200 active:bg-black/5 min-w-0"
+        class="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-all duration-200 active:bg-black/5 min-w-0 relative overflow-visible"
         :class="[
           i < contacts.length - 1 ? 'border-r border-black/8' : '',
           contact.variant === 'hotline' ? 'text-[#D84315]' : '',
@@ -76,50 +86,71 @@ const contacts = computed(() => [
           contact.variant === 'wechat' ? 'text-[#07C160]' : '',
         ]"
       >
-        <img
-          v-if="contact.image"
-          :src="contact.image"
-          class="w-6 h-6 object-contain"
-          :alt="contact.name"
-        />
-        <span v-else v-html="contact.icon"></span>
-        <span class="text-[9px] font-bold tracking-wide truncate w-full text-center">{{ contact.name }}</span>
+        <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-black/5 group-hover:bg-black/10 transition-colors">
+          <!-- Pulse ring for ALL buttons (mobile) -->
+          <div class="absolute inset-0 rounded-full animate-pulse-ring" :style="{ borderColor: variantStyles[contact.variant].pulseColor }" aria-hidden="true"></div>
+
+          <!-- Hotline exclusive: stronger alarm rings (mobile) -->
+          <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-extreme" aria-hidden="true"></div>
+          <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-strong" style="animation-delay: 0.4s;" aria-hidden="true"></div>
+
+          <img
+            v-if="contact.image"
+            :src="contact.image"
+            class="w-5 h-5 object-contain animate-icon-float"
+            :alt="contact.name"
+          />
+          <span v-else class="animate-icon-float" v-html="contact.icon"></span>
+        </div>
+        <span class="text-[11px] font-bold tracking-wide truncate w-full text-center mt-1">{{ contact.name }}</span>
       </a>
     </div>
   </div>
 
   <!-- Desktop: floating vertical buttons -->
-  <div class="hidden md:flex fixed bottom-24 right-6 z-50 flex-col items-center gap-3">
+  <div v-show="isVisible" class="hidden md:flex fixed bottom-24 right-6 z-50 flex-col items-center gap-4" role="navigation" aria-label="Liên hệ nhanh">
     <a
-      v-for="contact in contacts"
+      v-for="(contact, index) in contacts"
       :key="contact.name"
       :href="contact.url"
       :target="contact.external ? '_blank' : undefined"
       :rel="contact.external ? 'noopener noreferrer' : undefined"
-      class="widget-btn relative group flex items-center justify-center w-[56px] h-[56px] rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
+      class="widget-btn relative group flex items-center justify-center w-[60px] h-[60px] rounded-full transition-all duration-500 hover:scale-110 active:scale-95"
       :class="[
-        contact.variant === 'hotline'
-          ? 'bg-[#D84315] text-white shadow-[0_4px_20px_rgba(216,67,21,0.45)] hover:shadow-[0_6px_28px_rgba(216,67,21,0.55)]'
-          : contact.variant === 'zalo'
-            ? 'bg-[#0068FF] shadow-[0_4px_20px_rgba(0,104,255,0.35)] hover:shadow-[0_6px_28px_rgba(0,104,255,0.5)]'
-            : contact.variant === 'whatsapp'
-              ? 'bg-[#25D366] text-white shadow-[0_4px_20px_rgba(37,211,102,0.35)] hover:shadow-[0_6px_28px_rgba(37,211,102,0.5)]'
-              : contact.variant === 'wechat'
-                ? 'bg-[#07C160] text-white shadow-[0_4px_20px_rgba(7,193,96,0.35)] hover:shadow-[0_6px_28px_rgba(7,193,96,0.5)]'
-                : 'bg-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.18)]',
+        variantStyles[contact.variant].bg,
+        'text-white',
+        variantStyles[contact.variant].shadow,
+        'hover:' + variantStyles[contact.variant].hoverShadow,
       ]"
+      :style="{
+        '--pulse-color': variantStyles[contact.variant].pulseColor,
+        animationDelay: `${index * 150}ms`,
+      }"
     >
-      <img
-        v-if="contact.image"
-        :src="contact.image"
-        class="w-7 h-7 object-contain"
-        :alt="contact.name"
-      />
-      <span v-else v-html="contact.icon"></span>
+      <!-- Pulse ring for ALL buttons (subtle attention) -->
+      <div class="absolute inset-0 rounded-full animate-pulse-ring" :style="{ borderColor: variantStyles[contact.variant].pulseColor }" aria-hidden="true"></div>
 
-      <span class="absolute right-[calc(100%+12px)] top-1/2 -translate-y-1/2 px-3 py-1.5 bg-[#1a1a1a] text-white text-xs font-semibold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 whitespace-nowrap shadow-lg">
+      <!-- Hotline exclusive: stronger alarm rings -->
+      <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-extreme" aria-hidden="true"></div>
+      <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-strong" style="animation-delay: 0.4s;" aria-hidden="true"></div>
+
+      <!-- Button content with icon animation -->
+      <div class="relative z-10 flex items-center justify-center">
+        <img
+          v-if="contact.image"
+          :src="contact.image"
+          class="w-8 h-8 object-contain animate-icon-float"
+          :alt="contact.name"
+        />
+        <span v-else class="animate-icon-float" v-html="contact.icon"></span>
+      </div>
+
+      <!-- Tooltip label -->
+      <span class="widget-tooltip absolute right-[calc(100%+16px)] top-1/2 -translate-y-1/2 px-4 py-2 bg-[#1a1a1a] text-white text-xs font-semibold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none transition-all duration-300 whitespace-nowrap shadow-xl transform group-hover:translate-x-0">
         {{ contact.name }}
+        <span class="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-3 border-transparent border-l-[#1a1a1a]"></span>
       </span>
+
     </a>
   </div>
 </template>
@@ -132,33 +163,181 @@ const contacts = computed(() => [
 .widget-btn {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  position: relative;
 }
 
-.widget-btn:nth-child(1) { animation: widget-float-1 3s ease-in-out infinite; }
-.widget-btn:nth-child(2) { animation: widget-float-2 3s ease-in-out infinite 0.5s; }
-.widget-btn:nth-child(3) { animation: widget-float-3 2.2s ease-in-out infinite 1s; }
-.widget-btn:nth-child(4) { animation: widget-float-1 2.8s ease-in-out infinite 0.3s; }
-.widget-btn:nth-child(5) { animation: widget-float-2 2.6s ease-in-out infinite 0.7s; }
-
-@keyframes widget-float-1 {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-@keyframes widget-float-2 {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-4px) rotate(-3deg); }
-  75% { transform: translateY(2px) rotate(2deg); }
-}
-@keyframes widget-float-3 {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-6px) scale(1.04); }
+/* Staggered entrance animation */
+.widget-btn {
+  animation: widget-enter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
-.widget-btn:hover {
-  animation-play-state: paused;
+@keyframes widget-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(60px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
+/* Pulse ring - continuous attention grabber */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+/* Tooltip styles */
+.widget-tooltip {
+  transform: translateX(8px);
+}
+
+.widget-btn:hover .widget-tooltip {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Focus visible for accessibility */
+.widget-btn:focus-visible {
+  outline: 3px solid var(--pulse-color);
+  outline-offset: 4px;
+}
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .widget-btn { animation: none !important; }
+  .widget-btn,
+  .animate-pulse-ring,
+  .animate-icon-float,
+  .animate-hotline-ring-extreme,
+  .animate-hotline-ring-strong {
+    animation: none !important;
+  }
+  .widget-btn {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hotline priority - stronger pulse */
+.widget-btn:first-child .animate-pulse-ring {
+  animation-duration: 1.8s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Pulse ring - PROMINENT attention grabber for ALL buttons */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  30% {
+    transform: scale(1.4);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(1.6);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Icon float animation - NOTICEABLE vertical float for ALL icons */
+@keyframes icon-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-6px) scale(1.08); }
+  50% { transform: translateY(-4px) scale(1.04); }
+}
+
+.animate-icon-float {
+  animation: icon-float 1.2s ease-in-out infinite;
+}
+
+/* Hotline EXCLUSIVE: Extreme alarm ring - FAST & BRIGHT */
+@keyframes hotline-ring-extreme {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(216, 67, 21, 1),
+      0 0 50px 10px rgba(216, 67, 21, 0.8),
+      0 0 100px 20px rgba(216, 67, 21, 0.5);
+  }
+  25% {
+    box-shadow:
+      0 0 0 12px rgba(216, 67, 21, 0.8),
+      0 0 70px 16px rgba(216, 67, 21, 0.6),
+      0 0 140px 28px rgba(216, 67, 21, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 0 24px rgba(216, 67, 21, 0.5),
+      0 0 90px 22px rgba(216, 67, 21, 0.5),
+      0 0 180px 36px rgba(216, 67, 21, 0.35);
+  }
+  75% {
+    box-shadow:
+      0 0 0 36px rgba(216, 67, 21, 0.25),
+      0 0 110px 28px rgba(216, 67, 21, 0.3),
+      0 0 220px 44px rgba(216, 67, 21, 0.2);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(216, 67, 21, 0),
+      0 0 60px 12px rgba(216, 67, 21, 0.15),
+      0 0 120px 24px rgba(216, 67, 21, 0.08);
+  }
+}
+
+.animate-hotline-ring-extreme {
+  animation: hotline-ring-extreme 0.8s ease-out infinite;
+}
+
+/* Hotline EXCLUSIVE: Strong alarm ring - FAST */
+@keyframes hotline-ring-strong {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(216, 67, 21, 1),
+      0 0 40px 8px rgba(216, 67, 21, 0.6);
+  }
+  40% {
+    box-shadow:
+      0 0 0 16px rgba(216, 67, 21, 0.6),
+      0 0 60px 14px rgba(216, 67, 21, 0.4);
+  }
+  70% {
+    box-shadow:
+      0 0 0 30px rgba(216, 67, 21, 0.3),
+      0 0 80px 18px rgba(216, 67, 21, 0.25);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(216, 67, 21, 0),
+      0 0 40px 8px rgba(216, 67, 21, 0.15);
+  }
+}
+
+.animate-hotline-ring-strong {
+  animation: hotline-ring-strong 0.6s ease-out infinite;
 }
 </style>

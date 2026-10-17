@@ -132,7 +132,7 @@
                     @click="enterFolder(f.name)">
                     <span class="material-symbols-outlined text-4xl text-amber-500">folder</span>
                     <span class="text-xs font-medium text-gray-700 text-center break-all leading-tight" x-text="f.name"></span>
-                    <span class="text-[10px] text-gray-400" x-text="f.count + ' mục'"></span>
+                    <span class="text-[11px] text-gray-400" x-text="f.count + ' mục'"></span>
                     <div class="absolute top-1.5 right-1.5 hidden group-hover:flex gap-1" @click.stop>
                         <button type="button" title="Đổi tên" @click="rename(f.name, true)"
                             class="w-7 h-7 rounded bg-white border border-gray-200 text-gray-500 hover:text-blue-600 flex items-center justify-center">
@@ -156,7 +156,7 @@
                     </div>
                     <div class="p-2">
                         <div class="text-xs font-medium text-gray-700 truncate" :title="file.name" x-text="file.name"></div>
-                        <div class="text-[10px] text-gray-400 flex items-center justify-between">
+                        <div class="text-[11px] text-gray-400 flex items-center justify-between">
                             <span x-text="file.size_label"></span>
                             <span x-text="file.modified"></span>
                         </div>

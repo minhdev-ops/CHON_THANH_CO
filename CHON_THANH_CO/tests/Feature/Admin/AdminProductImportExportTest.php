@@ -12,8 +12,8 @@ beforeEach(function () {
 });
 
 it('downloads the export file', function () {
-    $category = Category::create(['slug' => 'cat-export', 'sort_order' => 1, 'is_active' => true]);
-    Product::create(['category_id' => $category->id, 'slug' => 'p-export', 'code' => 'EXPORT-1', 'image' => '/x.png', 'is_active' => true]);
+    $category = Category::create(['slug' => 'cat-export', 'name' => 'Cat Export', 'sort_order' => 1, 'is_active' => true]);
+    Product::create(['category_id' => $category->id, 'slug' => 'p-export', 'code' => 'EXPORT-1', 'name' => 'Export 1', 'description' => '', 'image' => '/x.png', 'is_active' => true]);
 
     $response = $this->get('/admin/products/export');
 
@@ -31,10 +31,9 @@ it('downloads the import template file', function () {
 });
 
 it('imports products from a csv file', function () {
-    $category = Category::create(['slug' => 'vai-khong-det', 'sort_order' => 1, 'is_active' => true]);
-    $category->translations()->create(['locale' => 'vi', 'name' => 'Vải không dệt']);
+    $category = Category::create(['slug' => 'vai-khong-det', 'name' => 'Vải không dệt', 'sort_order' => 1, 'is_active' => true]);
 
-    $csv = "code,name_vi,description_vi,category,image,strength_min,strength_max,is_active,is_featured\n"
+    $csv = "code,name,description,category,image,strength_min,strength_max,is_active,is_featured\n"
         ."IMPORT-01,Vải import 1,Mô tả 1,vai-khong-det,/x.png,20,30,1,1\n"
         ."IMPORT-02,Vải import 2,Mô tả 2,vai-khong-det,/x.png,,,0,0\n";
 
@@ -46,7 +45,7 @@ it('imports products from a csv file', function () {
 
     expect(Product::where('code', 'IMPORT-01')->exists())->toBeTrue();
     expect(Product::where('code', 'IMPORT-02')->exists())->toBeTrue();
-    expect(Product::where('code', 'IMPORT-01')->first()->translation('vi')?->name)->toBe('Vải import 1');
+    expect(Product::where('code', 'IMPORT-01')->first()->name)->toBe('Vải import 1');
     expect(Product::where('code', 'IMPORT-02')->first()->is_active)->toBeFalse();
 });
 

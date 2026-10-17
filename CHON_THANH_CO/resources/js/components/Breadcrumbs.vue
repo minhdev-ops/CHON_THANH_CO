@@ -14,7 +14,7 @@ defineProps<{
     <ol class="inline-flex items-center space-x-1 md:space-x-2">
       <li v-for="(item, i) in items" :key="i">
         <div class="flex items-center">
-          <span v-if="i > 0" class="material-symbols-outlined text-sm mx-1">chevron_right</span>
+          <i v-if="i > 0" class="fa text-sm mx-1 fa-chevron-right"></i>
           <router-link
             v-if="item.to"
             :to="item.to"

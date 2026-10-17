@@ -87,7 +87,7 @@ const goToPage = (page: number | string) => {
         @click="goToPage(currentPage - 1)"
         aria-label="Trang trước"
       >
-        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        <i class="fa text-[18px] fa-chevron-left"></i>
         <span class="hidden md:inline">Trước</span>
       </button>
 
@@ -105,7 +105,7 @@ const goToPage = (page: number | string) => {
           class="min-w-[36px] h-9 px-3 rounded-md text-[13px] font-bold transition-all duration-200 cursor-pointer tabular-nums"
           :class="
             p === currentPage
-              ? 'bg-primary text-white shadow-sm border border-primary ring-2 ring-primary/20 scale-105'
+              ? 'bg-primary text-primary-deep shadow-sm border border-primary ring-2 ring-primary/20 scale-105'
               : 'border border-outline-variant text-text-main hover:bg-surface-vlm hover:border-primary/40 hover:text-primary active:scale-95'
           "
           :aria-current="p === currentPage ? 'page' : undefined"
@@ -129,7 +129,7 @@ const goToPage = (page: number | string) => {
         aria-label="Trang sau"
       >
         <span class="hidden md:inline">Sau</span>
-        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        <i class="fa text-[18px] fa-chevron-right"></i>
       </button>
     </div>
   </nav>

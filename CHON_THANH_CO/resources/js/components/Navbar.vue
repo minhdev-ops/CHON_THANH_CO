@@ -4,7 +4,8 @@ import type { Category } from '../types'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useSettings } from '../composables/useSettings'
-import { t, locale, setLocale } from '../i18n'
+import { t, locale, setLocale, localeNames } from '../i18n'
+import type { Locale } from '../i18n'
 
 interface NavLinkItem     { type: 'link';     labelKey: string; to: string }
 interface NavDropdownItem { type: 'dropdown'; name: 'about' | 'products'; labelKey: string; to: string }
@@ -16,6 +17,8 @@ const isScrolled    = ref(false)
 const isMobileOpen  = ref(false)
 const mobileSection = ref<string | null>(null)
 const openDropdown  = ref<string | null>(null)
+const langOpen      = ref(false)
+const langRef       = ref<HTMLElement | null>(null)
 const categories    = ref<Category[]>([])
 const { settings, load } = useSettings()
 
@@ -40,14 +43,23 @@ const navItems: NavItem[] = [
 
 const handleScroll = () => { isScrolled.value = window.scrollY > 40 }
 
+const switchLocale = (code: Locale) => { setLocale(code); langOpen.value = false }
+const onDocClick = (e: MouseEvent) => {
+  if (langOpen.value && langRef.value && !langRef.value.contains(e.target as Node)) langOpen.value = false
+}
+
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll, { passive: true })
+  document.addEventListener('click', onDocClick)
   handleScroll()
   load()
   try { const res = await api.categories(); categories.value = res.data } catch {}
 })
-onUnmounted(() => window.removeEventListener('scroll', handleScroll))
-watch(() => route.path, () => { closeDropdown(); isMobileOpen.value = false })
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  document.removeEventListener('click', onDocClick)
+})
+watch(() => route.path, () => { closeDropdown(); isMobileOpen.value = false; langOpen.value = false })
 
 const isActive = (path: string) => {
   if (path === '/') return route.path === '/'
@@ -81,38 +93,60 @@ watch(isMobileOpen, (open) => {
       class="hidden lg:block w-full bg-[#F7F3F0] text-[#6B5D55] overflow-hidden transition-all duration-300 border-b border-[#E4D8D0]"
       :class="isScrolled ? 'h-0 opacity-0' : 'h-[44px] opacity-100'"
     >
-      <div class="max-w-[1600px] mx-auto px-[var(--spacing-margin-desktop)] h-full flex items-center justify-between text-[13px] font-medium">
+      <div class="max-w-[1600px] mx-auto px-[var(--spacing-margin-desktop)] h-full flex items-center justify-between text-[13px] font-medium py-3">
         <div class="flex items-center gap-6">
           <a href="https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8?entry=ttu&g_ep=EgoyMDI2MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:text-[#B89B88] transition-colors duration-200 cursor-pointer">
-            <span class="material-symbols-outlined text-[16px] text-[#B89B88]">location_on</span>
+            <i class="fa text-[16px] text-[#B89B88] fa-location-dot"></i>
             {{ settings?.['contact.address'] || 'Find A Location' }}
           </a>
           <span class="w-px h-4 bg-[#E4D8D0]"></span>
           <a :href="`mailto:${email}`" class="flex items-center gap-2 hover:text-[#B89B88] transition-colors duration-200 cursor-pointer">
-            <span class="material-symbols-outlined text-[16px] text-[#B89B88]">mail</span>
+            <i class="fa text-[16px] text-[#B89B88] fa-envelope"></i>
             {{ email }}
           </a>
         </div>
 
         <div class="flex items-center gap-5">
           <div class="flex items-center gap-3 text-[#B89B88]">
-            <a href="#" class="hover:text-[#4A403B] transition-colors" title="WeChat">
+            <a href="https://wechat.com" target="_blank" rel="noopener noreferrer" class="relative z-10 cursor-pointer hover:text-[#4A403B] transition-colors" title="WeChat" aria-label="WeChat">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/></svg>
             </a>
-            <a href="#" class="hover:text-[#4A403B] transition-colors" title="WhatsApp">
+            <a href="https://wa.me/84909292530" target="_blank" rel="noopener noreferrer" class="relative z-10 cursor-pointer hover:text-[#4A403B] transition-colors" title="WhatsApp" aria-label="WhatsApp">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
             </a>
-            <a href="#" class="hover:text-[#4A403B] transition-colors" title="Zalo">
+            <a href="https://zalo.me/0909292530" target="_blank" rel="noopener noreferrer" class="relative z-10 cursor-pointer hover:text-[#4A403B] transition-colors" title="Zalo" aria-label="Zalo">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.49 10.2722v-.4496h1.3467v6.3218h-.7704a.576.576 0 01-.5763-.5729l-.0006.0005a3.273 3.273 0 01-1.9372.6321c-1.8138 0-3.2844-1.4697-3.2844-3.2823 0-1.8125 1.4706-3.2822 3.2844-3.2822a3.273 3.273 0 011.9372.6321l.0006.0005zM6.9188 7.7896v.205c0 .3823-.051.6944-.2995 1.0605l-.03.0343c-.0542.0615-.1815.206-.2421.2843L2.024 14.8h4.8948v.7682a.5764.5764 0 01-.5767.5761H0v-.3622c0-.4436.1102-.6414.2495-.8476L4.8582 9.23H.1922V7.7896h6.7266zm8.5513 8.3548a.4805.4805 0 01-.4803-.4798v-7.875h1.4416v8.3548H15.47zM20.6934 9.6C22.52 9.6 24 11.0807 24 12.9044c0 1.8252-1.4801 3.306-3.3066 3.306-1.8264 0-3.3066-1.4808-3.3066-3.306 0-1.8237 1.4802-3.3044 3.3066-3.3044zm-10.1412 5.253c1.0675 0 1.9324-.8645 1.9324-1.9312 0-1.065-.865-1.9295-1.9324-1.9295s-1.9324.8644-1.9324 1.9295c0 1.0667.865 1.9312 1.9324 1.9312zm10.1412-.0033c1.0737 0 1.945-.8707 1.945-1.9453 0-1.073-.8713-1.9436-1.945-1.9436-1.0753 0-1.945.8706-1.945 1.9436 0 1.0746.8697 1.9453 1.945 1.9453z"/></svg>
             </a>
           </div>
 
           <span class="w-px h-4 bg-[#E4D8D0]"></span>
 
-          <div class="flex items-center gap-1 cursor-pointer hover:text-[#B89B88]">
-            <span class="material-symbols-outlined text-[16px] text-[#B89B88]">language</span>
-            <span>English</span>
-            <span class="material-symbols-outlined text-[16px]">expand_more</span>
+          <div class="relative" ref="langRef">
+            <button
+              type="button"
+              class="flex items-center gap-1 cursor-pointer hover:text-[#B89B88] focus:outline-none"
+              @click.stop="langOpen = !langOpen"
+            >
+              <i class="fa text-[16px] text-[#B89B88] fa-globe"></i>
+              <span>{{ localeNames[locale] }}</span>
+              <i class="fa text-[16px] fa-chevron-down transition-transform duration-300" :class="langOpen ? 'rotate-180' : ''"></i>
+            </button>
+            <div
+              v-if="langOpen"
+              class="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-[#E4D8D0] py-1 min-w-[150px] z-[60]"
+            >
+              <button
+                v-for="(name, code) in localeNames"
+                :key="code"
+                type="button"
+                class="w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors"
+                :class="locale === code ? 'text-[#B89B88] font-bold bg-[#F5EDE6]' : 'text-[#4A403B] hover:bg-[#F5EDE6]'"
+                @click="switchLocale(code)"
+              >
+                {{ name }}
+                <i v-if="locale === code" class="fa fa-check text-[12px]"></i>
+              </button>
+            </div>
           </div>
 
         </div>
@@ -163,7 +197,7 @@ watch(isMobileOpen, (open) => {
                   @click="closeDropdown()"
                 >
                   {{ t(item.labelKey) }}
-                  <span class="material-symbols-outlined text-[22px] transition-transform duration-200 group-hover/dd:rotate-180">expand_more</span>
+                  <i class="fa text-[22px] transition-transform duration-200 group-hover/dd:rotate-180 fa-chevron-down"></i>
                 </router-link>
 
                 <transition name="dropdown">
@@ -205,10 +239,10 @@ watch(isMobileOpen, (open) => {
             <a :href="hotlineHref" class="relative flex items-center justify-center shrink-0">
               <div class="absolute inset-0 rounded-full bg-[#D84315] opacity-30 animate-ping group-hover:bg-[#D84315]/50"></div>
               <div class="w-[64px] h-[64px] rounded-full bg-[#D84315] text-white flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-all duration-300">
-                <span class="material-symbols-outlined text-[30px] animate-ring">call</span>
+                <i class="fa text-[30px] animate-ring fa-phone"></i>
               </div>
               <div class="absolute -top-1 -right-1 w-6 h-6 bg-[#B89B88] rounded-full flex items-center justify-center z-20 shadow-sm border-2 border-white group-hover:bg-[#16243D] transition-colors">
-                <span class="material-symbols-outlined text-[14px] text-white">chat</span>
+                <i class="fa text-[14px] text-white fa-comment"></i>
               </div>
             </a>
             <div class="flex items-center ms-5 group/hotline">
@@ -262,7 +296,7 @@ watch(isMobileOpen, (open) => {
             <img src="/images/logo.svg" alt="Logo" class="h-10 w-auto object-contain">
             <div>
               <span class="block font-extrabold text-[17px] text-[#4A403B] leading-tight tracking-tight">CHƠN THÀNH</span>
-              <span class="block text-[8px] font-bold tracking-[0.25em] uppercase text-[#9B8B82] mt-0.5">GEOSYNTHETICS</span>
+              <span class="block text-[11px] font-bold tracking-[0.2em] uppercase text-[#9B8B82] mt-0.5">GEOSYNTHETICS</span>
             </div>
           </a>
           <button
@@ -270,7 +304,7 @@ watch(isMobileOpen, (open) => {
             @click="isMobileOpen = false"
             aria-label="Đóng menu"
           >
-            <span class="material-symbols-outlined text-[22px]">close</span>
+            <i class="fa text-[22px] fa-xmark"></i>
           </button>
         </div>
 
@@ -293,7 +327,7 @@ watch(isMobileOpen, (open) => {
                   :class="isActive(item.to) ? 'h-5' : 'group-hover:h-3'"
                 ></span>
                 {{ t(item.labelKey) }}
-                <span v-if="isActive(item.to)" class="ml-auto material-symbols-outlined text-[18px] text-[#B89B88]">check</span>
+                <i v-if="isActive(item.to)" class="fa ml-auto text-[18px] text-[#B89B88] fa-check"></i>
               </a>
 
               <!-- Dropdown -->
@@ -306,10 +340,10 @@ watch(isMobileOpen, (open) => {
                   @click="toggleMobileSection(item.name)"
                 >
                   <span>{{ t(item.labelKey) }}</span>
-                  <span
-                    class="material-symbols-outlined text-[20px] transition-transform duration-300"
+                  <i
+                    class="fa text-[20px] transition-transform duration-300 fa-chevron-down"
                     :class="mobileSection === item.name ? 'rotate-180 text-[#B89B88]' : 'text-[#9B8B82]'"
-                  >expand_more</span>
+                  ></i>
                 </button>
 
                 <!-- Dropdown content -->
@@ -353,7 +387,7 @@ watch(isMobileOpen, (open) => {
             :href="hotlineHref"
             class="w-full text-center py-3.5 bg-[#D84315] text-white rounded-xl font-bold text-[15px] min-h-[50px] flex items-center justify-center shadow-lg shadow-[#D84315]/20 active:scale-[0.98] transition-all duration-200 gap-2.5 hover:bg-[#C63A10]"
           >
-            <span class="material-symbols-outlined text-[20px]">call</span>
+            <i class="fa text-[20px] fa-phone"></i>
             <span>{{ hotline }}</span>
           </a>
           <a
@@ -361,7 +395,7 @@ watch(isMobileOpen, (open) => {
             class="w-full text-center py-3.5 bg-[#B89B88] text-white rounded-xl font-bold text-[15px] min-h-[50px] flex items-center justify-center shadow-lg shadow-[#B89B88]/20 active:scale-[0.98] transition-all duration-200 gap-2.5 hover:bg-[#A58370] cursor-pointer"
             @click.prevent="navigateAndClose('/contact')"
           >
-            <span class="material-symbols-outlined text-[20px]">mail</span>
+            <i class="fa text-[20px] fa-envelope"></i>
             <span>{{ t('product.quote') }}</span>
           </a>
         </div>
@@ -370,11 +404,11 @@ watch(isMobileOpen, (open) => {
         <div class="px-5 py-3.5 bg-[#F7F3F0]/80 border-t border-[#E4D8D0]/60 shrink-0">
           <div class="flex flex-col gap-2 text-[12px] text-[#6B5D55]">
             <div class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-[15px] text-[#B89B88] mt-0.5">location_on</span>
+              <i class="fa text-[15px] text-[#B89B88] mt-0.5 fa-location-dot"></i>
               <span class="leading-snug">{{ settings?.['contact.address'] || '416A Đường CC2, P. Sơn Kỳ, Q. Tân Phú, TP.HCM' }}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[15px] text-[#B89B88]">schedule</span>
+              <i class="fa text-[15px] text-[#B89B88] fa-clock"></i>
               <span>{{ settings?.['contact.working_hours'] || 'T2–T6: 8:30 AM – 5:30 PM' }}</span>
             </div>
           </div>

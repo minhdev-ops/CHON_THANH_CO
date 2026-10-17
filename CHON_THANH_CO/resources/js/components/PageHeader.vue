@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
-import ParticleBackground from './ParticleBackground.vue'
-import WireframeTerrain from './WireframeTerrain.vue'
 
 const props = withDefaults(
   defineProps<{
     title: string
     breadcrumbs: { label: string; to?: string }[]
     variant?: 'default' | 'compact' | 'cinematic'
+    eyebrow?: string
   }>(),
   { variant: 'compact' },
 )
@@ -29,19 +28,15 @@ const paddingClass = computed(() => {
     class="relative overflow-hidden hero-parallax"
     :class="[paddingClass, variant === 'cinematic' ? 'noise-overlay' : '']"
   >
-    <WireframeTerrain />
-
     <div
       class="absolute inset-0 pointer-events-none"
       :style="{
         background: variant === 'cinematic'
-          ? 'linear-gradient(180deg, rgba(42,36,32,0.4) 0%, rgba(42,36,32,0.1) 40%, rgba(42,36,32,0.4) 100%)'
-          : 'linear-gradient(180deg, rgba(42,36,32,0.4) 0%, rgba(42,36,32,0.1) 50%, rgba(42,36,32,0.4) 100%)',
+          ? 'linear-gradient(180deg, rgba(42,36,32,0.82) 0%, rgba(42,36,32,0.55) 40%, rgba(42,36,32,0.82) 100%)'
+          : 'linear-gradient(180deg, rgba(42,36,32,0.92) 0%, rgba(42,36,32,0.72) 50%, rgba(42,36,32,0.92) 100%)',
         transform: variant === 'cinematic' ? `translateY(${scrollY * 0.15 + 20}px) scale(1.1)` : 'none',
       }"
     />
-
-    <ParticleBackground v-if="variant === 'cinematic'" />
 
     <div
       v-if="variant === 'cinematic'"
@@ -57,14 +52,12 @@ const paddingClass = computed(() => {
       class="relative z-10 max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop text-center flex flex-col items-center reveal"
     >
       <div
-        v-if="breadcrumbs.length"
-        class="inline-flex items-center gap-3 mb-5"
+        v-if="eyebrow || breadcrumbs.length"
+        class="inline-flex items-center justify-center mb-5 max-w-2xl px-4 text-center"
       >
-        <span class="w-6 h-px bg-primary" />
-        <span class="text-primary text-[11px] font-bold tracking-[0.22em] uppercase">
-          {{ breadcrumbs[breadcrumbs.length - 1]?.label }}
+        <span class="text-primary text-[11px] md:text-[12px] font-bold tracking-[0.22em] uppercase">
+          {{ eyebrow || breadcrumbs[breadcrumbs.length - 1]?.label }}
         </span>
-        <span class="w-6 h-px bg-primary" />
       </div>
 
       <h1
@@ -72,7 +65,7 @@ const paddingClass = computed(() => {
         :class="variant === 'cinematic'
           ? 'text-[42px] md:text-[56px] lg:text-[68px]'
           : 'text-[32px] md:text-[44px] lg:text-[52px]'"
-        style="letter-spacing: -0.02em; text-shadow: 0 4px 30px rgba(0,0,0,0.25);"
+        style="letter-spacing: -0.02em; text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 4px 30px rgba(0,0,0,0.3);"
       >
         {{ title }}
       </h1>

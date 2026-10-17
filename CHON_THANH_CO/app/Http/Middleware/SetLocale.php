@@ -12,7 +12,10 @@ class SetLocale
     {
         $locale = $request->query('locale') ?? $request->header('X-Locale');
 
-        app()->setLocale(in_array($locale, ['vi', 'en'], true) ? $locale : 'vi');
+        $validLocales = ['vi', 'en'];
+        $locale = in_array($locale, $validLocales, true) ? $locale : 'vi';
+
+        app()->setLocale($locale);
 
         return $next($request);
     }

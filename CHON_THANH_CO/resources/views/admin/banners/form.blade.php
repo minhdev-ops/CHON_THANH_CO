@@ -5,7 +5,7 @@
 @section('content')
     <div class="max-w-3xl">
         <form method="POST" action="{{ $banner ? route('admin.banners.update', $banner) : route('admin.banners.store') }}"
-            x-data="{ lang: 'vi', section: '{{ old('section', $banner?->section ?? 'hero') }}' }">
+            x-data="{ section: '{{ old('section', $banner?->section ?? 'hero') }}' }">
             @csrf
             @if ($banner)
                 @method('PUT')
@@ -37,37 +37,11 @@
                 </div>
 
                 <x-admin.partials.image-picker name="image" label="Ảnh nền" :value="$banner?->image" :hint="'Chỉ dùng cho hero trang chủ. Để trống nếu không cần ảnh.'" folder="banners" />
-            </div>
 
-            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-                <div class="flex gap-2 mb-4">
-                    <button type="button" @click="lang = 'vi'" :class="lang === 'vi' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-1.5 rounded text-sm font-semibold">Tiếng Việt</button>
-                    <button type="button" @click="lang = 'en'" :class="lang === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-1.5 rounded text-sm font-semibold">English</button>
-                </div>
-
-                <x-admin.partials.translation-section
-                    locale="vi"
-                    label="Tiếng Việt"
-                    :fields="[
-                        ['name' => 'title', 'label' => 'Tiêu đề', 'required' => false, 'max' => 300],
-                        ['name' => 'subtitle', 'label' => 'Phụ đề (hero)', 'max' => 500],
-                        ['name' => 'text', 'label' => 'Mô tả (CTA)', 'type' => 'textarea', 'rows' => 3],
-                        ['name' => 'button_text', 'label' => 'Chữ trên nút', 'max' => 100],
-                    ]"
-                    :values="$banner?->translation('vi')?->toArray() ?? []"
-                />
-
-                <x-admin.partials.translation-section
-                    locale="en"
-                    label="English"
-                    :fields="[
-                        ['name' => 'title', 'label' => 'Title', 'max' => 300],
-                        ['name' => 'subtitle', 'label' => 'Subtitle (hero)', 'max' => 500],
-                        ['name' => 'text', 'label' => 'Text (CTA)', 'type' => 'textarea', 'rows' => 3],
-                        ['name' => 'button_text', 'label' => 'Button text', 'max' => 100],
-                    ]"
-                    :values="$banner?->translation('en')?->toArray() ?? []"
-                />
+                <x-admin.partials.input name="title" label="Tiêu đề" :value="$banner?->title" max="300" />
+                <x-admin.partials.input name="subtitle" label="Phụ đề (hero)" :value="$banner?->subtitle" max="500" />
+                <x-admin.partials.input name="text" label="Mô tả (CTA)" :value="$banner?->text" type="textarea" rows="3" />
+                <x-admin.partials.input name="button_text" label="Chữ trên nút" :value="$banner?->button_text" max="100" />
             </div>
 
             <div class="flex items-center gap-3">

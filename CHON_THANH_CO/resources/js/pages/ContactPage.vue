@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { api } from '../api/client'
 import { useSettings } from '../composables/useSettings'
 import type { Product } from '../types'
 import PageHeader from '../components/PageHeader.vue'
 import SectionHeader from '../components/SectionHeader.vue'
 import { t } from '../i18n'
+import { contactBodyText } from '../utils/contactLink'
 
-const { settings, load, socialSettings } = useSettings()
+const route = useRoute()
+const { settings, load } = useSettings()
 
 const DEFAULT_MAP_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d550.0847160481649!2d106.60798745916034!3d10.810054716844608!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752bb2c658a587%3A0x3362c58ad0f4ce7c!2zQ8OUTkcgVFkgVE5INCBEViBWw4AgVE0gQ0jGoE4gVEjDgE5I!5e1!3m2!1sen!2s!4v1785813190548!5m2!1sen!2s'
 
@@ -59,6 +62,7 @@ const availableProducts = computed(() => {
 })
 
 onMounted(async () => {
+  applyPrefill()
   load()
   try {
     let cursor: number | undefined
@@ -103,7 +107,7 @@ const validateField = (field: FieldKey): string => {
     case 'name':
       if (!name) return t('contact.errName')
       if (name.length < 2) return t('contact.errNameShort')
-      if (!/^[\\p{L}\\p{M}\\s.'-]+$/u.test(name)) return t('contact.errNameInvalid')
+      if (!/^[\p{L}\p{M}\s.'-]+$/u.test(name)) return t('contact.errNameInvalid')
       if (name.length > 150) return t('contact.errNameLong')
       return ''
     case 'phone':
@@ -138,6 +142,25 @@ const touchField = (field: FieldKey) => {
   if (message) formErrors.value[field] = message
   else if (formErrors.value[field]) delete formErrors.value[field]
 }
+
+const queryValue = (v: unknown): string => (Array.isArray(v) ? String(v[0] ?? '') : String(v ?? ''))
+
+// CTA toàn site dẫn tới /contact?subject=...&body=...&product=... — điền sẵn form.
+const applyPrefill = () => {
+  const product = queryValue(route.query.product).trim()
+  if (product && !selectedProducts.value.includes(product)) {
+    selectedProducts.value.push(product)
+    touchField('products')
+  }
+
+  if (form.value.message) return
+  const body = queryValue(route.query.body).trim()
+  const subject = queryValue(route.query.subject).trim() as keyof typeof contactBodyText
+  const text = body || contactBodyText[subject] || ''
+  if (text) form.value.message = text
+}
+
+watch(() => [route.query.subject, route.query.body, route.query.product], applyPrefill)
 
 const validate = (): boolean => {
   const fields: FieldKey[] = ['name', 'phone', 'email', 'company', 'products', 'message']
@@ -225,19 +248,18 @@ const breadcrumbs = computed(() => [
 
     <section class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-16 md:py-20">
       <div class="text-center max-w-2xl mx-auto mb-16 reveal">
-        <span class="kicker mb-4 block">Contact Us</span>
-        <h2 class="text-[32px] md:text-[42px] text-text-main font-bold tracking-tight mb-5">{{ t('contact.formTitle') }}</h2>
+        <SectionHeader align="center" kicker="Contact Us" :title="t('contact.formTitle')" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
         <!-- Contact Form -->
         <div class="bg-surface-bright border border-outline-variant rounded-3xl p-8 md:p-10 shadow-sm hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] transition-all duration-500 reveal-left card-shine glow-card">
           <div v-if="submitted" class="mb-6 flex items-start gap-3 bg-green-50 border border-green-200 rounded-2xl p-4 animate-fade-in-up">
-            <span class="material-symbols-outlined text-green-600 flex-shrink-0">check_circle</span>
+            <i class="fa text-green-600 flex-shrink-0 fa-circle-check"></i>
             <p class="text-sm text-green-800 font-medium">{{ t('contact.success') }}</p>
           </div>
           <div v-if="error" class="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 rounded-2xl p-4">
-            <span class="material-symbols-outlined text-red-500 flex-shrink-0">error</span>
+            <i class="fa text-red-500 flex-shrink-0 fa-circle-exclamation"></i>
             <p class="text-sm text-red-600 font-medium">{{ error }}</p>
           </div>
           <form class="space-y-6" novalidate @submit.prevent="handleSubmit">
@@ -273,12 +295,12 @@ const breadcrumbs = computed(() => [
                     <span v-for="(product, index) in selectedProducts" :key="product" class="inline-flex items-center gap-1 bg-primary/10 text-primary-deep rounded-full pl-3.5 pr-1.5 py-1 text-xs font-bold transition-all duration-300 hover:bg-primary/20">
                       {{ product }}
                       <button type="button" class="w-5 h-5 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors" :aria-label="`${t('contact.remove')} ${product}`" @click="removeProduct(index)">
-                        <span class="material-symbols-outlined text-xs leading-none">close</span>
+                        <i class="fa text-xs leading-none fa-xmark"></i>
                       </button>
                     </span>
                   </div>
                   <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-text-muted text-lg">search</span>
+                    <i class="fa text-text-muted text-lg fa-magnifying-glass"></i>
                     <input
                       id="product-search"
                       ref="productInput"
@@ -317,7 +339,7 @@ const breadcrumbs = computed(() => [
                 <!-- Empty state for suggestions -->
                 <div v-if="showSuggestions && searchQuery.trim() && !availableProducts.length" class="absolute left-0 right-0 top-full mt-2 bg-surface-bright border border-outline-variant/30 rounded-2xl shadow-2xl z-20">
                   <div class="p-8 flex flex-col items-center justify-center text-center">
-                    <span class="material-symbols-outlined text-4xl text-outline-variant mb-3">search_off</span>
+                    <i class="fa text-4xl text-outline-variant mb-3 fa-magnifying-glass-minus"></i>
                     <p class="text-text-main font-semibold mb-1">{{ t('contact.noProductsFound') }}</p>
                     <p class="text-text-secondary text-[13px]">{{ t('contact.tryDifferentKeyword') }}</p>
                   </div>
@@ -332,7 +354,7 @@ const breadcrumbs = computed(() => [
             </div>
             <button type="submit" :disabled="submitting" class="btn btn-primary btn-magnetic w-full md:w-auto mt-4 inline-flex items-center justify-center gap-2 group disabled:opacity-60">
               <span>{{ submitting ? t('contact.submitting') : t('contact.submit') }}</span>
-              <span class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform duration-300">send</span>
+              <i class="fa text-base group-hover:translate-x-1 transition-transform duration-300 fa-paper-plane"></i>
             </button>
           </form>
         </div>
@@ -343,8 +365,8 @@ const breadcrumbs = computed(() => [
             <h2 class="text-[24px] text-text-main mb-8 pb-5 border-b border-outline-variant font-bold tracking-tight">{{ t('contact.infoTitle') }}</h2>
             <ul class="space-y-6">
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">location_on</span>
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
+                  <i class="fa text-primary-deep text-xl fa-location-dot"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.headquarters') }}</span>
@@ -352,8 +374,8 @@ const breadcrumbs = computed(() => [
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">call</span>
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
+                  <i class="fa text-primary-deep text-xl fa-phone"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.phoneLabel') }}</span>
@@ -366,8 +388,8 @@ const breadcrumbs = computed(() => [
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">mail</span>
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
+                  <i class="fa text-primary-deep text-xl fa-envelope"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.emailLabel') }}</span>
@@ -375,8 +397,8 @@ const breadcrumbs = computed(() => [
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
-                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <span class="material-symbols-outlined text-primary-deep text-xl">schedule</span>
+                <div class="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center flex-shrink-0">
+                  <i class="fa text-primary-deep text-xl fa-clock"></i>
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.hoursLabel') }}</span>
@@ -384,14 +406,6 @@ const breadcrumbs = computed(() => [
                 </div>
               </li>
             </ul>
-            <div class="mt-10 pt-8 border-t border-outline-variant">
-              <span class="block text-[11px] font-bold text-text-muted mb-4 uppercase tracking-[0.15em]">{{ t('contact.connect') }}</span>
-              <div class="flex flex-wrap gap-3">
-                <a v-for="social in socialSettings" :key="social.name" :href="social.url" target="_blank" rel="noopener noreferrer" class="w-13 h-13 rounded-2xl bg-surface-vlm border border-outline-variant text-text-secondary flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1" :aria-label="social.name" :title="social.name">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" v-html="social.icon"></svg>
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>

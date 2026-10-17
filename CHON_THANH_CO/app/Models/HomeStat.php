@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Localizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\HomeStatTranslation;
 
 class HomeStat extends Model
 {
     use HasFactory;
-    use Localizable;
     use SoftDeletes;
 
     protected $fillable = [
         'icon',
         'value',
+        'label',
         'sort_order',
         'is_active',
     ];
@@ -34,3 +34,4 @@ class HomeStat extends Model
         return $this->hasMany(HomeStatTranslation::class);
     }
 }
+

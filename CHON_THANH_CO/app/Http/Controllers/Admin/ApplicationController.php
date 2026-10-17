@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\Concerns\SyncsTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use Illuminate\Http\Request;
@@ -10,11 +9,44 @@ use Illuminate\Support\Str;
 
 class ApplicationController extends Controller
 {
-    use SyncsTranslations;
+    use Concerns\RendersAdminTables;
 
-    public function index()
+    public function index(Request $request)
     {
-        $applications = Application::with('translations')->withCount('products')->orderBy('sort_order')->get();
+        $baseQuery = fn () => Application::withCount('products');
+
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('q')) {
+                $search = $request->input('q');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%");
+                });
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.applications.rows',
+                itemsVar: 'applications',
+                sortable: [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'sort_order' => 'sort_order',
+                    'products_count' => 'products_count',
+                    'is_active' => 'is_active',
+                ],
+                defaultOrder: ['sort_order' => 'asc'],
+            );
+        }
+
+        $query = $baseQuery();
+        $applyFilters($query, $request);
+
+        $applications = $query->orderBy('sort_order')->paginate(15)->withQueryString();
 
         return view('admin.applications.index', compact('applications'));
     }
@@ -26,33 +58,35 @@ class ApplicationController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $application = Application::create([
             'slug' => $this->makeSlug($data),
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($application, $data['translations'], ['name', 'description']);
 
         return redirect()->route('admin.applications.index')->with('success', 'Đã tạo ứng dụng.');
     }
 
     public function edit(Application $application)
     {
-        return view('admin.applications.form', ['application' => $application->load('translations')]);
+        return view('admin.applications.form', ['application' => $application]);
     }
 
     public function update(Request $request, Application $application)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $application->update([
             'slug' => $this->makeSlug($data, $application),
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($application, $data['translations'], ['name', 'description']);
 
         return redirect()->route('admin.applications.index')->with('success', 'Đã cập nhật ứng dụng.');
     }
@@ -68,16 +102,28 @@ class ApplicationController extends Controller
         return redirect()->route('admin.applications.index')->with('success', 'Đã xóa ứng dụng.');
     }
 
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['name', 'description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
+    }
+
     private function validated(Request $request): array
     {
         return $request->validate([
             'slug' => ['nullable', 'string', 'max:150'],
+            'name' => ['required', 'string', 'max:150'],
+            'description' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
             'is_active' => ['boolean'],
-            'translations.vi.name' => ['required', 'string', 'max:150'],
-            'translations.vi.description' => ['nullable', 'string'],
-            'translations.en.name' => ['nullable', 'string', 'max:150'],
-            'translations.en.description' => ['nullable', 'string'],
         ]);
     }
 
@@ -87,8 +133,8 @@ class ApplicationController extends Controller
             return Str::slug($data['slug']);
         }
 
-        $name = $data['translations']['vi']['name'] ?? '';
+        $name = $data['name'] ?? '';
 
-        return Str::slug($name) ?: ($existing?->slug ?? 'application-' . Str::random(6));
+        return Str::slug($name) ?: ($existing?->slug ?? 'application-'.Str::random(6));
     }
 }

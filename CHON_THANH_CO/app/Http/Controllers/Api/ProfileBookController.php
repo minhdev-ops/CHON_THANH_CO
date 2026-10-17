@@ -16,19 +16,19 @@ class ProfileBookController extends Controller
     {
         // Kiểm tra xem file có tồn tại không
         $filePath = 'profile/ho-so-nang-luc.pdf';
-        
-        if (Storage::disk('public')->exists($filePath)) {
+
+        if (Storage::disk('s3')->exists($filePath)) {
             return response()->json([
                 'success' => true,
-                'url' => Storage::disk('public')->url($filePath),
-                'message' => 'Lấy URL hồ sơ năng lực thành công.'
+                'url' => Storage::disk('s3')->url($filePath),
+                'message' => 'Lấy URL hồ sơ năng lực thành công.',
             ]);
         }
 
         return response()->json([
             'success' => false,
             'url' => null,
-            'message' => 'Chưa có file hồ sơ năng lực nào được tải lên.'
+            'message' => 'Chưa có file hồ sơ năng lực nào được tải lên.',
         ], 404);
     }
 
@@ -38,7 +38,7 @@ class ProfileBookController extends Controller
     public function upload(Request $request)
     {
         // Có thể thêm middleware auth:sanctum hoặc admin ở routes/api.php
-        
+
         $validator = Validator::make($request->all(), [
             'file' => 'required|mimes:pdf|max:20480', // Giới hạn file PDF 20MB
         ]);
@@ -46,19 +46,19 @@ class ProfileBookController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $file = $request->file('file');
-        
+
         // Lưu đè file cũ với tên cố định
-        $path = $file->storeAs('profile', 'ho-so-nang-luc.pdf', 'public');
+        $path = $file->storeAs('profile', 'ho-so-nang-luc.pdf', 's3');
 
         return response()->json([
             'success' => true,
-            'url' => Storage::disk('public')->url($path),
-            'message' => 'Upload hồ sơ năng lực thành công.'
+            'url' => Storage::disk('s3')->url($path),
+            'message' => 'Upload hồ sơ năng lực thành công.',
         ]);
     }
 }

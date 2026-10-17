@@ -2,20 +2,23 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Localizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\BannerTranslation;
 
 class Banner extends Model
 {
     use HasFactory;
-    use Localizable;
     use SoftDeletes;
 
     protected $fillable = [
         'section',
+        'title',
+        'subtitle',
+        'text',
+        'button_text',
         'image',
         'link_to',
         'is_active',
@@ -35,3 +38,4 @@ class Banner extends Model
         return $this->hasMany(BannerTranslation::class);
     }
 }
+

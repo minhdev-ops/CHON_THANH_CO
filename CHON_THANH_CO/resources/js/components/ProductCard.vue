@@ -18,64 +18,41 @@ const productImage = computed(() =>
   props.product.image || '/images/products/geotextile-roll.jpg',
 )
 
-const isCatalog = computed(() => props.variant === 'catalog')
 </script>
 
 <template>
   <router-link
     :to="`/products/${product.slug}`"
-    class="group relative block bg-surface-1 border border-outline-variant hover:border-text-main transition-all duration-500 overflow-hidden card-shine"
+    class="group relative block overflow-hidden rounded-[20px] bg-white border border-[#E8E1DC] hover:border-[#B89B88] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(74,64,59,0.13)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
   >
     <!-- Desktop: vertical card -->
     <div class="hidden sm:block">
-      <LazyImage
-        :src="productImage"
-        :alt="product.name"
-        fallback-src="/images/products/geotextile-roll.jpg"
-        :aspect-ratio="isCatalog ? 'aspect-[4/3]' : 'aspect-[4/3]'"
-        image-class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
-      >
-        <div class="absolute inset-0 bg-gradient-to-t from-text-main/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div class="relative overflow-hidden bg-[#F4F1EE]">
+        <LazyImage
+          :src="productImage"
+          :alt="product.name"
+          fallback-src="/images/products/geotextile-roll.jpg"
+          aspect-ratio="aspect-[5/4]"
+          image-class="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+        />
+        <span class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6E5B50] shadow-sm">
+          {{ product.category?.name || 'Geosynthetics' }}
+        </span>
+        <span class="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#16243D] text-white opacity-0 translate-y-2 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <i class="fa text-[17px] fa-arrow-right"></i>
+        </span>
+      </div>
 
-        <div
-          v-if="showStrength && product.strength_label"
-          class="absolute bottom-0 left-0 bg-primary/90 backdrop-blur-sm text-canvas px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] uppercase tabular-nums z-10"
-          style="background: rgba(22, 36, 61, 0.9);"
-        >
-          {{ product.strength_label }}
-        </div>
-
-        <div v-if="showCategory" class="absolute top-3 left-3 z-10">
-          <span
-            class="inline-flex items-center gap-1 bg-canvas/90 backdrop-blur-md border border-text-main/20 px-2.5 py-1 text-[9px] font-bold text-text-main uppercase tracking-[0.18em]"
-          >
-            {{ product.category?.name || 'Geosynthetics' }}
-          </span>
-        </div>
-
-        <div
-          class="absolute top-3 right-3 w-9 h-9 bg-primary text-white flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:rotate-[-45deg] transition-all duration-500 z-10"
-        >
-          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-        </div>
-      </LazyImage>
-
-      <div class="p-6 border-t border-outline-variant flex flex-col">
+      <div class="p-5 md:p-6">
         <h3
-          class="font-extrabold text-[19px] text-text-main mb-3 group-hover:text-primary transition-colors duration-300 leading-snug line-clamp-2 min-h-[2.6em]"
+          class="font-extrabold text-[21px] text-[#2A2420] group-hover:text-primary transition-colors duration-300 leading-[1.18] line-clamp-2 min-h-[2.36em]"
         >
           {{ product.name }}
         </h3>
-
-        <div class="mt-auto pt-4 flex items-center justify-between border-t border-outline-variant/60">
-          <span class="text-[12px] font-bold text-text-muted tracking-[0.18em] uppercase tabular-nums">
-            {{ product.code }}
-          </span>
-          <span
-            class="inline-flex items-center gap-1.5 text-[12px] font-bold text-text-main group-hover:text-primary tracking-[0.15em] uppercase transition-colors duration-300"
-          >
-            Chi tiết
-            <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+        <div class="mt-5 border-t border-[#EEE8E3] pt-4">
+          <span class="btn-primary inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-[12px] font-bold uppercase tracking-[0.12em] transition-all duration-300 group-hover:shadow-md">
+            Yêu cầu báo giá
+            <i class="fa text-[17px] transition-transform duration-300 group-hover:translate-x-1 fa-arrow-right"></i>
           </span>
         </div>
       </div>
@@ -83,28 +60,28 @@ const isCatalog = computed(() => props.variant === 'catalog')
 
     <!-- Mobile: compact horizontal card -->
     <div class="flex sm:hidden items-center gap-3 p-3">
-      <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
+      <div class="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-[#F4F1EE]">
         <LazyImage
           :src="productImage"
           :alt="product.name"
           fallback-src="/images/products/geotextile-roll.jpg"
-          image-class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+          image-class="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
       </div>
       <div class="flex-1 min-w-0">
-        <div v-if="showCategory" class="mb-1">
-          <span class="inline-flex items-center text-[9px] font-bold text-primary uppercase tracking-[0.15em]">
+        <div class="mb-1.5">
+          <span class="text-[10px] font-bold text-[#8C6B58] uppercase tracking-[0.12em]">
             {{ product.category?.name || 'Geosynthetics' }}
           </span>
         </div>
-        <h3 class="font-extrabold text-[14px] text-text-main group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2">
+        <h3 class="font-extrabold text-[16px] text-text-main group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2">
           {{ product.name }}
         </h3>
-        <div class="flex items-center justify-between mt-1.5">
-          <span class="text-[10px] font-bold text-text-muted tracking-[0.15em] uppercase tabular-nums">
-            {{ product.code }}
+        <div class="mt-3">
+          <span class="btn-primary inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-2 text-[10px] font-bold uppercase tracking-[0.1em]">
+            Yêu cầu báo giá
+            <i class="fa text-[14px] fa-arrow-right"></i>
           </span>
-          <span class="material-symbols-outlined text-[16px] text-primary">arrow_forward</span>
         </div>
       </div>
     </div>

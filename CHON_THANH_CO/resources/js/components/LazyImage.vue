@@ -11,6 +11,7 @@ const props = withDefaults(
     containerClass?: string
     eager?: boolean
     rootMargin?: string
+    noOverflow?: boolean
   }>(),
   {
     src: '',
@@ -21,6 +22,7 @@ const props = withDefaults(
     containerClass: '',
     eager: false,
     rootMargin: '200px',
+    noOverflow: false
   }
 )
 
@@ -118,16 +120,16 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="containerRef"
-    class="relative overflow-hidden bg-surface-vlm select-none"
-    :class="[aspectRatio, containerClass]"
+    class="relative bg-surface-vlm select-none"
+    :class="[aspectRatio, containerClass, { 'overflow-hidden': !noOverflow }]"
   >
     <!-- Skeleton loader placeholder while not loaded -->
     <div
       v-if="!isLoaded"
       class="absolute inset-0 w-full h-full bg-surface-vlm animate-shimmer flex items-center justify-center z-0"
     >
-      <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center opacity-60">
-        <span class="material-symbols-outlined text-[18px] text-primary/40 animate-pulse">image</span>
+      <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center opacity-60">
+        <i class="fa text-[18px] text-primary/40 animate-pulse fa-image"></i>
       </div>
     </div>
 

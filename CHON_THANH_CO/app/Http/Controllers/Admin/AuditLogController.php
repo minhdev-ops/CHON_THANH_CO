@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class AuditLogController extends Controller
 {
+    use Concerns\RendersAdminTables;
+
     public const MODEL_LABELS = [
         'App\Models\AboutTimeline' => 'Mốc lịch sử',
         'App\Models\Category' => 'Danh mục',
@@ -33,19 +35,48 @@ class AuditLogController extends Controller
 
     public function index(Request $request)
     {
-        $query = AuditLog::latest('id');
+        $baseQuery = fn () => AuditLog::query();
 
-        if ($request->filled('action')) {
-            $query->where('action', $request->input('action'));
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('action')) {
+                $query->where('action', $request->input('action'));
+            }
+
+            if ($request->filled('model_type')) {
+                $query->where('model_type', $request->input('model_type'));
+            }
+
+            $actor = $request->input('q') ?: $request->input('actor');
+            if ($actor) {
+                $query->where('actor', 'like', '%'.$actor.'%');
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.audit-logs.rows',
+                itemsVar: 'logs',
+                viewData: [
+                    'modelLabels' => self::MODEL_LABELS,
+                    'actionLabels' => self::ACTION_LABELS,
+                ],
+                sortable: [
+                    'id' => 'id',
+                    'action' => 'action',
+                    'model_type' => 'model_type',
+                    'actor' => 'actor',
+                    'created_at' => 'created_at',
+                ],
+                defaultOrder: ['id' => 'desc'],
+                defaultPerPage: 25,
+            );
         }
 
-        if ($request->filled('model_type')) {
-            $query->where('model_type', $request->input('model_type'));
-        }
-
-        if ($request->filled('actor')) {
-            $query->where('actor', 'like', '%' . $request->input('actor') . '%');
-        }
+        $query = $baseQuery();
+        $applyFilters($query, $request);
 
         $logs = $query->paginate(25)->withQueryString();
 

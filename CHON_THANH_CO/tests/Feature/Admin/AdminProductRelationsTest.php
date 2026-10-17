@@ -12,31 +12,29 @@ beforeEach(function () {
 });
 
 it('saves product specs with translations', function () {
-    $category = Category::create(['slug' => 'vai-khong-det', 'sort_order' => 1, 'is_active' => true]);
-    $category->translations()->create(['locale' => 'vi', 'name' => 'Vải không dệt']);
+    $category = Category::create(['slug' => 'vai-khong-det', 'name' => 'Vải không dệt', 'sort_order' => 1, 'is_active' => true]);
 
     $this->post('/admin/products', [
         'category_id' => $category->id,
         'code' => 'ART-SPEC-1',
         'image' => '/userfiles/images/products/spec.png',
         'is_active' => 1,
-        'translations' => [
-            'vi' => ['name' => 'Vải ART SPEC 1', 'description' => 'Mô tả'],
-            'en' => ['name' => '', 'description' => ''],
-        ],
+        'name' => 'Vải ART SPEC 1',
+        'description' => 'Mô tả',
+        'strength_label' => '30 kN/m',
+        'meta_title' => 'Meta title',
+        'meta_description' => 'Meta description',
         'specs' => [
             [
                 'value' => '30 kN/m',
                 'icon' => 'bolt',
-                'label_vi' => 'Cường độ kéo',
-                'label_en' => 'Tensile strength',
+                'label' => 'Cường độ kéo',
                 'sort_order' => 1,
             ],
             [
                 'value' => '200 g/m²',
                 'icon' => 'weight',
-                'label_vi' => 'Định lượng',
-                'label_en' => '',
+                'label' => 'Định lượng',
                 'sort_order' => 2,
             ],
         ],
@@ -53,30 +51,29 @@ it('saves product specs with translations', function () {
     $spec = $product->specs()->first();
     expect($spec->value)->toBe('30 kN/m')
         ->and($spec->icon)->toBe('bolt')
-        ->and($spec->translation('vi')?->label)->toBe('Cường độ kéo')
-        ->and($spec->translation('en')?->label)->toBe('Tensile strength');
+        ->and($spec->label)->toBe('Cường độ kéo');
 
     expect($product->images()->count())->toBe(1);
     expect($product->images()->first()->image)->toBe('/userfiles/images/products/spec-2.png');
 });
 
 it('syncs applications when creating a product', function () {
-    $category = Category::create(['slug' => 'cat-app', 'sort_order' => 1, 'is_active' => true]);
-    $category->translations()->create(['locale' => 'vi', 'name' => 'Danh mục']);
+    $category = Category::create(['slug' => 'cat-app', 'name' => 'Danh mục', 'sort_order' => 1, 'is_active' => true]);
 
-    $app1 = Application::create(['slug' => 'phan-cach-loc', 'sort_order' => 1, 'is_active' => true]);
-    $app2 = Application::create(['slug' => 'thoat-nuoc', 'sort_order' => 2, 'is_active' => true]);
+    $app1 = Application::create(['slug' => 'phan-cach-loc', 'name' => 'Phân cách, lọc', 'sort_order' => 1, 'is_active' => true]);
+    $app2 = Application::create(['slug' => 'thoat-nuoc', 'name' => 'Thoát nước', 'sort_order' => 2, 'is_active' => true]);
 
     $this->post('/admin/products', [
         'category_id' => $category->id,
         'code' => 'ART-APP-1',
         'image' => '/userfiles/images/products/app.png',
         'is_active' => 1,
+        'name' => 'Vải ART APP 1',
+        'description' => 'Mô tả',
+        'strength_label' => '',
+        'meta_title' => '',
+        'meta_description' => '',
         'applications' => [$app1->id, $app2->id],
-        'translations' => [
-            'vi' => ['name' => 'Vải ART APP 1', 'description' => 'Mô tả'],
-            'en' => ['name' => '', 'description' => ''],
-        ],
     ])->assertRedirect('/admin/products');
 
     $product = Product::where('code', 'ART-APP-1')->first();
@@ -85,11 +82,10 @@ it('syncs applications when creating a product', function () {
 });
 
 it('replaces relations when updating a product', function () {
-    $category = Category::create(['slug' => 'cat-replace', 'sort_order' => 1, 'is_active' => true]);
-    $category->translations()->create(['locale' => 'vi', 'name' => 'Danh mục']);
+    $category = Category::create(['slug' => 'cat-replace', 'name' => 'Danh mục', 'sort_order' => 1, 'is_active' => true]);
 
-    $app1 = Application::create(['slug' => 'ung-dung-1', 'sort_order' => 1, 'is_active' => true]);
-    $app2 = Application::create(['slug' => 'ung-dung-2', 'sort_order' => 2, 'is_active' => true]);
+    $app1 = Application::create(['slug' => 'ung-dung-1', 'name' => 'Ứng dụng 1', 'sort_order' => 1, 'is_active' => true]);
+    $app2 = Application::create(['slug' => 'ung-dung-2', 'name' => 'Ứng dụng 2', 'sort_order' => 2, 'is_active' => true]);
 
     $product = Product::create([
         'category_id' => $category->id,
@@ -97,9 +93,11 @@ it('replaces relations when updating a product', function () {
         'code' => 'REPLACE-1',
         'image' => '/x.png',
         'is_active' => true,
+        'name' => 'Product Replace',
+        'description' => 'Mô tả',
     ]);
     $product->applications()->attach($app1->id);
-    $product->specs()->create(['value' => 'Cũ', 'sort_order' => 1]);
+    $product->specs()->create(['value' => 'Cũ', 'label' => 'Old', 'sort_order' => 1]);
     $product->images()->create(['image' => '/old.png', 'sort_order' => 1]);
 
     $this->put("/admin/products/{$product->id}", [
@@ -108,12 +106,13 @@ it('replaces relations when updating a product', function () {
         'image' => '/x.png',
         'is_active' => 1,
         'applications' => [$app2->id],
-        'translations' => [
-            'vi' => ['name' => 'Đã thay đổi', 'description' => 'Mô tả'],
-            'en' => ['name' => '', 'description' => ''],
-        ],
+        'name' => 'Đã thay đổi',
+        'description' => 'Mô tả',
+        'strength_label' => '',
+        'meta_title' => '',
+        'meta_description' => '',
         'specs' => [
-            ['value' => 'Mới', 'icon' => '', 'label_vi' => 'Nhãn mới', 'label_en' => '', 'sort_order' => 1],
+            ['value' => 'Mới', 'icon' => '', 'label' => 'Nhãn mới', 'sort_order' => 1],
         ],
         'images' => [
             ['image' => '/new.png', 'alt' => '', 'sort_order' => 1],
@@ -131,17 +130,20 @@ it('replaces relations when updating a product', function () {
 });
 
 it('validates specs value max length', function () {
-    $category = Category::create(['slug' => 'cat-validate', 'sort_order' => 1, 'is_active' => true]);
-    $category->translations()->create(['locale' => 'vi', 'name' => 'Danh mục']);
+    $category = Category::create(['slug' => 'cat-validate', 'name' => 'Danh mục', 'sort_order' => 1, 'is_active' => true]);
 
     $this->post('/admin/products', [
         'category_id' => $category->id,
         'code' => 'VALIDATE-1',
         'image' => '/x.png',
         'is_active' => 1,
-        'translations' => ['vi' => ['name' => 'Tên', 'description' => 'Mô tả']],
+        'name' => 'Tên',
+        'description' => 'Mô tả',
+        'strength_label' => '',
+        'meta_title' => '',
+        'meta_description' => '',
         'specs' => [
-            ['value' => str_repeat('a', 101), 'icon' => '', 'label_vi' => '', 'label_en' => '', 'sort_order' => 1],
+            ['value' => str_repeat('a', 101), 'icon' => '', 'label' => '', 'sort_order' => 1],
         ],
     ])->assertSessionHasErrors('specs.0.value');
 });

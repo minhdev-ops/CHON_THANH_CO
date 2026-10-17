@@ -23,12 +23,12 @@ it('returns active categories with product counts', function () {
         ->assertJsonPath('data.0.products_count', 15);
 });
 
-it('serves categories in english', function () {
+it('serves categories in vietnamese', function () {
     seed([CategorySeeder::class, ApplicationSeeder::class, ProductSeeder::class]);
 
-    getJson('/api/v1/categories', ['X-Locale' => 'en'])
+    getJson('/api/v1/categories', ['X-Locale' => 'vi'])
         ->assertStatus(200)
-        ->assertJsonPath('data.0.name', 'Non-woven Geotextile');
+        ->assertJsonPath('data.0.name', 'Vải địa kỹ thuật không dệt');
 });
 
 it('excludes inactive categories', function () {
@@ -54,11 +54,11 @@ it('returns active applications with product counts', function () {
         ->assertJsonPath('data.0.name', 'Phân cách, lọc');
 });
 
-it('serves applications in english', function () {
+it('serves applications in vietnamese', function () {
     seed([CategorySeeder::class, ApplicationSeeder::class, ProductSeeder::class]);
 
-    getJson('/api/v1/applications', ['X-Locale' => 'en'])
+    getJson('/api/v1/applications', ['X-Locale' => 'vi'])
         ->assertStatus(200)
         ->assertJsonStructure(['data' => ['*' => ['slug', 'name']]])
-        ->assertJsonPath('data.0.name', 'Separation & Filtration');
+        ->assertJsonPath('data.0.name', 'Phân cách, lọc');
 });

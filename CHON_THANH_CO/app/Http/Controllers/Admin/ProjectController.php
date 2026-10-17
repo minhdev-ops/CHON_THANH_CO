@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\Concerns\SyncsTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Project;
@@ -11,22 +10,43 @@ use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
-    use SyncsTranslations;
+    use Concerns\RendersAdminTables;
 
     public function index(Request $request)
     {
-        $query = Project::with('translations');
+        $baseQuery = fn () => Project::query();
 
-        if ($request->filled('q')) {
-            $search = $request->input('q');
-            $query->where(function ($q) use ($search) {
-                $q->where('slug', 'like', "%{$search}%")
-                    ->orWhere('period', 'like', "%{$search}%")
-                    ->orWhereHas('translations', function ($t) use ($search) {
-                        $t->where('name', 'like', "%{$search}%");
-                    });
-            });
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('q')) {
+                $search = $request->input('q');
+                $query->where(function ($q) use ($search) {
+                    $q->where('slug', 'like', "%{$search}%")
+                        ->orWhere('period', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%");
+                });
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.projects.rows',
+                itemsVar: 'projects',
+                sortable: [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'period' => 'period',
+                    'sort_order' => 'sort_order',
+                    'is_active' => 'is_active',
+                ],
+                defaultOrder: ['sort_order' => 'asc'],
+            );
         }
+
+        $query = $baseQuery();
+        $applyFilters($query, $request);
 
         $projects = $query->orderBy('sort_order')->paginate(15)->withQueryString();
 
@@ -37,15 +57,21 @@ class ProjectController extends Controller
     {
         return view('admin.projects.form', [
             'project' => null,
-            'products' => Product::with('translations')->get(),
+            'products' => Product::all(),
         ]);
     }
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $project = Project::create([
             'slug' => $this->makeSlug($data),
+            'name' => $data['name'],
+            'location' => $data['location'],
+            'description' => $data['description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
             'period' => $data['period'],
             'area' => $data['area'] ?? null,
             'hero_image' => $data['hero_image'],
@@ -63,16 +89,22 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         return view('admin.projects.form', [
-            'project' => $project->load('translations', 'materials.translations', 'images'),
-            'products' => Product::with('translations')->get(),
+            'project' => $project->load('materials', 'images'),
+            'products' => Product::all(),
         ]);
     }
 
     public function update(Request $request, Project $project)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $project->update([
             'slug' => $this->makeSlug($data, $project),
+            'name' => $data['name'],
+            'location' => $data['location'],
+            'description' => $data['description'] ?? null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
             'period' => $data['period'],
             'area' => $data['area'] ?? null,
             'hero_image' => $data['hero_image'],
@@ -126,24 +158,18 @@ class ProjectController extends Controller
 
     private function saveRelations(Project $project, array $data): void
     {
-        $this->syncTranslations($project, $data['translations'], [
-            'name', 'location', 'description', 'meta_title', 'meta_description',
-        ]);
-
         $project->materials()->delete();
         foreach (($data['materials'] ?? []) as $row) {
-            if (empty($row['name_vi'])) {
+            if (empty($row['name'])) {
                 continue;
             }
-            $material = $project->materials()->create([
+            $project->materials()->create([
                 'product_id' => $row['product_id'] ?: null,
                 'image' => $row['image'] ?? '',
+                'name' => $row['name'],
+                'detail' => $row['detail'] ?? null,
                 'sort_order' => $row['sort_order'] ?? 0,
             ]);
-            $this->syncTranslations($material, [
-                'vi' => ['name' => $row['name_vi'] ?? null, 'detail' => $row['detail_vi'] ?? null],
-                'en' => ['name' => $row['name_en'] ?? null, 'detail' => $row['detail_en'] ?? null],
-            ], ['name', 'detail']);
         }
 
         $project->images()->delete();
@@ -159,10 +185,29 @@ class ProjectController extends Controller
         }
     }
 
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['name', 'location', 'description', 'meta_title', 'meta_description'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
+    }
+
     private function validated(Request $request): array
     {
         return $request->validate([
             'slug' => ['nullable', 'string', 'max:150'],
+            'name' => ['required', 'string', 'max:200'],
+            'location' => ['required', 'string', 'max:200'],
+            'description' => ['required', 'string'],
+            'meta_title' => ['nullable', 'string', 'max:200'],
+            'meta_description' => ['nullable', 'string', 'max:300'],
             'period' => ['required', 'string', 'max:50'],
             'area' => ['nullable', 'string', 'max:50'],
             'hero_image' => ['required', 'string', 'max:255'],
@@ -170,23 +215,11 @@ class ProjectController extends Controller
             'sort_order' => ['nullable', 'integer'],
             'is_featured' => ['boolean'],
             'is_active' => ['boolean'],
-            'translations.vi.name' => ['required', 'string', 'max:200'],
-            'translations.vi.location' => ['required', 'string', 'max:200'],
-            'translations.vi.description' => ['required', 'string'],
-            'translations.vi.meta_title' => ['nullable', 'string', 'max:200'],
-            'translations.vi.meta_description' => ['nullable', 'string', 'max:300'],
-            'translations.en.name' => ['nullable', 'string', 'max:200'],
-            'translations.en.location' => ['nullable', 'string', 'max:200'],
-            'translations.en.description' => ['nullable', 'string'],
-            'translations.en.meta_title' => ['nullable', 'string', 'max:200'],
-            'translations.en.meta_description' => ['nullable', 'string', 'max:300'],
             'materials' => ['nullable', 'array'],
             'materials.*.product_id' => ['nullable', 'exists:products,id'],
             'materials.*.image' => ['nullable', 'string', 'max:255'],
-            'materials.*.name_vi' => ['nullable', 'string', 'max:150'],
-            'materials.*.detail_vi' => ['nullable', 'string'],
-            'materials.*.name_en' => ['nullable', 'string', 'max:150'],
-            'materials.*.detail_en' => ['nullable', 'string'],
+            'materials.*.name' => ['required', 'string', 'max:150'],
+            'materials.*.detail' => ['nullable', 'string'],
             'materials.*.sort_order' => ['nullable', 'integer'],
             'gallery' => ['nullable', 'array'],
             'gallery.*.image' => ['nullable', 'string', 'max:255'],
@@ -201,7 +234,7 @@ class ProjectController extends Controller
             return Str::slug($data['slug']);
         }
 
-        $name = $data['translations']['vi']['name'] ?? '';
+        $name = $data['name'] ?? '';
 
         return Str::slug($name) ?: ($existing?->slug ?? 'project-'.Str::random(6));
     }

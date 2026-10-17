@@ -10,58 +10,41 @@ beforeEach(function () {
     $this->withSession(['admin_authenticated' => true]);
 });
 
-it('saves news content in both locales', function () {
-    $category = NewsCategory::create(['slug' => 'ky-thuat', 'sort_order' => 1, 'is_active' => true]);
+it('saves news content', function () {
+    $category = NewsCategory::create(['slug' => 'ky-thuat', 'name' => 'Kỹ thuật', 'sort_order' => 1, 'is_active' => true]);
 
     $this->post('/admin/news', [
         'news_category_id' => $category->id,
         'image' => '/userfiles/images/news/content.png',
         'is_active' => 1,
-        'translations' => [
-            'vi' => [
-                'title' => 'Bài viết nội dung',
-                'excerpt' => 'Tóm tắt',
-                'content' => "Đoạn đầu tiên.\n\nĐoạn thứ hai.",
-            ],
-            'en' => [
-                'title' => 'Content article',
-                'excerpt' => 'Excerpt',
-                'content' => "First paragraph.\n\nSecond paragraph.",
-            ],
-        ],
+        'title' => 'Bài viết nội dung',
+        'excerpt' => 'Tóm tắt',
+        'content' => "Đoạn đầu tiên.\n\nĐoạn thứ hai.",
     ])->assertRedirect('/admin/news');
 
     $news = News::where('slug', 'bai-viet-noi-dung')->first();
     expect($news)->not->toBeNull();
-    expect($news->translation('vi')?->content)->toBe("Đoạn đầu tiên.\n\nĐoạn thứ hai.");
-    expect($news->translation('en')?->content)->toBe("First paragraph.\n\nSecond paragraph.");
+    expect($news->content)->toBe("Đoạn đầu tiên.\n\nĐoạn thứ hai.");
 });
 
 it('updates news content', function () {
-    $news = News::create(['slug' => 'news-update-content', 'image' => '/x.png', 'is_active' => true]);
-    $news->translations()->create([
-        'locale' => 'vi',
-        'title' => 'Cũ',
-        'excerpt' => 'Tóm tắt cũ',
-        'content' => 'Nội dung cũ',
-    ]);
+    $news = News::create(['slug' => 'news-update-content', 'title' => 'Cũ', 'excerpt' => 'Tóm tắt cũ', 'content' => 'Nội dung cũ', 'image' => '/x.png', 'is_active' => true]);
 
     $this->put("/admin/news/{$news->id}", [
         'image' => '/x.png',
         'is_active' => 1,
-        'translations' => [
-            'vi' => ['title' => 'Mới', 'excerpt' => 'Tóm tắt mới', 'content' => 'Nội dung mới'],
-            'en' => ['title' => '', 'excerpt' => '', 'content' => ''],
-        ],
+        'title' => 'Mới',
+        'excerpt' => 'Tóm tắt mới',
+        'content' => 'Nội dung mới',
     ])->assertRedirect('/admin/news');
 
-    expect($news->fresh()->translation('vi')?->title)->toBe('Mới');
-    expect($news->fresh()->translation('vi')?->content)->toBe('Nội dung mới');
+    expect($news->fresh()->title)->toBe('Mới');
+    expect($news->fresh()->content)->toBe('Nội dung mới');
 });
 
 it('can bulk delete news', function () {
-    $n1 = News::create(['slug' => 'bulk-n1', 'image' => '/x.png', 'is_active' => true]);
-    $n2 = News::create(['slug' => 'bulk-n2', 'image' => '/x.png', 'is_active' => true]);
+    $n1 = News::create(['slug' => 'bulk-n1', 'title' => 'N1', 'excerpt' => 'Tóm tắt', 'image' => '/x.png', 'is_active' => true]);
+    $n2 = News::create(['slug' => 'bulk-n2', 'title' => 'N2', 'excerpt' => 'Tóm tắt', 'image' => '/x.png', 'is_active' => true]);
 
     $this->post('/admin/news/bulk', ['ids' => [$n1->id, $n2->id], 'action' => 'delete'])
         ->assertRedirect('/admin/news');
@@ -71,7 +54,7 @@ it('can bulk delete news', function () {
 });
 
 it('can bulk deactivate and activate news', function () {
-    $news = News::create(['slug' => 'bulk-toggle', 'image' => '/x.png', 'is_active' => true]);
+    $news = News::create(['slug' => 'bulk-toggle', 'title' => 'Toggle', 'excerpt' => 'Tóm tắt', 'image' => '/x.png', 'is_active' => true]);
 
     $this->post('/admin/news/bulk', ['ids' => [$news->id], 'action' => 'deactivate'])->assertRedirect('/admin/news');
     expect($news->fresh()->is_active)->toBeFalse();
@@ -85,5 +68,5 @@ it('rejects invalid news bulk action', function () {
 });
 
 it('validates news required fields', function () {
-    $this->post('/admin/news', [])->assertSessionHasErrors(['image', 'translations.vi.title', 'translations.vi.excerpt']);
+    $this->post('/admin/news', [])->assertSessionHasErrors(['image', 'title', 'excerpt']);
 });

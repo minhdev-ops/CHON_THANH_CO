@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,9 +14,9 @@
 |
 */
 
-pest()->extend(Tests\TestCase::class)
+pest()->extend(TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +31,7 @@ pest()->extend(Tests\TestCase::class)
 
 uses()
     ->beforeEach(function () {
-        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+        $this->withoutMiddleware(ValidateCsrfToken::class);
     })
     ->in('Feature/Admin');
 

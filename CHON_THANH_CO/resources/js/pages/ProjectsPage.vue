@@ -134,17 +134,17 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
           </div>
           <div class="flex items-center gap-4 mb-4 lg:mb-3">
             <div class="relative w-full lg:w-72">
-              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+              <i class="fa absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px] fa-magnifying-glass"></i>
               <input
                 v-model="searchQuery"
                 type="text"
                 :placeholder="t('projects.searchPlaceholder')"
-                class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60"
+                class="bg-surface-vlm border border-outline-variant/60 shadow-inner pl-10 pr-4 py-2.5 text-[13px] text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all w-full rounded-md placeholder:text-text-muted/60 fa-arrow-right"
               >
             </div>
-            <div class="hidden sm:flex flex-col items-end px-3 border-l border-outline-variant h-full justify-center">
+            <div class="hidden sm:flex flex-col items-end px-3 h-full justify-center">
               <span class="font-black text-[16px] text-text-main leading-none">{{ String(filteredProjects.length).padStart(2, '0') }}</span>
-              <span class="text-[9px] font-bold text-text-muted uppercase tracking-widest mt-0.5">Kết quả</span>
+              <span class="text-[11px] font-bold text-text-muted uppercase tracking-widest mt-0.5">Kết quả</span>
             </div>
           </div>
         </div>
@@ -177,19 +177,19 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
                   :src="project.hero_image"
                   :alt="project.name"
                   fallback-src="/images/projects/highway-1.jpg"
-                  image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  image-class="w-full h-full object-cover"
                 />
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.15em]">{{ project.period }}</span>
+                  <span class="text-primary text-[11px] font-extrabold uppercase tracking-[0.15em]">{{ project.period }}</span>
                 </div>
                 <h3 class="font-bold text-[14px] text-text-main group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2">
                   {{ project.name }}
                 </h3>
                 <span class="text-[11px] font-bold text-text-muted line-clamp-1 mt-1 block">{{ project.location }}</span>
               </div>
-              <span class="material-symbols-outlined text-[18px] text-primary shrink-0">arrow_forward</span>
+              <i class="fa text-[18px] text-primary shrink-0 fa-arrow-right"></i>
             </div>
 
             <!-- Desktop: full vertical card -->
@@ -200,17 +200,17 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
                 fallback-src="/images/projects/highway-1.jpg"
                 aspect-ratio="aspect-[4/3]"
                 container-class="shrink-0 border-b border-outline-variant/60"
-                image-class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                image-class="w-full h-full object-cover"
               >
                 <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1 flex items-center gap-2 shadow-sm rounded-sm z-10">
                   <span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
-                  <span class="text-[9px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
+                  <span class="text-[11px] font-bold text-text-main tracking-[0.2em] uppercase">{{ t('projects.completed') }}</span>
                 </div>
               </LazyImage>
 
               <div class="p-6 md:p-8 flex flex-col flex-grow relative">
                 <div class="flex items-center gap-3 mb-3">
-                  <span class="text-primary text-[10px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
+                  <span class="text-primary text-[11px] font-extrabold uppercase tracking-[0.2em]">{{ project.period }}</span>
                   <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
                   <span class="text-[11px] font-bold text-text-muted line-clamp-1 uppercase tracking-wider">{{ project.location }}</span>
                 </div>
@@ -227,7 +227,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
 
                 <div class="mt-auto flex items-center pt-5 border-t border-outline-variant/30">
                   <span class="inline-flex items-center gap-1.5 font-bold text-[12px] text-primary group-hover:text-primary-deep transition-colors duration-300 uppercase tracking-widest relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">
-                    Chi tiết dự án <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    Chi tiết dự án <i class="fa text-[16px] group-hover:translate-x-1 transition-transform fa-arrow-right"></i>
                   </span>
                 </div>
               </div>
@@ -239,7 +239,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
         <div v-else class="py-20 text-center bg-canvas border border-outline-variant">
           <div class="font-sans text-[80px] font-bold text-text-muted/30 leading-none mb-4 select-none">∅</div>
           <p class="text-text-secondary font-medium mb-6 text-[13px] uppercase tracking-[0.2em]">{{ t('projects.empty') || 'Không tìm thấy dự án phù hợp' }}</p>
-          <button class="bg-primary text-white px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-primary-deep transition-colors duration-300" @click="selectedLocation = null; searchQuery = ''; currentPage = 1">
+          <button class="btn-primary px-7 py-3 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300" @click="selectedLocation = null; searchQuery = ''; currentPage = 1">
             {{ t('products.clearAll') || 'Xóa bộ lọc' }}
           </button>
         </div>
@@ -260,6 +260,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
     <CTABanner
       :title="t('projects.ctaTitle')"
       :linkLabel="t('projects.ctaButton')"
+      subject="project"
     />
   </div>
 </template>

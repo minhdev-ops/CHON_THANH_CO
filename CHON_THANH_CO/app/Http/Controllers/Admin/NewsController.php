@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\Concerns\SyncsTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use App\Models\NewsCategory;
@@ -11,21 +10,41 @@ use Illuminate\Support\Str;
 
 class NewsController extends Controller
 {
-    use SyncsTranslations;
+    use Concerns\RendersAdminTables;
 
     public function index(Request $request)
     {
-        $query = News::with('translations', 'category');
+        $baseQuery = fn () => News::with('category');
 
-        if ($request->filled('q')) {
-            $search = $request->input('q');
-            $query->where(function ($q) use ($search) {
-                $q->where('slug', 'like', "%{$search}%")
-                    ->orWhereHas('translations', function ($t) use ($search) {
-                        $t->where('title', 'like', "%{$search}%");
-                    });
-            });
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('q')) {
+                $search = $request->input('q');
+                $query->where(function ($q) use ($search) {
+                    $q->where('slug', 'like', "%{$search}%")
+                        ->orWhere('title', 'like', "%{$search}%");
+                });
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.news.rows',
+                itemsVar: 'news',
+                sortable: [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'published_at' => 'published_at',
+                    'is_active' => 'is_active',
+                ],
+                defaultOrder: ['published_at' => 'desc'],
+            );
         }
+
+        $query = $baseQuery();
+        $applyFilters($query, $request);
 
         $news = $query->latest('published_at')->paginate(15)->withQueryString();
 
@@ -42,16 +61,18 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item = News::create([
             'news_category_id' => $data['news_category_id'] ?? null,
             'slug' => $this->makeSlug($data),
+            'title' => $data['title'],
+            'excerpt' => $data['excerpt'],
+            'content' => $data['content'] ?? null,
             'image' => $data['image'],
             'published_at' => $data['published_at'] ?? now(),
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($item, $data['translations'], ['title', 'excerpt', 'content']);
 
         return redirect()->route('admin.news.index')->with('success', 'Đã tạo bài viết.');
     }
@@ -59,23 +80,25 @@ class NewsController extends Controller
     public function edit(News $item)
     {
         return view('admin.news.form', [
-            'item' => $item->load('translations', 'category'),
+            'item' => $item->load('category'),
             'categories' => NewsCategory::all(),
         ]);
     }
 
     public function update(Request $request, News $item)
     {
+        $this->mergeViTranslations($request);
         $data = $this->validated($request);
         $item->update([
             'news_category_id' => $data['news_category_id'] ?? null,
             'slug' => $this->makeSlug($data, $item),
+            'title' => $data['title'],
+            'excerpt' => $data['excerpt'],
+            'content' => $data['content'] ?? null,
             'image' => $data['image'],
             'published_at' => $data['published_at'] ?? $item->published_at,
             'is_active' => $request->boolean('is_active'),
         ]);
-
-        $this->syncTranslations($item, $data['translations'], ['title', 'excerpt', 'content']);
 
         return redirect()->route('admin.news.index')->with('success', 'Đã cập nhật bài viết.');
     }
@@ -113,20 +136,37 @@ class NewsController extends Controller
         return redirect()->route('admin.news.index')->with('success', $messages[$data['action']]);
     }
 
+    /**
+     * Form dùng partial translation-section nên title/excerpt/content đi theo
+     * translations[vi][...]. Copy chúng sang khóa thường để validate() hoạt
+     * động. Nếu thiếu hàm này, mọi lần lưu bài từ form đều báo lỗi "title is
+     * required" dù admin đã điền đủ.
+     */
+    private function mergeViTranslations(Request $request): void
+    {
+        $vi = $request->input('translations.vi', []);
+        if (! is_array($vi)) {
+            return;
+        }
+
+        foreach (['title', 'excerpt', 'content'] as $key) {
+            if (! $request->filled($key) && filled($vi[$key] ?? null)) {
+                $request->merge([$key => $vi[$key]]);
+            }
+        }
+    }
+
     private function validated(Request $request): array
     {
         return $request->validate([
             'news_category_id' => ['nullable', 'exists:news_categories,id'],
             'slug' => ['nullable', 'string', 'max:150'],
+            'title' => ['required', 'string', 'max:250'],
+            'excerpt' => ['required', 'string'],
+            'content' => ['nullable', 'string'],
             'image' => ['required', 'string', 'max:255'],
             'published_at' => ['nullable', 'date'],
             'is_active' => ['boolean'],
-            'translations.vi.title' => ['required', 'string', 'max:250'],
-            'translations.vi.excerpt' => ['required', 'string'],
-            'translations.vi.content' => ['nullable', 'string'],
-            'translations.en.title' => ['nullable', 'string', 'max:250'],
-            'translations.en.excerpt' => ['nullable', 'string'],
-            'translations.en.content' => ['nullable', 'string'],
         ]);
     }
 
@@ -136,7 +176,7 @@ class NewsController extends Controller
             return Str::slug($data['slug']);
         }
 
-        $title = $data['translations']['vi']['title'] ?? '';
+        $title = $data['title'] ?? '';
 
         return Str::slug($title) ?: ($existing?->slug ?? 'news-'.Str::random(6));
     }

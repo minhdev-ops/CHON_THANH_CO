@@ -109,13 +109,13 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
         <h1 class="text-[36px] md:text-[52px] text-white font-bold mb-8 leading-[1.1] max-w-4xl tracking-tight" style="text-shadow: 0 4px 30px rgba(0,0,0,0.3);">{{ project.name }}</h1>
         <div class="flex gap-4 flex-wrap">
           <span class="inline-flex items-center gap-2.5 bg-primary text-white px-6 py-3 rounded-2xl text-[15px] font-bold shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <span class="material-symbols-outlined text-[20px]">location_on</span> {{ project.location }}
+            <i class="fa text-[20px] fa-location-dot"></i> {{ project.location }}
           </span>
           <span class="inline-flex items-center gap-2.5 glass-premium text-white px-6 py-3 rounded-2xl text-[15px] font-bold shadow-lg">
-            <span class="material-symbols-outlined text-[20px]">calendar_month</span> {{ project.period }}
+            <i class="fa text-[20px] fa-calendar"></i> {{ project.period }}
           </span>
           <span v-if="project.area" class="inline-flex items-center gap-2.5 glass-premium text-white px-6 py-3 rounded-2xl text-[15px] font-bold shadow-lg">
-            <span class="material-symbols-outlined text-[20px]">square_foot</span> {{ project.area }}
+            <i class="fa text-[20px] fa-ruler-combined"></i> {{ project.area }}
           </span>
         </div>
       </div>
@@ -148,7 +148,9 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
       <div class="grid md:grid-cols-12 gap-12 lg:gap-16 items-center">
         <div class="md:col-span-5 flex flex-col gap-8 reveal-left">
           <div>
-            <span class="kicker mb-4 block">{{ t('project.description') }}</span>
+            <div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5">
+              <span class="text-primary text-[11px] font-extrabold tracking-[0.15em] uppercase">{{ t('project.description') }}</span>
+            </div>
             <h2 class="text-[32px] md:text-[38px] text-text-main font-bold tracking-tight leading-[1.15]">Mô tả dự án</h2>
           </div>
           <div class="text-text-secondary space-y-5 leading-[1.8] text-[17px]">
@@ -183,14 +185,14 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
                 :alt="prod.name"
                 fallback-src="/images/products/geotextile-roll.jpg"
                 container-class="w-full h-32 bg-transparent flex items-center justify-center"
-                image-class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                image-class="max-w-full max-h-full object-contain"
               />
             </div>
             <div class="p-8 flex flex-col justify-center">
               <h3 class="font-bold text-[20px] text-primary-deep mb-3">{{ prod.name }}</h3>
               <p class="text-[16px] text-text-secondary mb-6 leading-relaxed">{{ prod.detail }}</p>
               <router-link :to="`/products`" class="inline-flex items-center gap-2 font-bold text-[14px] text-primary hover:text-primary-deep uppercase tracking-[0.12em] transition-colors duration-300 mt-auto w-fit group/link">
-                {{ t('project.viewProduct') }} <span class="material-symbols-outlined text-[18px] group-hover/link:translate-x-1 transition-transform duration-300">arrow_forward</span>
+                {{ t('project.viewProduct') }} <i class="fa text-[18px] group-hover/link:translate-x-1 transition-transform duration-300 fa-arrow-right"></i>
               </router-link>
             </div>
           </div>
@@ -211,7 +213,7 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
         </button>
       </div>
       <div v-else class="text-center text-text-muted py-12">
-        <span class="material-symbols-outlined text-5xl mb-3 block">image</span>
+        <i class="fa text-5xl mb-3 block fa-image"></i>
         Hình ảnh đang cập nhật
       </div>
     </section>
@@ -219,17 +221,17 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
     <div v-if="lightboxIndex !== null" ref="lightboxEl" role="dialog" aria-modal="true"
       class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4" @click.self="lightboxIndex = null">
       <button type="button" class="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors duration-300 backdrop-blur-md" :aria-label="t('common.close')" @click="lightboxIndex = null">
-        <span class="material-symbols-outlined">close</span>
+        <i class="fa fa-xmark"></i>
       </button>
       <button v-if="project.gallery && project.gallery.length > 1" type="button"
         class="absolute left-4 md:left-8 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-300 backdrop-blur-md"
         @click="lightboxIndex = (lightboxIndex! - 1 + project.gallery!.length) % project.gallery!.length">
-        <span class="material-symbols-outlined">chevron_left</span>
+        <i class="fa fa-chevron-left"></i>
       </button>
       <button v-if="project.gallery && project.gallery.length > 1" type="button"
         class="absolute right-4 md:right-8 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-300 backdrop-blur-md"
         @click="lightboxIndex = (lightboxIndex! + 1) % project.gallery!.length">
-        <span class="material-symbols-outlined">chevron_right</span>
+        <i class="fa fa-chevron-right"></i>
       </button>
       <figure class="max-w-5xl w-full animate-scale-in">
         <img v-if="project.gallery && lightboxIndex !== null && project.gallery[lightboxIndex]"
@@ -243,28 +245,28 @@ watch(() => route.params.slug, (slug) => load(String(slug)), { immediate: true }
 
     <section class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 flex justify-between items-center border-t border-outline-variant">
       <router-link v-if="prev" :to="`/projects/${prev.slug}`" class="flex items-center gap-3 font-bold text-[14px] text-primary-deep hover:text-primary transition-colors duration-300 group uppercase tracking-[0.12em]">
-        <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform duration-300">arrow_back</span>
+        <i class="fa text-[20px] group-hover:-translate-x-1 transition-transform duration-300 fa-arrow-left"></i>
         <span class="hidden sm:inline">{{ prev.name }}</span>
         <span class="sm:hidden">{{ t('project.prev') }}</span>
       </router-link>
       <div v-else></div>
       <router-link to="/projects" class="hidden md:inline-flex items-center gap-2 text-text-muted font-bold text-[13px] uppercase tracking-[0.12em] hover:text-primary transition-colors">
-        <span class="material-symbols-outlined text-[18px]">grid_view</span>
+        <i class="fa text-[18px] fa-th"></i>
         Tất cả dự án
       </router-link>
       <router-link v-if="next" :to="`/projects/${next.slug}`" class="flex items-center gap-3 font-bold text-[14px] text-primary-deep hover:text-primary transition-colors duration-300 group uppercase tracking-[0.12em] text-right">
         <span class="hidden sm:inline">{{ next.name }}</span>
         <span class="sm:hidden">{{ t('project.next') }}</span>
-        <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+        <i class="fa text-[20px] group-hover:translate-x-1 transition-transform duration-300 fa-arrow-right"></i>
       </router-link>
       <div v-else></div>
     </section>
   </div>
   <div v-else-if="notFound" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 text-center">
-    <span class="material-symbols-outlined text-7xl text-outline-variant mb-6 block">folder_off</span>
+    <i class="fa text-7xl text-outline-variant mb-6 block fa-folder-minus"></i>
     <h1 class="text-[32px] text-text-main font-bold mb-6">{{ t('project.notFound') }}</h1>
     <router-link to="/projects" class="btn btn-primary btn-magnetic inline-flex items-center gap-2">
-      <span class="material-symbols-outlined text-lg">arrow_back</span> {{ t('project.backToList') }}
+      <i class="fa text-lg fa-arrow-left"></i> {{ t('project.backToList') }}
     </router-link>
   </div>
 </template>

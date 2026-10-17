@@ -10,7 +10,6 @@ class ProjectService
     public function list(array $filters = [], string $locale = 'vi', int $limit = 12): array
     {
         $query = Project::query()
-            ->with(['translations'])
             ->where('is_active', true);
 
         if (! empty($filters['cursor'])) {
@@ -30,14 +29,13 @@ class ProjectService
         return Project::query()
             ->where('slug', $slug)
             ->where('is_active', true)
-            ->with(['translations', 'materials.translations', 'materials.product', 'images'])
+            ->with(['materials.product', 'images'])
             ->first();
     }
 
     public function featured(string $locale = 'vi', int $limit = 6): Collection
     {
         return Project::query()
-            ->with(['translations'])
             ->where('is_featured', true)
             ->where('is_active', true)
             ->orderBy('sort_order')

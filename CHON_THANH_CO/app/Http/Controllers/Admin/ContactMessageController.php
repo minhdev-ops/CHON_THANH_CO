@@ -11,13 +11,37 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactMessageController extends Controller
 {
+    use Concerns\RendersAdminTables;
+
     public function index(Request $request)
     {
-        $query = ContactMessage::latest();
+        $baseQuery = fn () => ContactMessage::latest();
 
-        if ($request->filled('status') && in_array($request->input('status'), ['new', 'replied'], true)) {
-            $query->where('status', $request->input('status'));
+        $applyFilters = function ($query, Request $request) {
+            if ($request->filled('status') && in_array($request->input('status'), ['new', 'replied'], true)) {
+                $query->where('status', $request->input('status'));
+            }
+        };
+
+        if ($this->wantsTableAjax($request)) {
+            return $this->tableJson(
+                $request,
+                $baseQuery,
+                $applyFilters,
+                'admin.contacts.rows',
+                itemsVar: 'contacts',
+                sortable: [
+                    'id' => 'id',
+                    'name' => 'name',
+                    'status' => 'status',
+                    'created_at' => 'created_at',
+                ],
+                defaultOrder: ['created_at' => 'desc'],
+            );
         }
+
+        $query = $baseQuery();
+        $applyFilters($query, $request);
 
         $contacts = $query->paginate(15)->withQueryString();
 
@@ -57,7 +81,7 @@ class ContactMessageController extends Controller
             $contact->markHandled();
         }
 
-        return redirect()->route('admin.contacts.index')->with('success', 'Đã gửi email trả lời cho ' . $contact->name . '.');
+        return redirect()->route('admin.contacts.index')->with('success', 'Đã gửi email trả lời cho '.$contact->name.'.');
     }
 
     public function destroy(ContactMessage $contact)

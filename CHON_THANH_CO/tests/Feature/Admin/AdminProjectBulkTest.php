@@ -12,11 +12,13 @@ beforeEach(function () {
 });
 
 it('saves project materials and gallery', function () {
-    $category = Category::create(['slug' => 'cat-linked', 'sort_order' => 1, 'is_active' => true]);
+    $category = Category::create(['slug' => 'cat-linked', 'name' => 'Cat Linked', 'sort_order' => 1, 'is_active' => true]);
     $linkedProduct = Product::create([
         'category_id' => $category->id,
         'slug' => 'product-linked',
         'code' => 'LINKED-1',
+        'name' => 'Linked Product',
+        'description' => '',
         'image' => '/x.png',
         'is_active' => true,
     ]);
@@ -27,18 +29,17 @@ it('saves project materials and gallery', function () {
         'hero_image' => '/userfiles/images/projects/hero.png',
         'is_active' => 1,
         'sort_order' => 1,
-        'translations' => [
-            'vi' => ['name' => 'Dự án cao tốc', 'location' => 'Đồng Nai', 'description' => 'Mô tả'],
-            'en' => ['name' => '', 'location' => '', 'description' => ''],
-        ],
+        'name' => 'Dự án cao tốc',
+        'location' => 'Đồng Nai',
+        'description' => 'Mô tả',
+        'meta_title' => 'Meta title',
+        'meta_description' => 'Meta description',
         'materials' => [
             [
                 'product_id' => $linkedProduct->id,
                 'image' => '/userfiles/images/projects/mat.png',
-                'name_vi' => 'Vải địa kỹ thuật ART 30',
-                'detail_vi' => 'Cường độ 30 kN/m',
-                'name_en' => 'ART 30 Geotextile',
-                'detail_en' => '30 kN/m',
+                'name' => 'Vải địa kỹ thuật ART 30',
+                'detail' => 'Cường độ 30 kN/m',
                 'sort_order' => 1,
             ],
         ],
@@ -54,8 +55,8 @@ it('saves project materials and gallery', function () {
     expect($project->materials()->count())->toBe(1);
     $material = $project->materials()->first();
     expect($material->product_id)->toBe($linkedProduct->id)
-        ->and($material->translation('vi')?->name)->toBe('Vải địa kỹ thuật ART 30')
-        ->and($material->translation('en')?->detail)->toBe('30 kN/m');
+        ->and($material->name)->toBe('Vải địa kỹ thuật ART 30')
+        ->and($material->detail)->toBe('Cường độ 30 kN/m');
 
     expect($project->images()->count())->toBe(2);
     expect($project->images()->first()->image)->toBe('/userfiles/images/projects/g1.png');
@@ -64,21 +65,25 @@ it('saves project materials and gallery', function () {
 it('replaces materials and gallery on update', function () {
     $project = Project::create([
         'slug' => 'project-update',
+        'name' => 'Project Update',
+        'location' => 'Location',
+        'description' => 'Description',
         'period' => '2024',
         'hero_image' => '/x.png',
         'is_active' => true,
     ]);
-    $project->materials()->create(['image' => '/old-mat.png', 'sort_order' => 1]);
+    $project->materials()->create(['image' => '/old-mat.png', 'name' => 'Old Mat', 'detail' => 'Old Detail', 'sort_order' => 1]);
     $project->images()->create(['image' => '/old-g.png', 'sort_order' => 1]);
 
     $this->put("/admin/projects/{$project->id}", [
         'period' => '2025',
         'hero_image' => '/x.png',
         'is_active' => 1,
-        'translations' => [
-            'vi' => ['name' => 'Đã cập nhật', 'location' => 'Bình Dương', 'description' => 'Mô tả'],
-            'en' => ['name' => '', 'location' => '', 'description' => ''],
-        ],
+        'name' => 'Đã cập nhật',
+        'location' => 'Bình Dương',
+        'description' => 'Mô tả',
+        'meta_title' => 'Meta title',
+        'meta_description' => 'Meta description',
         'materials' => [],
         'gallery' => [
             ['image' => '/new-g.png', 'alt' => '', 'sort_order' => 1],
@@ -92,12 +97,12 @@ it('replaces materials and gallery on update', function () {
 });
 
 it('validates required project fields', function () {
-    $this->post('/admin/projects', [])->assertSessionHasErrors(['period', 'hero_image', 'translations.vi.name', 'translations.vi.location', 'translations.vi.description']);
+    $this->post('/admin/projects', [])->assertSessionHasErrors(['period', 'hero_image', 'name', 'location', 'description']);
 });
 
 it('can bulk delete projects', function () {
-    $p1 = Project::create(['slug' => 'bulk-p1', 'period' => '2024', 'hero_image' => '/x.png', 'is_active' => true]);
-    $p2 = Project::create(['slug' => 'bulk-p2', 'period' => '2024', 'hero_image' => '/x.png', 'is_active' => true]);
+    $p1 = Project::create(['slug' => 'bulk-p1', 'name' => 'Bulk P1', 'location' => 'Loc', 'description' => 'Desc', 'period' => '2024', 'hero_image' => '/x.png', 'is_active' => true]);
+    $p2 = Project::create(['slug' => 'bulk-p2', 'name' => 'Bulk P2', 'location' => 'Loc', 'description' => 'Desc', 'period' => '2024', 'hero_image' => '/x.png', 'is_active' => true]);
 
     $this->post('/admin/projects/bulk', ['ids' => [$p1->id, $p2->id], 'action' => 'delete'])
         ->assertRedirect('/admin/projects');
@@ -107,7 +112,7 @@ it('can bulk delete projects', function () {
 });
 
 it('can bulk feature and unfeature projects', function () {
-    $project = Project::create(['slug' => 'bulk-feature', 'period' => '2024', 'hero_image' => '/x.png', 'is_active' => true]);
+    $project = Project::create(['slug' => 'bulk-feature', 'name' => 'Bulk Feature', 'location' => 'Loc', 'description' => 'Desc', 'period' => '2024', 'hero_image' => '/x.png', 'is_active' => true]);
 
     $this->post('/admin/projects/bulk', ['ids' => [$project->id], 'action' => 'feature'])->assertRedirect('/admin/projects');
     expect($project->fresh()->is_featured)->toBeTrue();
