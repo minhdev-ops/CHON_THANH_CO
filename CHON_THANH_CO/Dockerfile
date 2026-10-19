@@ -101,8 +101,9 @@ COPY docker/nginx/default.conf /etc/nginx/http.d/default.conf
 # Supervisor config (chạy php-fpm + nginx + queue worker)
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Quyền thư mục storage & cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+# Quyền thư mục storage & cache + log dir cho supervisord
+RUN mkdir -p /var/log/supervisor \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80

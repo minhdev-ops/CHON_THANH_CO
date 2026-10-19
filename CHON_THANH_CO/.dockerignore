@@ -15,6 +15,9 @@ bootstrap/cache/*
 .env
 .env.production
 .env.docker
+.env.testing
+document/
+public/userfiles/
 .phpunit.result.cache
 unit-tests.md
 test-results/
