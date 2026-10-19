@@ -226,9 +226,9 @@ const milestones = [
             <div class="flex md:hidden items-center gap-3 p-4">
               <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0">
                 <LazyImage
-                  src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                  src="/images/projects/factory-a-chau.jpg"
                   alt="Nhà máy Rọ đá Á Châu"
-                  fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                  fallback-src="/images/projects/factory-a-chau.jpg"
                   image-class="w-full h-full object-cover"
                 />
               </div>
@@ -241,9 +241,9 @@ const milestones = [
             <!-- Desktop: full card -->
             <div class="hidden md:block">
               <LazyImage
-                src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                src="/images/projects/factory-a-chau.jpg"
                 alt="Nhà máy Rọ đá Á Châu"
-                fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                fallback-src="/images/projects/factory-a-chau.jpg"
                 aspect-ratio="aspect-[16/9]"
                 image-class="w-full h-full object-cover"
               />
@@ -271,9 +271,9 @@ const milestones = [
             <div class="flex md:hidden items-center gap-3 p-4">
               <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0">
                 <LazyImage
-                  src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/luoi_thep_tien_phong.png"
+                  src="/images/projects/tien-phong-factory.jpg"
                   alt="Nhà máy Lưới thép Tiên Phong"
-                  fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/luoi_thep_tien_phong.png"
+                  fallback-src="/images/projects/tien-phong-factory.jpg"
                   image-class="w-full h-full object-cover"
                 />
               </div>
@@ -286,9 +286,9 @@ const milestones = [
             <!-- Desktop: full card -->
             <div class="hidden md:block">
               <LazyImage
-                src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/luoi_thep_tien_phong.png"
+                src="/images/projects/tien-phong-factory.jpg"
                 alt="Nhà máy Lưới thép Tiên Phong"
-                fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/luoi_thep_tien_phong.png"
+                fallback-src="/images/projects/tien-phong-factory.jpg"
                 aspect-ratio="aspect-[16/9]"
                 image-class="w-full h-full object-cover"
               />

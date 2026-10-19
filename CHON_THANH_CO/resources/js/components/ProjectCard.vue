@@ -8,7 +8,7 @@ const props = defineProps<{ project: Project }>()
 const heroImage = computed(() =>
   props.project.gallery?.[0]?.image
   || props.project.hero_image
-  || 'https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png'
+  || '/images/projects/highway-1.jpg'
 )
 </script>
 
@@ -21,7 +21,7 @@ const heroImage = computed(() =>
     <LazyImage
       :src="heroImage"
       :alt="project.name"
-      fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+      fallback-src="/images/projects/highway-1.jpg"
       aspect-ratio="aspect-[4/3]"
       container-class="rounded-[10px]"
       image-class="w-full h-full object-cover"

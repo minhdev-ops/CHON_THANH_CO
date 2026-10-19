@@ -211,9 +211,9 @@ const displayStats = computed(() =>
             <div class="grid gap-6">
               <div class="rounded-[10px] overflow-hidden bg-surface-vlm shadow-md">
                 <LazyImage
-                  src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                  src="/images/projects/factory-a-chau.jpg"
                   alt="CHƠN THÀNH nhà máy"
-                  fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                  fallback-src="/images/projects/factory-a-chau.jpg"
                   aspect-ratio="aspect-[16/9]"
                   image-class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
@@ -400,9 +400,9 @@ const displayStats = computed(() =>
           <div class="reveal-right">
             <div class="relative rounded-[10px] overflow-hidden">
               <LazyImage
-                src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                src="/images/projects/site-gabion.jpg"
                 alt="Công trình địa kỹ thuật"
-                fallback-src="https://htqmpwpewhfknqhgjhwp.supabase.co/storage/v1/object/public/CHON_THANH/images/projects/Untitled.png"
+                fallback-src="/images/projects/site-gabion.jpg"
                 aspect-ratio="aspect-[4/5]"
                 image-class="w-full h-full object-cover"
               >
