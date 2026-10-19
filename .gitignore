@@ -1,0 +1,21 @@
+# Bảo mật — không bao giờ commit file chứa bí mật (áp dụng toàn repo)
+.env
+.env.*
+!.env.example
+!.env.docker
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+*.sql
+*.sql.gz
+*.dump
+*.bak
+*.log
+.DS_Store
+Thumbs.db
