@@ -18,12 +18,14 @@ ENV COMPOSER_CACHE_DIR=/tmp/composer-cache
 
 COPY composer.json composer.lock ./
 
+# ext-gd chỉ có ở stage app (runtime), composer stage ignore để resolve deps
 RUN composer install \
     --no-interaction \
     --no-plugins \
     --no-scripts \
     --prefer-dist \
-    --no-dev
+    --no-dev \
+    --ignore-platform-req=ext-gd
 
 #────────────────────────────────────────────────────────────────────────
 # Stage 2: Node / Vite build (assets frontend)
@@ -39,7 +41,7 @@ COPY package.json package-lock.json vite.config.js ./
 COPY resources ./resources
 COPY public ./public
 
-RUN npm ci && npm run build
+RUN npm ci --include=dev && npm run build
 
 #────────────────────────────────────────────────────────────────────────
 # Stage 3: App runtime (PHP-FPM + nginx)
@@ -63,6 +65,10 @@ RUN apk add --no-cache \
         unzip \
         libzip-dev \
         zlib-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         intl \
         mbstring \
@@ -70,6 +76,7 @@ RUN apk add --no-cache \
         zip \
         bcmath \
         xml \
+        gd \
     && docker-php-ext-enable pdo_mysql
 
 # Composer binary
