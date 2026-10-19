@@ -1,0 +1,71 @@
+# ═══════════════════════════════════════════════════════════════════════
+# CHON THANH CO — Production stack (dùng trên server /opt/chonthanh)
+# Image build từ CI: ghcr.io/minhdev-ops/chon_thanh_co
+# Chạy: docker compose -f docker-compose.prod.yml up -d
+# Rollback: IMAGE_TAG=<sha> docker compose -f docker-compose.prod.yml up -d --no-deps app
+# ═══════════════════════════════════════════════════════════════════════
+
+services:
+
+  app:
+    image: ghcr.io/minhdev-ops/chon_thanh_co:${IMAGE_TAG:-latest}
+    container_name: chonthanhco_app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - app_storage:/var/www/html/storage
+    ports:
+      - "127.0.0.1:8000:80"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1/up"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - chonthanhco_net
+
+  mysql:
+    image: mysql:9.1.0
+    container_name: chonthanhco_mysql
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    networks:
+      - chonthanhco_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: chonthanhco_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - chonthanhco_net
+
+networks:
+  chonthanhco_net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  app_storage:
