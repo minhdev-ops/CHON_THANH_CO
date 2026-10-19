@@ -11,6 +11,7 @@ fi
 
 # ── Chuẩn bị thư mục writable (named volume mount đè storage) ──
 mkdir -p storage/framework/{sessions,views,cache} storage/logs bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
 
 # ── Cache production ──
 php artisan config:cache --no-interaction
