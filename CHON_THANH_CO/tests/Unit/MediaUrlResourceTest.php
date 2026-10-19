@@ -55,6 +55,6 @@ it('builds urls for company file settings only', function () {
         'group' => 'company',
     ]))->toArray($request);
 
-    expect($capability['value'])->toBe('https://example.supabase.co/storage/v1/object/public/CHON_THANH/documents/ho-so-nang-luc-2026.pdf')
+    expect($capability['value'])->toBe('/documents/ho-so-nang-luc-2026.pdf')
         ->and($plain['value'])->toBe('CHƠN THÀNH');
 });

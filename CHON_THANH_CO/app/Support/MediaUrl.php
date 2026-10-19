@@ -21,6 +21,14 @@ class MediaUrl
             return $key;
         }
 
-        return Storage::disk('s3')->url(ltrim($key, '/'));
+        $relative = ltrim($key, '/');
+
+        // Ưu tiên file có sẵn trong public/ (đã tối ưu, phục vụ local/CDN)
+        if (is_file(public_path($relative))) {
+            return '/'.$relative;
+        }
+
+        // Fallback: file chỉ tồn tại trên object storage
+        return Storage::disk('s3')->url($relative);
     }
 }
