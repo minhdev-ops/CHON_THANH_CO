@@ -21,6 +21,16 @@ it('builds a public url from a relative s3 key', function () {
         ->toBe('https://example.supabase.co/storage/v1/object/public/CHON_THANH/images/products/foo.jpg');
 });
 
+it('prefers local public file when it exists', function () {
+    expect(MediaUrl::url('images/home-hero.jpg'))
+        ->toBe('/images/home-hero.jpg');
+});
+
+it('prefers local public file for keys with leading slash', function () {
+    expect(MediaUrl::url('/images/home-hero.jpg'))
+        ->toBe('/images/home-hero.jpg');
+});
+
 it('strips leading slashes from keys', function () {
     expect(MediaUrl::url('/files/documents/a.pdf'))
         ->toBe('https://example.supabase.co/storage/v1/object/public/CHON_THANH/files/documents/a.pdf');
