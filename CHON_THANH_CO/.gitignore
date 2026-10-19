@@ -26,3 +26,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/THONG_TIN_ADMIN.txt
+/deploy/db
+/deploy/nginx/ssl
