@@ -3,6 +3,7 @@
 .env
 .env.backup
 .env.production
+.env.testing
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -18,6 +19,8 @@
 /public/storage
 /public/userfiles
 /public/userfiles/*
+/test-results
+/playwright-report
 /storage/*.key
 /storage/pail
 /vendor
