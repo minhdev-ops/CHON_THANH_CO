@@ -1,9 +1,9 @@
 *.log
 .DS_Store
 .env
-.env.backup
-.env.production
-.env.testing
+.env.*
+!.env.docker
+!.env.example
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -32,3 +32,18 @@ Thumbs.db
 /THONG_TIN_ADMIN.txt
 /deploy/db
 /deploy/nginx/ssl
+
+# File chứa bí mật / credentials — không bao giờ commit
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+*.sql
+*.sql.gz
+*.dump
+*.bak
