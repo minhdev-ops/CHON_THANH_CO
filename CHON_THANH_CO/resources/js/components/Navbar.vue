@@ -178,7 +178,7 @@ watch(isMobileOpen, (open) => {
               <router-link
                 v-if="item.type === 'link'"
                 :to="item.to"
-                class="px-6 xl:px-8 py-[22px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
+                class="px-3 xl:px-3.5 2xl:px-8 py-[22px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
                 :class="isActive(item.to) ? 'text-[#B89B88]' : 'text-[#16243D] hover:text-[#B89B88]'"
               >
                 {{ t(item.labelKey) }}
@@ -192,7 +192,7 @@ watch(isMobileOpen, (open) => {
               >
                 <router-link
                   :to="item.to"
-                  class="flex items-center gap-1 px-6 xl:px-8 py-[22px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
+                  class="flex items-center gap-1 px-3 xl:px-3.5 2xl:px-8 py-[22px] text-[19px] xl:text-[20px] font-bold transition-colors duration-200 whitespace-nowrap tracking-wide"
                   :class="isActive(item.to) || openDropdown === item.name ? 'text-[#B89B88]' : 'text-[#16243D] group-hover/dd:text-[#B89B88]'"
                   @click="closeDropdown()"
                 >
@@ -235,7 +235,7 @@ watch(isMobileOpen, (open) => {
         <!-- ═══ Right Action / Hotline ═══ -->
         <div class="flex shrink-0 justify-end items-center gap-2">
           <!-- Desktop Hotline -->
-          <div class="hidden xl:flex items-center shrink-0 bg-white rounded-[50px] p-2 pe-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group hotline-cluster">
+          <div class="hidden xl:flex items-center shrink-0 bg-white rounded-[50px] p-2 pe-4 2xl:pe-6 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 group hotline-cluster">
             <a :href="hotlineHref" class="relative flex items-center justify-center shrink-0">
               <div class="absolute inset-0 rounded-full bg-[#D84315] opacity-30 animate-ping group-hover:bg-[#D84315]/50"></div>
               <div class="w-[64px] h-[64px] rounded-full bg-[#D84315] text-white flex items-center justify-center relative z-10 shadow-lg group-hover:scale-110 transition-all duration-300">
@@ -245,8 +245,8 @@ watch(isMobileOpen, (open) => {
                 <i class="fa text-[14px] text-white fa-comment"></i>
               </div>
             </a>
-            <div class="flex items-center ms-5 group/hotline">
-              <a :href="hotlineHref" class="text-[28px] font-black text-[#D84315] group-hover:text-[#B89B88] transition-colors leading-none tracking-tight animate-hotline-nudge tabular-nums">{{ hotline }}</a>
+            <div class="flex items-center ms-3 2xl:ms-5 group/hotline">
+              <a :href="hotlineHref" class="text-[24px] 2xl:text-[28px] font-black text-[#D84315] group-hover:text-[#B89B88] transition-colors leading-none tracking-tight animate-hotline-nudge tabular-nums">{{ hotline }}</a>
             </div>
           </div>
 

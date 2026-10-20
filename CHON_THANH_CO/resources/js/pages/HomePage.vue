@@ -164,7 +164,7 @@ const displayStats = computed(() =>
             </div>
             <h3 class="relative z-10 font-extrabold text-text-main text-[13px] md:text-[18px] mb-2 md:mb-3 tracking-tight leading-tight">{{ f.title }}</h3>
             <p class="relative z-10 text-text-secondary text-[11px] md:text-[14px] leading-relaxed mb-4 md:mb-6 flex-grow hidden sm:block">{{ f.desc }}</p>
-            <router-link to="/about" class="relative z-10 inline-flex items-center gap-1.5 text-primary font-semibold text-[11px] md:text-[14px] group-hover:text-primary-dark transition-colors duration-300">
+            <router-link to="/about" class="relative z-10 inline-flex items-center gap-1.5 text-primary font-semibold text-[11px] md:text-[14px] max-md:text-[13px] max-md:min-h-[44px] group-hover:text-primary-dark transition-colors duration-300">
               Chi tiết
               <i class="fa text-[14px] md:text-[18px] group-hover:translate-x-1 transition-transform duration-300 fa-arrow-right"></i>
             </router-link>
@@ -295,7 +295,7 @@ const displayStats = computed(() =>
             </div>
             <router-link
               :to="buildContactLink({ subject: 'quote-24h' })"
-              class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300"
+              class="shrink-0 w-9 h-9 max-md:w-11 max-md:h-11 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300"
             >
               <i class="fa text-[18px] text-primary group-hover:text-white fa-arrow-right"></i>
             </router-link>

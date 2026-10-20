@@ -126,7 +126,7 @@ const milestones = [
       <div class="absolute inset-0 noise-overlay pointer-events-none"></div>
       <div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 lg:gap-12">
-          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-[#B89B88] transition-all duration-500 relative group reveal-left glow-card">
+          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(184,155,136,0.15)] hover:border-[#B89B88] transition-all duration-500 relative max-md:overflow-hidden group reveal-left glow-card">
             <div class="absolute top-0 right-0 w-40 h-40 bg-primary/4 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
 
 
@@ -139,7 +139,7 @@ const milestones = [
             </div>
           </div>
 
-          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(140,107,88,0.15)] hover:border-[#8C6B58] transition-all duration-500 relative group reveal-right glow-card">
+          <div class="bg-surface-bright p-6 md:p-12 border border-outline-variant shadow-sm rounded-2xl md:rounded-3xl hover:shadow-[0_20px_60px_rgba(140,107,88,0.15)] hover:border-[#8C6B58] transition-all duration-500 relative max-md:overflow-hidden group reveal-right glow-card">
             <div class="absolute top-0 right-0 w-40 h-40 bg-[#8C6B58]/8 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
 
 
