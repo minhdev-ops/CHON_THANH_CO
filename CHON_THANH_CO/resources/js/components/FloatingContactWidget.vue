@@ -68,46 +68,7 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
 </script>
 
 <template>
-  <!-- Mobile: fixed bottom bar with 5 buttons -->
-  <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-black/8 safe-area-bottom">
-    <div class="flex items-stretch">
-      <a
-        v-for="(contact, i) in contacts"
-        :key="contact.name"
-        :href="contact.url"
-        :target="contact.external ? '_blank' : undefined"
-        :rel="contact.external ? 'noopener noreferrer' : undefined"
-        class="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition-all duration-200 active:bg-black/5 min-w-0 relative overflow-visible"
-        :class="[
-          i < contacts.length - 1 ? 'border-r border-black/8' : '',
-          contact.variant === 'hotline' ? 'text-[#D84315]' : '',
-          contact.variant === 'zalo' ? 'text-[#0068FF]' : '',
-          contact.variant === 'whatsapp' ? 'text-[#25D366]' : '',
-          contact.variant === 'wechat' ? 'text-[#07C160]' : '',
-        ]"
-      >
-        <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-black/5 group-hover:bg-black/10 transition-colors">
-          <!-- Pulse ring for ALL buttons (mobile) -->
-          <div class="absolute inset-0 rounded-full animate-pulse-ring" :style="{ borderColor: variantStyles[contact.variant].pulseColor }" aria-hidden="true"></div>
-
-          <!-- Hotline exclusive: stronger alarm rings (mobile) -->
-          <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-extreme" aria-hidden="true"></div>
-          <div v-if="contact.variant === 'hotline'" class="absolute inset-0 rounded-full animate-hotline-ring-strong" style="animation-delay: 0.4s;" aria-hidden="true"></div>
-
-          <img
-            v-if="contact.image"
-            :src="contact.image"
-            class="w-5 h-5 object-contain animate-icon-float"
-            :alt="contact.name"
-          />
-          <span v-else class="animate-icon-float" v-html="contact.icon"></span>
-        </div>
-        <span class="text-[11px] font-bold tracking-wide truncate w-full text-center mt-1">{{ contact.name }}</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Desktop: floating vertical buttons -->
+  <!-- Desktop: floating vertical buttons (unchanged) -->
   <div v-show="isVisible" class="hidden md:flex fixed bottom-24 right-6 z-50 flex-col items-center gap-4" role="navigation" aria-label="Liên hệ nhanh">
     <a
       v-for="(contact, index) in contacts"
@@ -156,10 +117,6 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
 </template>
 
 <style scoped>
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
 .widget-btn {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;

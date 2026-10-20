@@ -242,7 +242,7 @@ const breadcrumbs = computed(() => [
 </script>
 
 <template>
-  <div>
+  <div class="max-w-full overflow-x-hidden">
     <!-- Hero Banner -->
     <PageHeader :title="t('nav.contact')" :breadcrumbs="breadcrumbs" />
 
@@ -266,24 +266,24 @@ const breadcrumbs = computed(() => [
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div data-error-field="name">
                 <label class="block text-[11px] font-bold text-text-muted mb-2.5 uppercase tracking-[0.15em]" for="name">{{ t('contact.name') }}</label>
-                <input id="name" v-model="form.name" type="text" :aria-invalid="!!formErrors.name" :class="[formErrors.name ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-sm text-text-main input-premium outline-none transition-all duration-300" @input="touchField('name')" @blur="touchField('name')">
+                <input id="name" v-model="form.name" type="text" :aria-invalid="!!formErrors.name" :class="[formErrors.name ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-[16px] md:text-sm text-text-main input-premium outline-none scroll-mt-[90px] transition-all duration-300" @input="touchField('name')" @blur="touchField('name')">
                 <p v-if="formErrors.name" class="mt-2 text-xs text-red-500 font-medium">{{ formErrors.name }}</p>
               </div>
               <div data-error-field="phone">
                 <label class="block text-[11px] font-bold text-text-muted mb-2.5 uppercase tracking-[0.15em]" for="phone">{{ t('contact.phone') }}</label>
-                <input id="phone" v-model="form.phone" type="tel" :aria-invalid="!!formErrors.phone" :class="[formErrors.phone ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-sm text-text-main input-premium outline-none transition-all duration-300" @input="touchField('phone')" @blur="touchField('phone')">
+                <input id="phone" v-model="form.phone" type="tel" :aria-invalid="!!formErrors.phone" :class="[formErrors.phone ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-[16px] md:text-sm text-text-main input-premium outline-none scroll-mt-[90px] transition-all duration-300" @input="touchField('phone')" @blur="touchField('phone')">
                 <p v-if="formErrors.phone" class="mt-2 text-xs text-red-500 font-medium">{{ formErrors.phone }}</p>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div data-error-field="email">
                 <label class="block text-[11px] font-bold text-text-muted mb-2.5 uppercase tracking-[0.15em]" for="email">{{ t('contact.email') }}</label>
-                <input id="email" v-model="form.email" type="email" :aria-invalid="!!formErrors.email" :class="[formErrors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-sm text-text-main input-premium outline-none transition-all duration-300" @input="touchField('email')" @blur="touchField('email')">
+                <input id="email" v-model="form.email" type="email" :aria-invalid="!!formErrors.email" :class="[formErrors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-[16px] md:text-sm text-text-main input-premium outline-none scroll-mt-[90px] transition-all duration-300" @input="touchField('email')" @blur="touchField('email')">
                 <p v-if="formErrors.email" class="mt-2 text-xs text-red-500 font-medium">{{ formErrors.email }}</p>
               </div>
               <div data-error-field="company">
                 <label class="block text-[11px] font-bold text-text-muted mb-2.5 uppercase tracking-[0.15em]" for="company">{{ t('contact.company') }}</label>
-                <input id="company" v-model="form.company" type="text" :aria-invalid="!!formErrors.company" :class="[formErrors.company ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-sm text-text-main input-premium outline-none transition-all duration-300" @input="touchField('company')">
+                <input id="company" v-model="form.company" type="text" :aria-invalid="!!formErrors.company" :class="[formErrors.company ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-[16px] md:text-sm text-text-main input-premium outline-none scroll-mt-[90px] transition-all duration-300" @input="touchField('company')">
                 <p v-if="formErrors.company" class="mt-2 text-xs text-red-500 font-medium">{{ formErrors.company }}</p>
               </div>
             </div>
@@ -308,7 +308,7 @@ const breadcrumbs = computed(() => [
                       type="text"
                       :placeholder="t('contact.productSearch')"
                       autocomplete="off"
-                      class="w-full bg-transparent text-sm text-text-main placeholder:text-text-muted outline-none"
+                      class="w-full max-md:h-11 bg-transparent text-[16px] md:text-sm text-text-main placeholder:text-text-muted outline-none scroll-mt-[90px]"
                       @focus="showSuggestions = true"
                       @input="showSuggestions = true; touchField('products')"
                       @keydown.enter.prevent="availableProducts[0] && addProduct(availableProducts[0])"
@@ -349,7 +349,7 @@ const breadcrumbs = computed(() => [
             </div>
             <div data-error-field="message">
               <label class="block text-[11px] font-bold text-text-muted mb-2.5 uppercase tracking-[0.15em]" for="message">{{ t('contact.message') }}</label>
-              <textarea id="message" v-model="form.message" rows="4" :aria-invalid="!!formErrors.message" :class="[formErrors.message ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-sm text-text-main input-premium outline-none transition-all duration-300 resize-y" @input="touchField('message')" @blur="touchField('message')"></textarea>
+              <textarea id="message" v-model="form.message" rows="4" :aria-invalid="!!formErrors.message" :class="[formErrors.message ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-outline-variant focus:border-primary focus:ring-primary']" class="w-full bg-surface-vlm border rounded-2xl px-5 py-4 text-[16px] md:text-sm text-text-main input-premium outline-none scroll-mt-[90px] transition-all duration-300 resize-y" @input="touchField('message')" @blur="touchField('message')"></textarea>
               <p v-if="formErrors.message" class="mt-2 text-xs text-red-500 font-medium">{{ formErrors.message }}</p>
             </div>
             <button type="submit" :disabled="submitting" class="btn btn-primary btn-magnetic w-full md:w-auto mt-4 inline-flex items-center justify-center gap-2 group disabled:opacity-60">
@@ -370,7 +370,7 @@ const breadcrumbs = computed(() => [
                 </div>
                 <div>
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.headquarters') }}</span>
-                  <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8'" target="_blank" rel="noopener noreferrer" class="block text-[15px] text-text-secondary leading-relaxed hover:text-primary transition-colors">{{ settings?.['contact.address'] || '416A Đường CC2, Phường Tây Thạnh, Thành Phố Hồ Chí Minh' }}</a>
+                  <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps/place/C%C3%94NG+TY+TNHH+DV+V%C3%80+TM+CH%C6%A0N+TH%C3%80NH/@10.8100547,106.6079875,140m/data=!3m1!1e3!4m6!3m5!1s0x31752bb2c658a587:0x3362c58ad0f4ce7c!8m2!3d10.8102715!4d106.6081321!16s%2Fg%2F11h6mklcm8'" target="_blank" rel="noopener noreferrer" class="block text-[15px] text-text-secondary leading-relaxed hover:text-primary transition-colors max-md:py-2">{{ settings?.['contact.address'] || '416A Đường CC2, Phường Tây Thạnh, Thành Phố Hồ Chí Minh' }}</a>
                 </div>
               </li>
               <li class="flex items-start gap-4 group">
@@ -381,7 +381,7 @@ const breadcrumbs = computed(() => [
                   <span class="block text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-[0.15em]">{{ t('contact.phoneLabel') }}</span>
                   <a
                     :href="`tel:${(settings?.['contact.phone'] || '0909 292 530').replace(/[^\d+]/g, '')}`"
-                    class="block text-[15px] text-primary-deep font-bold hover:text-primary transition-colors duration-300 animated-underline"
+                    class="block text-[15px] text-primary-deep font-bold hover:text-primary transition-colors duration-300 animated-underline max-md:min-h-[44px] max-md:flex max-md:items-center"
                   >
                     {{ settings?.['contact.phone'] || '0909 292 530' }}
                   </a>

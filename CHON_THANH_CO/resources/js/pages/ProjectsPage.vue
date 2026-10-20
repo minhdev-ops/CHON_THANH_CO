@@ -113,9 +113,9 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
       <!-- ═══ FILTER BAR ═══ -->
       <div class="mb-10 reveal">
         <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 pb-0 border-b border-outline-variant">
-          <div class="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div class="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap max-md:-mx-margin-mobile max-md:px-margin-mobile">
             <button
-              class="pb-4 text-[14px] font-bold transition-colors relative"
+              class="pb-4 text-[14px] font-bold transition-colors relative max-md:pb-0 max-md:min-h-[44px] max-md:flex max-md:items-center"
               :class="selectedLocation === null ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedLocation = null"
             >
@@ -124,7 +124,7 @@ const paddedIndex = (i: number) => String(i + 1).padStart(2, '0')
             </button>
             <button
               v-for="loc in locations" :key="loc"
-              class="pb-4 text-[14px] font-bold transition-colors relative"
+              class="pb-4 text-[14px] font-bold transition-colors relative max-md:pb-0 max-md:min-h-[44px] max-md:flex max-md:items-center"
               :class="selectedLocation === loc ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedLocation = loc"
             >

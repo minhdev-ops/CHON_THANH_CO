@@ -1951,7 +1951,160 @@
     /* ── Mobile bottom padding for fixed contact bar ── */
     @media (max-width: 768px) {
         .pb-mobile-contact {
-            padding-bottom: 80px;
+            padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
         }
     }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE WEB APP STANDARDS — Chỉ áp dụng trên điện thoại (≤768px)
+   KHÔNG làm thay đổi giao diện desktop.
+════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* 1. Anchor scroll dừng ngay dưới header mobile (desktop đang để 130px) */
+  html {
+    scroll-padding-top: 70px;
+  }
+
+  /* 2. Bỏ trễ chạm 300ms → cảm giác như app native */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  .btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(184, 155, 136, 0.15);
+  }
+
+  /* 3. Ngăn trình duyệt di động zoom mức chữ khi focus input (iOS) */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* 4. Touch target tối thiểu 44×44px cho nút/liên kết trên mobile */
+  .btn {
+    min-height: 46px;
+    padding-inline: 1rem;
+  }
+
+  /* 5. Ngăn hiệu ứng hover "dính" (sticky hover) sau khi chạm trên màn hình cảm ứng */
+  .hover-lift:hover,
+  .hover-lift-sm:hover,
+  .card-premium:hover,
+  .feature-item:hover,
+  .service-item:hover,
+  .blog-item:hover,
+  .testimonial-card:hover,
+  .tilt-card:hover,
+  .hover-magnetic:hover,
+  .hover-glow:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 6. Không cho nội dung tràn ngang màn hình điện thoại */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* 7. Safe-area cho điện thoại có vết cắt (notch / dynamic island) */
+  .pb-safe-bottom {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+  .pt-safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  /* 8. Nút chính hiển thị toàn rộng trên mobile, dễ nhắm ngón tay */
+  .btn-mobile-block {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE APP SHELL — khung ứng dụng di động (<768px)
+   Chỉ chạy trên điện thoại. Desktop hoàn toàn không đổi.
+════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 767.98px) {
+  :root {
+    --mobile-appbar-h: 56px;
+    --mobile-tabbar-h: 56px;
+  }
+
+  /* 1. Chừa chỗ cho tab bar dưới cùng (component MobileTabBar bật class này) */
+  html.mobile-tabbar .app-shell {
+    padding-bottom: calc(var(--mobile-tabbar-h) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* 1b. Trang tự quản thanh CTA ở đáy (chi tiết sản phẩm) — vẫn chừa khoảng trống
+     để nội dung cuối trang không bị thanh cố định che */
+  html.mobile-page-bottombar .app-shell {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* 1c. Không bao giờ có thanh cuộn ngang: cắt phần tràn do hiệu ứng reveal
+     (dùng `clip` để KHÔNG tạo scroll container → position: sticky vẫn hoạt động) */
+  .app-shell {
+    overflow-x: clip;
+  }
+
+  /* 2. Khi drawer menu mở: khoá cứng nền, không cho lộ nội dung phía sau */
+  html.mobile-menu-open,
+  html.mobile-menu-open body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  /* 3. Tránh kéo-giãn trang khi kéo quá tay trên đầu trang */
+  body {
+    overscroll-behavior-y: contain;
+  }
+
+  /* 4. Ảnh và media không bao giờ rộng hơn màn hình */
+  img,
+  video,
+  svg,
+  iframe {
+    max-width: 100%;
+  }
+
+  /* 5. Dải nội dung cuộn ngang (chips, tab, card): cuộn mượt, dừng đúng nhịp */
+  .no-scrollbar,
+  .scrollbar-none,
+  .scrollbar-hide {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+  }
+
+  /* 6. Vùng bấm tối thiểu cho các phần tử tương tác nhỏ nhất */
+  a.mobile-tap,
+  button.mobile-tap {
+    min-height: 44px;
+  }
+
+  /* 7. Chữ mô tả dài không tràn ra ngoài thẻ */
+  .text-clamp-safe {
+    overflow-wrap: anywhere;
+  }
+
+  /* 8. Bottom sheet / drawer luôn cao đúng theo viewport động của mobile */
+  .mobile-sheet-safe {
+    max-height: 90dvh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* 9. Hiệu ứng chạm nhẹ như app native cho các thẻ bấm được */
+  .mobile-press {
+    transition: transform 0.15s ease;
+  }
+  .mobile-press:active {
+    transform: scale(0.98);
+  }
 }

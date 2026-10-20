@@ -110,13 +110,17 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
         :key="i"
         type="button"
         :aria-label="`${t('common.page')} ${i + 1}`"
-        class="h-2.5 rounded-full transition-all duration-300 cursor-pointer"
-        :class="[
-          i === currentPage ? 'w-8 bg-primary' : 'w-2.5 bg-outline hover:bg-outline-variant',
-          noGap && i !== currentPage ? 'bg-white/50 hover:bg-white' : ''
-        ]"
+        class="flex items-center justify-center cursor-pointer max-md:h-11 max-md:px-1"
         @click="page = i"
-      ></button>
+      >
+        <span
+          class="block h-2.5 rounded-full transition-all duration-300"
+          :class="[
+            i === currentPage ? 'w-8 bg-primary' : 'w-2.5 bg-outline hover:bg-outline-variant',
+            noGap && i !== currentPage ? 'bg-white/50 hover:bg-white' : ''
+          ]"
+        ></span>
+      </button>
     </div>
   </div>
 </template>

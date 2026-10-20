@@ -267,11 +267,7 @@ test('Không tràn ngang trên mobile (mọi trang)', async ({ page }) => {
     await page.goto(route.path, { waitUntil: 'networkidle' })
     await page.waitForTimeout(500)
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)
-    // Allow overflow on /about page (known issue with long content)
-    if (route.path === '/about') {
-      expect(overflow, `trang ${route.path} có thể tràn ngang do nội dung dài`).toBe(true)
-    } else {
-      expect(overflow, `trang ${route.path} không tràn ngang`).toBe(false)
-    }
+    // Mobile đã được cắt tràn (overflow-hidden) cho card nội dung dài ở trang /about
+    expect(overflow, `trang ${route.path} không tràn ngang trên mobile`).toBe(false)
   }
 })

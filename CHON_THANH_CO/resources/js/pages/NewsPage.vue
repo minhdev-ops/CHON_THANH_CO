@@ -144,9 +144,9 @@ const activeCategoryName = computed(() => {
       </div>
       <div v-else class="mb-6 md:mb-10 reveal">
         <div class="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-4 md:gap-6 pb-0 border-b border-outline-variant">
-          <div class="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div class="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar whitespace-nowrap max-md:-mx-margin-mobile max-md:px-margin-mobile">
             <button
-              class="pb-3 md:pb-4 text-[13px] md:text-[14px] font-bold transition-colors relative"
+              class="pb-3 md:pb-4 max-md:pb-0 max-md:min-h-[44px] max-md:flex max-md:items-center text-[13px] md:text-[14px] font-bold transition-colors relative"
               :class="selectedCategory === null ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = null"
             >
@@ -154,7 +154,7 @@ const activeCategoryName = computed(() => {
               <div v-if="selectedCategory === null" class="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-t-sm"></div>
             </button>
             <button v-for="cat in visibleCategories" :key="cat.slug"
-              class="pb-3 md:pb-4 text-[13px] md:text-[14px] font-bold transition-colors relative"
+              class="pb-3 md:pb-4 max-md:pb-0 max-md:min-h-[44px] max-md:flex max-md:items-center text-[13px] md:text-[14px] font-bold transition-colors relative"
               :class="selectedCategory === cat.slug ? 'text-primary' : 'text-text-secondary hover:text-text-main'"
               @click="selectedCategory = cat.slug"
             >

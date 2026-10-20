@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useSettings } from '../composables/useSettings'
 import { getYearsOfExperience } from '../utils/experience'
 
 const { settings, load, socialSettings } = useSettings()
+
+// Mobile footer: accordion sections (app-style), contact mở sẵn.
+type FooterSection = 'links' | 'products' | 'contact'
+const openFooterSection = ref<FooterSection | null>('contact')
+const toggleFooterSection = (section: FooterSection) => {
+  openFooterSection.value = openFooterSection.value === section ? null : section
+}
 
 const phones = computed(() => {
   const raw = settings.value?.['contact.phone']?.trim() || '0909 292 530'
@@ -116,51 +123,103 @@ onMounted(() => load())
         <p class="text-[#2A2420]/60 text-[14px] text-center mt-1">Vật liệu địa kỹ thuật hàng đầu Việt Nam</p>
       </div>
 
-      <div class="px-6 mb-6">
-        <h4 class="text-[12px] font-bold text-[#2A2420]/50 uppercase tracking-[0.2em] mb-3">Liên kết nhanh</h4>
-        <div class="space-y-0 mb-5">
-          <router-link v-for="link in quickLinks" :key="link.to" :to="link.to"
-            class="flex items-center justify-between py-3 border-b border-[#2A2420]/10 text-[#2A2420]/85 text-[16px] font-medium hover:text-[#2A2420] transition-colors">
-            <span>{{ link.label }}</span>
-            <i class="fa text-[#2A2420]/30 text-[18px] fa-chevron-right"></i>
+      <div class="px-5">
+        <!-- Quick actions -->
+        <div class="grid grid-cols-2 gap-2.5 mb-4">
+          <a
+            :href="`tel:${(phones[0]?.display || '0909292530').replace(/[^\d+]/g, '')}`"
+            class="min-h-[46px] rounded-xl bg-[#2A2420] text-white text-[13px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+          >
+            <i class="fa text-[15px] fa-phone"></i> Gọi tư vấn
+          </a>
+          <router-link
+            to="/contact"
+            class="min-h-[46px] rounded-xl bg-white/70 border border-[#2A2420]/15 text-[#2A2420] text-[13px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+          >
+            <i class="fa text-[15px] fa-file-pen"></i> Yêu cầu báo giá
           </router-link>
         </div>
 
-        <h4 class="text-[12px] font-bold text-[#2A2420]/50 uppercase tracking-[0.2em] mb-3">Sản phẩm</h4>
-        <div class="space-y-0">
-          <router-link v-for="p in productLinks" :key="p.slug" :to="`/products?category=${p.slug}`"
-            class="flex items-center justify-between py-3 border-b border-[#2A2420]/10 text-[#2A2420]/85 text-[16px] font-medium hover:text-[#2A2420] transition-colors">
-            <span>{{ p.label }}</span>
-            <i class="fa text-[#2A2420]/30 text-[18px] fa-chevron-right"></i>
-          </router-link>
-        </div>
-      </div>
-
-      <div class="px-6 mb-6 space-y-4">
-        <h4 class="text-[12px] font-bold text-[#2A2420]/50 uppercase tracking-[0.2em]">Liên hệ</h4>
-        <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps'" target="_blank" rel="noopener noreferrer"
-          class="flex items-start gap-3 group">
-          <i class="fa text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0 group-hover:text-[#2A2420] transition-colors fa-location-dot"></i>
-          <span class="text-[#2A2420]/80 text-[15px] leading-snug group-hover:text-[#2A2420] transition-colors">{{ settings?.['contact.address'] || '416A Đường CC2, P. Sơn Kỳ, Q. Tân Phú, TP.HCM' }}</span>
-        </a>
-        <div class="flex items-start gap-3">
-          <i class="fa text-[#2A2420]/60 text-[20px] mt-0.5 shrink-0 fa-phone"></i>
-          <div class="flex flex-col gap-1.5">
-            <a v-for="phone in phones" :key="phone.href" :href="phone.href"
-              class="text-[#2A2420]/80 text-[15px] font-medium tabular-nums hover:text-[#2A2420] transition-colors">{{ phone.display }}</a>
+        <!-- Accordion: quick links -->
+        <div class="border-t border-[#2A2420]/15">
+          <button
+            type="button"
+            class="w-full min-h-[52px] flex items-center justify-between gap-3 text-left"
+            :aria-expanded="openFooterSection === 'links'"
+            aria-controls="footer-mobile-links"
+            @click="toggleFooterSection('links')"
+          >
+            <span class="text-[12px] font-bold text-[#2A2420]/70 uppercase tracking-[0.16em]">Liên kết nhanh</span>
+            <i class="fa text-[15px] text-[#2A2420]/50 fa-chevron-down transition-transform duration-300" :class="openFooterSection === 'links' ? 'rotate-180' : ''"></i>
+          </button>
+          <div v-show="openFooterSection === 'links'" id="footer-mobile-links" class="pb-2">
+            <router-link v-for="link in quickLinks" :key="link.to" :to="link.to"
+              class="flex items-center justify-between min-h-[44px] text-[#2A2420]/85 text-[15px] font-medium active:text-[#2A2420] transition-colors">
+              <span>{{ link.label }}</span>
+              <i class="fa text-[#2A2420]/25 text-[14px] fa-chevron-right"></i>
+            </router-link>
           </div>
         </div>
-        <div class="flex items-center gap-3">
-          <i class="fa text-[#2A2420]/60 text-[20px] shrink-0 fa-envelope"></i>
-          <span class="text-[#2A2420]/80 text-[15px]">{{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}</span>
+
+        <!-- Accordion: products -->
+        <div class="border-t border-[#2A2420]/15">
+          <button
+            type="button"
+            class="w-full min-h-[52px] flex items-center justify-between gap-3 text-left"
+            :aria-expanded="openFooterSection === 'products'"
+            aria-controls="footer-mobile-products"
+            @click="toggleFooterSection('products')"
+          >
+            <span class="text-[12px] font-bold text-[#2A2420]/70 uppercase tracking-[0.16em]">Sản phẩm</span>
+            <i class="fa text-[15px] text-[#2A2420]/50 fa-chevron-down transition-transform duration-300" :class="openFooterSection === 'products' ? 'rotate-180' : ''"></i>
+          </button>
+          <div v-show="openFooterSection === 'products'" id="footer-mobile-products" class="pb-2">
+            <router-link v-for="p in productLinks" :key="p.slug" :to="`/products?category=${p.slug}`"
+              class="flex items-center justify-between min-h-[44px] text-[#2A2420]/85 text-[15px] font-medium active:text-[#2A2420] transition-colors">
+              <span>{{ p.label }}</span>
+              <i class="fa text-[#2A2420]/25 text-[14px] fa-chevron-right"></i>
+            </router-link>
+          </div>
         </div>
-        <div class="flex items-center gap-3">
-          <i class="fa text-[#2A2420]/60 text-[20px] shrink-0 fa-clock"></i>
-          <span class="text-[#2A2420]/80 text-[15px]">{{ settings?.['contact.working_hours'] || 'T2 – T6: 8:30 AM – 5:30 PM' }}</span>
+
+        <!-- Accordion: contact -->
+        <div class="border-t border-b border-[#2A2420]/15">
+          <button
+            type="button"
+            class="w-full min-h-[52px] flex items-center justify-between gap-3 text-left"
+            :aria-expanded="openFooterSection === 'contact'"
+            aria-controls="footer-mobile-contact"
+            @click="toggleFooterSection('contact')"
+          >
+            <span class="text-[12px] font-bold text-[#2A2420]/70 uppercase tracking-[0.16em]">Liên hệ</span>
+            <i class="fa text-[15px] text-[#2A2420]/50 fa-chevron-down transition-transform duration-300" :class="openFooterSection === 'contact' ? 'rotate-180' : ''"></i>
+          </button>
+          <div v-show="openFooterSection === 'contact'" id="footer-mobile-contact" class="pb-4 space-y-3">
+            <a :href="settings?.['social.ggmap'] || 'https://www.google.com/maps'" target="_blank" rel="noopener noreferrer"
+              class="flex items-start gap-3 min-h-[44px] active:opacity-70 transition-opacity">
+              <i class="fa text-[#2A2420]/60 text-[16px] mt-1 shrink-0 fa-location-dot"></i>
+              <span class="text-[#2A2420]/80 text-[14px] leading-relaxed">{{ settings?.['contact.address'] || '416A Đường CC2, P. Sơn Kỳ, Q. Tân Phú, TP.HCM' }}</span>
+            </a>
+            <div class="flex items-start gap-3">
+              <i class="fa text-[#2A2420]/60 text-[16px] mt-1 shrink-0 fa-phone"></i>
+              <div class="flex flex-col gap-1">
+                <a v-for="phone in phones" :key="phone.href" :href="phone.href"
+                  class="flex items-center min-h-[44px] text-[#2A2420]/85 text-[15px] font-semibold tabular-nums">{{ phone.display }}</a>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 min-h-[44px]">
+              <i class="fa text-[#2A2420]/60 text-[16px] shrink-0 fa-envelope"></i>
+              <span class="text-[#2A2420]/80 text-[14px] break-all">{{ settings?.['contact.email'] || 'chonthanhco@gmail.com' }}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <i class="fa text-[#2A2420]/60 text-[16px] shrink-0 fa-clock"></i>
+              <span class="text-[#2A2420]/80 text-[14px]">{{ settings?.['contact.working_hours'] || 'T2 – T6: 8:30 AM – 5:30 PM' }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div v-if="socialSettings.length" class="px-6 flex justify-center gap-2.5 mt-4">
+      <div v-if="socialSettings.length" class="px-5 flex justify-center gap-2.5 mt-5">
         <a v-for="social in socialSettings" :key="social.name" :href="social.url" target="_blank" rel="noopener noreferrer"
           class="w-11 h-11 rounded-xl bg-[#2A2420]/10 border border-[#2A2420]/15 text-[#2A2420] flex items-center justify-center hover:bg-[#2A2420] hover:text-white hover:-translate-y-0.5 transition-all duration-300"
           :aria-label="social.name" :title="social.name">
@@ -168,13 +227,13 @@ onMounted(() => load())
         </a>
       </div>
 
-      <div class="px-6 pt-5 border-t border-[#2A2420]/15">
-        <div class="flex justify-center gap-3 mb-3">
-          <router-link to="/privacy-policy" class="text-[#2A2420]/60 text-[12px] hover:text-[#2A2420] transition-colors">Chính sách bảo mật</router-link>
+      <div class="px-5 pt-5 mt-4 border-t border-[#2A2420]/15">
+        <div class="flex justify-center items-center gap-3 mb-2">
+          <router-link to="/privacy-policy" class="flex items-center min-h-[44px] text-[#2A2420]/60 text-[13px] hover:text-[#2A2420] transition-colors">Chính sách bảo mật</router-link>
           <span class="text-[#2A2420]/30">|</span>
-          <router-link to="/terms-of-service" class="text-[#2A2420]/60 text-[12px] hover:text-[#2A2420] transition-colors">Điều khoản sử dụng</router-link>
+          <router-link to="/terms-of-service" class="flex items-center min-h-[44px] text-[#2A2420]/60 text-[13px] hover:text-[#2A2420] transition-colors">Điều khoản sử dụng</router-link>
         </div>
-        <p class="text-[#2A2420]/50 text-[12px] text-center leading-relaxed">
+        <p class="text-[#2A2420]/50 text-[13px] text-center leading-relaxed">
           &copy; {{ new Date().getFullYear() }} CHƠN THÀNH Geosynthetics
         </p>
       </div>
@@ -226,15 +285,15 @@ onMounted(() => load())
   display: block;
   position: relative;
   z-index: 10;
-  padding-top: 2rem;
-  padding-bottom: 1.5rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.25rem;
 }
 
 .footer-mobile-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }

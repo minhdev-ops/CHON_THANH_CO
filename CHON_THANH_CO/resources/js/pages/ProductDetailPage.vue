@@ -57,7 +57,7 @@ const tabs = computed(() => {
   if (p.specs?.length) list.push({ key: 'specs', label: t('product.specs') })
   if (p.applications?.length || p.applications_text) list.push({ key: 'applications', label: t('product.applications') })
   if (p.functions?.trim()) list.push({ key: 'functions', label: t('product.functions') })
-  list.push({ key: 'description', label: t('product.description') })
+  list.push({ key: 'description', label: t('product.descriptionTab') })
   return list
 })
 
@@ -72,6 +72,23 @@ const onKeydown = (e: KeyboardEvent) => {
   if (!galleryImages.value.length) return
   if (e.key === 'ArrowLeft') activeImage.value = (activeImage.value - 1 + galleryImages.value.length) % galleryImages.value.length
   if (e.key === 'ArrowRight') activeImage.value = (activeImage.value + 1) % galleryImages.value.length
+}
+
+// Touch swipe gallery (mobile)
+let galleryTouchX: number | null = null
+const onGalleryTouchStart = (e: TouchEvent) => {
+  galleryTouchX = e.changedTouches[0]?.clientX ?? null
+}
+const onGalleryTouchEnd = (e: TouchEvent) => {
+  if (galleryTouchX == null) return
+  const endX = e.changedTouches[0]?.clientX ?? galleryTouchX
+  const dx = endX - galleryTouchX
+  galleryTouchX = null
+  const n = galleryImages.value.length
+  if (n < 2 || Math.abs(dx) < 40) return
+  activeImage.value = dx < 0
+    ? (activeImage.value + 1) % n
+    : (activeImage.value - 1 + n) % n
 }
 
 onMounted(() => window.addEventListener('keydown', onKeydown))
@@ -140,14 +157,18 @@ const breadcrumbs = computed(() => [
     </div>
   </div>
 
-  <div v-else-if="product">
-    <PageHeader :title="product.name" :breadcrumbs="breadcrumbs" />
+  <div v-else-if="product" class="pb-mobile-contact">
+    <PageHeader :title="product.name" :breadcrumbs="breadcrumbs" :eyebrow="product.category?.name || t('nav.products')" />
 
     <section class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
         <!-- Gallery -->
         <div class="reveal">
-          <div class="bg-surface-bright rounded-3xl flex items-center justify-center p-8 aspect-[4/3] relative border border-outline-variant hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] transition-all duration-500 group">
+          <div
+            class="bg-surface-bright rounded-3xl flex items-center justify-center p-8 aspect-[4/3] relative border border-outline-variant hover:shadow-[0_16px_48px_rgba(184,155,136,0.12)] transition-all duration-500 group touch-pan-y"
+            @touchstart.passive="onGalleryTouchStart"
+            @touchend.passive="onGalleryTouchEnd"
+          >
             <transition name="page" mode="out-in">
             <img :key="activeImage" :src="galleryImages[activeImage] ?? product.image" :alt="product.name" class="w-full h-full object-contain group-hover:scale-105 transition-transform ease-out duration-300" loading="lazy">
             </transition>
@@ -160,6 +181,19 @@ const breadcrumbs = computed(() => [
                 <i class="fa text-sm fa-chevron-right"></i>
               </button>
             </div>
+          </div>
+
+          <!-- Mobile: swipe dots -->
+          <div v-if="galleryImages.length > 1" class="sm:hidden flex items-center justify-center gap-1.5 mt-3">
+            <button
+              v-for="(img, i) in galleryImages"
+              :key="'dot-' + i"
+              type="button"
+              class="rounded-full transition-all duration-300"
+              :class="i === activeImage ? 'w-6 h-2 bg-primary' : 'w-2 h-2 bg-outline-variant'"
+              :aria-label="`${product.name} ${i + 1}`"
+              @click="activeImage = i"
+            ></button>
           </div>
 
           <div v-if="galleryImages.length > 1" class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4 overflow-x-auto scrollbar-hide pb-2">
@@ -272,14 +306,14 @@ const breadcrumbs = computed(() => [
       <div class="bg-surface-bright border border-outline-variant rounded-3xl overflow-hidden">
         <div class="flex flex-wrap overflow-x-auto scrollbar-hide border-b border-outline-variant bg-surface-vlm">
           <button v-for="tab in tabs" :key="tab.key"
-            class="px-6 md:px-8 py-4 md:py-5 text-[12px] md:text-[14px] font-bold uppercase tracking-wider transition-colors duration-300 relative whitespace-nowrap shrink-0"
+            class="px-5 md:px-8 py-4 md:py-5 max-md:min-h-[48px] text-[13px] md:text-[14px] font-bold uppercase tracking-wider transition-colors duration-300 relative whitespace-nowrap shrink-0"
             :class="activeTab === tab.key ? 'text-primary-deep bg-surface-bright' : 'text-text-muted hover:text-primary'"
             @click="activeTab = tab.key">
             {{ tab.label }}
             <span v-if="activeTab === tab.key" class="absolute bottom-0 left-0 right-0 h-1 bg-primary"></span>
           </button>
         </div>
-        <div class="p-8 md:p-10">
+        <div class="p-4 md:p-10">
           <transition name="page" mode="out-in">
             <div v-if="activeTab === 'specs' && product.specs?.length" key="specs">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -318,7 +352,7 @@ const breadcrumbs = computed(() => [
                   v-if="product.applications?.length && hasAppText"
                   class="text-[12px] font-bold text-text-muted uppercase tracking-[0.15em] mb-4"
                 >
-                  {{ t('product.applicationsDetail') }}
+                  {{ t('product.appDetail') }}
                 </h3>
                 <RichText :text="product.applications_text" class="text-text-secondary text-[16px]" />
               </div>
@@ -370,6 +404,30 @@ const breadcrumbs = computed(() => [
         <ProductCard v-for="item in related" :key="item.slug" :product="item" />
       </div>
     </section>
+
+    <!-- Mobile: sticky quote bar -->
+    <div
+      class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-1/95 backdrop-blur-lg border-t border-outline-variant shadow-[0_-8px_24px_rgba(26,26,26,0.08)]"
+      style="padding-bottom: env(safe-area-inset-bottom, 0px)"
+      data-testid="product-mobile-cta"
+    >
+      <div class="grid grid-cols-2 gap-2.5 px-4 py-3">
+        <a
+          href="tel:0909292530"
+          class="inline-flex items-center justify-center gap-2 border border-primary-deep text-primary-deep py-3 min-h-[48px] rounded-xl text-[12px] font-bold uppercase tracking-[0.1em] active:scale-[0.98] transition-transform"
+        >
+          <i class="fa text-[14px] fa-phone"></i>
+          {{ t('product.callConsult') }}
+        </a>
+        <router-link
+          :to="quoteLink"
+          class="inline-flex items-center justify-center gap-2 bg-primary-deep text-white py-3 min-h-[48px] rounded-xl text-[12px] font-bold uppercase tracking-[0.1em] active:scale-[0.98] transition-transform shadow-[0_4px_16px_rgba(107,79,58,0.3)]"
+        >
+          <i class="fa text-[14px] fa-file-pen"></i>
+          {{ t('product.quote') }}
+        </router-link>
+      </div>
+    </div>
   </div>
 
   <div v-else-if="notFound" class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 text-center">

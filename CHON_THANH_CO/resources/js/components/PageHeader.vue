@@ -17,9 +17,10 @@ const onScroll = () => { scrollY.value = window.scrollY }
 onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 
+// Mobile: app-style compact header (chỉ <768px). Desktop giữ nguyên chiều cao cũ.
 const paddingClass = computed(() => {
-  if (props.variant === 'cinematic') return 'pt-[var(--page-header-top,320px)] pb-[var(--page-header-bottom,120px)]'
-  return 'pt-[var(--page-header-top-compact,280px)] pb-[var(--page-header-bottom-compact,80px)]'
+  if (props.variant === 'cinematic') return 'pt-[108px] pb-9 md:pt-[var(--page-header-top,320px)] md:pb-[var(--page-header-bottom,120px)]'
+  return 'pt-[76px] pb-6 md:pt-[var(--page-header-top-compact,280px)] md:pb-[var(--page-header-bottom-compact,80px)]'
 })
 </script>
 
@@ -53,18 +54,18 @@ const paddingClass = computed(() => {
     >
       <div
         v-if="eyebrow || breadcrumbs.length"
-        class="inline-flex items-center justify-center mb-5 max-w-2xl px-4 text-center"
+        class="inline-flex items-center justify-center mb-2 md:mb-5 max-w-2xl px-4 text-center"
       >
-        <span class="text-primary text-[11px] md:text-[12px] font-bold tracking-[0.22em] uppercase">
+        <span class="text-primary text-[11px] md:text-[12px] font-bold tracking-[0.18em] md:tracking-[0.22em] uppercase line-clamp-1">
           {{ eyebrow || breadcrumbs[breadcrumbs.length - 1]?.label }}
         </span>
       </div>
 
       <h1
-        class="text-white font-bold mb-6 leading-[1.1]"
+        class="text-white font-bold mb-3 md:mb-6 leading-[1.15] md:leading-[1.1] max-w-[22ch] md:max-w-none line-clamp-2 md:line-clamp-none"
         :class="variant === 'cinematic'
-          ? 'text-[42px] md:text-[56px] lg:text-[68px]'
-          : 'text-[32px] md:text-[44px] lg:text-[52px]'"
+          ? 'text-[26px] sm:text-[34px] md:text-[56px] lg:text-[68px]'
+          : 'text-[24px] sm:text-[30px] md:text-[44px] lg:text-[52px]'"
         style="letter-spacing: -0.02em; text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 4px 30px rgba(0,0,0,0.3);"
       >
         {{ title }}
@@ -72,18 +73,27 @@ const paddingClass = computed(() => {
 
       <div
         v-if="breadcrumbs.length > 1"
-        class="flex items-center justify-center gap-2 text-white/70 text-[13px]"
+        class="flex flex-wrap items-center justify-center gap-x-1.5 md:gap-x-2 gap-y-1 text-white/70 text-[12px] md:text-[13px] max-w-full"
       >
         <template v-for="(item, index) in breadcrumbs" :key="index">
           <router-link
             v-if="item.to"
             :to="item.to"
-            class="hover:text-primary transition-colors duration-300"
+            class="hover:text-primary transition-colors duration-300 whitespace-nowrap max-md:py-2"
+            :class="index < breadcrumbs.length - 2 ? 'hidden md:inline' : ''"
           >
             {{ item.label }}
           </router-link>
-          <span v-else class="text-primary font-semibold">{{ item.label }}</span>
-          <span v-if="index < breadcrumbs.length - 1" class="text-white/30 text-xs">/</span>
+          <span
+            v-else
+            class="text-primary font-semibold max-w-[42vw] md:max-w-full truncate md:whitespace-normal"
+            :class="index < breadcrumbs.length - 2 ? 'hidden md:inline' : ''"
+          >{{ item.label }}</span>
+          <span
+            v-if="index < breadcrumbs.length - 1"
+            class="text-white/30 text-xs"
+            :class="index < breadcrumbs.length - 2 ? 'hidden md:inline' : ''"
+          >/</span>
         </template>
       </div>
     </div>
