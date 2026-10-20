@@ -121,7 +121,7 @@ const breadcrumbs = computed(() => [
               </div>
               <div class="flex flex-wrap gap-2">
                 <button v-for="cat in categories" :key="cat"
-                  class="px-4 py-2 rounded-full font-bold text-[11px] uppercase tracking-[0.1em] transition-all duration-300"
+                  class="px-4 py-2 max-md:min-h-[44px] max-md:px-4 max-md:text-[12px] rounded-full font-bold text-[11px] uppercase tracking-[0.1em] transition-all duration-300"
                   :class="activeCategory === cat ? 'bg-primary text-[#2A2420] shadow-md shadow-primary/20' : 'bg-canvas text-text-secondary border border-outline-variant hover:border-primary/40 hover:text-primary-deep'"
                   @click="activeCategory = cat">
                   {{ cat }}

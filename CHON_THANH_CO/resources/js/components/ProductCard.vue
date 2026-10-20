@@ -58,29 +58,31 @@ const productImage = computed(() =>
       </div>
     </div>
 
-    <!-- Mobile: compact horizontal card -->
-    <div class="flex sm:hidden items-center gap-3 p-3">
-      <div class="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-[#F4F1EE]">
+    <!-- Mobile: compact vertical card (2-col grid) -->
+    <div class="sm:hidden">
+      <div class="relative overflow-hidden bg-[#F4F1EE]">
         <LazyImage
           :src="productImage"
           :alt="product.name"
           fallback-src="/images/products/geotextile-roll.jpg"
-          image-class="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          aspect-ratio="aspect-[4/3]"
+          image-class="w-full h-full object-cover object-center"
         />
+        <span class="absolute left-2 top-2 rounded-full bg-white/95 px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] text-[#6E5B50] shadow-sm max-w-[85%] truncate">
+          {{ product.category?.name || 'Geosynthetics' }}
+        </span>
       </div>
-      <div class="flex-1 min-w-0">
-        <div class="mb-1.5">
-          <span class="text-[10px] font-bold text-[#8C6B58] uppercase tracking-[0.12em]">
-            {{ product.category?.name || 'Geosynthetics' }}
-          </span>
-        </div>
-        <h3 class="font-extrabold text-[16px] text-text-main group-hover:text-primary transition-colors duration-300 leading-tight line-clamp-2">
+      <div class="px-3 pt-2.5 pb-3">
+        <h3 class="font-bold text-[14px] text-[#2A2420] leading-snug line-clamp-2 min-h-[2.6em]">
           {{ product.name }}
         </h3>
-        <div class="mt-3">
-          <span class="btn-primary inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-2 text-[10px] font-bold uppercase tracking-[0.1em]">
-            Yêu cầu báo giá
-            <i class="fa text-[14px] fa-arrow-right"></i>
+        <div class="mt-2.5 pt-2.5 border-t border-[#EEE8E3] flex items-center justify-between gap-2">
+          <span class="text-[11px] font-semibold text-[#8C7B70] tracking-[0.06em] uppercase tabular-nums truncate">
+            {{ product.code }}
+          </span>
+          <span class="shrink-0 flex items-center gap-1 text-[11px] font-bold text-primary-deep">
+            Xem
+            <i class="fa text-[11px] fa-arrow-right group-active:translate-x-0.5 transition-transform duration-300"></i>
           </span>
         </div>
       </div>

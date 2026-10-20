@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { api } from '../api/client'
 import { useApiData } from '../composables/useApiData'
@@ -8,6 +8,7 @@ import PageHeader from '../components/PageHeader.vue'
 import ErrorState from '../components/ErrorState.vue'
 import CTABanner from '../components/CTABanner.vue'
 import ProductCard from '../components/ProductCard.vue'
+import ProductFilterPanel from '../components/ProductFilterPanel.vue'
 import Pagination from '../components/Pagination.vue'
 import { t } from '../i18n'
 import { fallbackProducts, fallbackCategories, fallbackApplications } from '../types/fallback'
@@ -144,6 +145,16 @@ const clearFilters = () => {
   currentPage.value = 1
 }
 
+// Lock body scroll while the mobile filter sheet is open
+watch(mobileFiltersOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
+onBeforeUnmount(() => {
+  document.body.style.overflow = ''
+})
+
+const toggleCategory = (slug: string) => toggle(selectedCategories.value, slug)
+
 const breadcrumbs = computed(() => [
   { label: t('nav.home'), to: '/' },
   { label: t('nav.products') }
@@ -171,24 +182,57 @@ const bentoCol = (i: number) => {
     <PageHeader :title="t('nav.products')" :breadcrumbs="breadcrumbs" />
 
     <main class="max-w-max-width mx-auto w-full px-margin-mobile md:px-margin-desktop py-10 md:py-14 animate-fade-in-up">
-      <!-- Mobile filter trigger -->
-      <div class="lg:hidden mb-4 flex items-center gap-3">
-        <button
-          class="flex-1 inline-flex items-center justify-center gap-2 btn-primary py-3 text-[12px] font-bold uppercase tracking-[0.15em] rounded-xl active:scale-[0.98] transition-transform shadow-md"
-          @click="mobileFiltersOpen = !mobileFiltersOpen"
-        >
-          <i class="fa text-[18px] fa-sliders"></i>
-          <span>{{ t('products.filter') }}</span>
-          <span v-if="activeFilterCount" class="bg-white text-primary text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center ml-1">{{ activeFilterCount }}</span>
-        </button>
+      <!-- Mobile: app-style search bar + category chips (dính dưới app bar) -->
+      <div class="lg:hidden -mx-margin-mobile px-margin-mobile mb-5 sticky top-[56px] z-30 bg-canvas/95 backdrop-blur-md border-b border-outline-variant/50">
+        <div class="pt-2 pb-2">
+          <div class="flex items-center gap-2">
+            <label class="relative flex-1 min-w-0">
+              <i class="fa fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-text-muted"></i>
+              <input
+                v-model="searchQuery"
+                type="search"
+                enterkeyhint="search"
+                :placeholder="t('products.searchPlaceholder')"
+                class="w-full h-11 pl-10 pr-3 rounded-xl bg-surface-1 border border-outline-variant text-[16px] text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all placeholder:text-text-muted/70 appearance-none"
+              />
+            </label>
+            <button
+              type="button"
+              class="relative shrink-0 h-11 px-3.5 rounded-xl btn-primary inline-flex items-center justify-center gap-2 text-[12px] font-bold uppercase tracking-[0.1em] active:scale-[0.97] transition-transform shadow-sm"
+              :aria-label="`${t('products.filter')}${activeFilterCount ? ` (${activeFilterCount})` : ''}`"
+              @click="mobileFiltersOpen = true"
+            >
+              <i class="fa text-[16px] fa-sliders"></i>
+              <span class="hidden min-[400px]:inline">{{ t('products.filter') }}</span>
+              <span v-if="activeFilterCount" class="bg-white text-primary-deep text-[11px] font-bold rounded-full min-w-5 h-5 px-1 flex items-center justify-center">{{ activeFilterCount }}</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex gap-2 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2.5">
+          <button
+            class="shrink-0 snap-start px-4 rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors duration-200 min-h-[44px] active:scale-[0.97]"
+            :class="selectedCategories.length === 0 ? 'bg-primary-deep text-white border-primary-deep shadow-sm' : 'bg-surface-1 text-text-secondary border-outline-variant'"
+            @click="selectedCategories = []"
+          >
+            {{ t('projects.all') }}
+          </button>
+          <button
+            v-for="cat in categories"
+            :key="'pill-' + cat.slug"
+            class="shrink-0 snap-start px-4 rounded-full border text-[13px] font-semibold whitespace-nowrap transition-colors duration-200 min-h-[44px] active:scale-[0.97]"
+            :class="selectedCategories.includes(cat.slug) ? 'bg-primary-deep text-white border-primary-deep shadow-sm' : 'bg-surface-1 text-text-secondary border-outline-variant'"
+            @click="toggleCategory(cat.slug)"
+          >
+            {{ cat.name }}
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-12 gap-6 lg:gap-10">
-        <!-- ═══ FILTER RAIL ═══ -->
-        <aside class="col-span-12 lg:col-span-3">
+        <!-- ═══ FILTER RAIL (desktop) ═══ -->
+        <aside class="col-span-12 lg:col-span-3 hidden lg:block">
           <div
             class="lg:sticky lg:top-36 border border-outline-variant bg-surface-glass backdrop-blur-xl rounded-2xl lg:rounded-[24px] shadow-sm overflow-hidden"
-            :class="{ 'hidden lg:block': !mobileFiltersOpen, 'block mb-6': mobileFiltersOpen }"
           >
             <!-- Rail header -->
             <div class="px-5 py-4 bg-primary text-white flex items-center justify-between">
@@ -199,109 +243,25 @@ const bentoCol = (i: number) => {
               <span v-if="activeFilterCount" class="font-mono text-[11px] font-bold bg-primary text-canvas rounded-full w-5 h-5 flex items-center justify-center tabular-nums">{{ activeFilterCount }}</span>
             </div>
 
-            <div class="p-5 space-y-7 max-h-[65vh] overflow-y-auto custom-scrollbar">
-              <!-- Search -->
-              <div>
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="font-mono text-[13px] font-bold text-primary tracking-[0.2em]">01</span>
-                  <span class="text-[13px] font-bold text-text-main uppercase tracking-[0.2em]">{{ t('products.searchLabel') }}</span>
-                </div>
-                <div class="relative">
-                  <i class="fa absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[16px] fa-magnifying-glass"></i>
-                  <input
-                    v-model="searchQuery"
-                    type="text"
-                    :placeholder="t('products.searchPlaceholder')"
-                    class="w-full bg-canvas border border-outline-variant pl-9 pr-3 py-2.5 text-[15px] text-text-main outline-none focus:border-text-main transition-colors duration-200 placeholder:text-text-muted/60 rounded-none fa-check"
-                  />
-                </div>
-              </div>
-
-              <!-- Category -->
-              <div v-if="!(categoriesError && !categories.length)">
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="font-mono text-[13px] font-bold text-primary tracking-[0.2em]">02</span>
-                  <span class="text-[13px] font-bold text-text-main uppercase tracking-[0.2em]">{{ t('products.categoryFilter') }}</span>
-                </div>
-                <ul class="space-y-0.5">
-                  <li v-for="cat in categories" :key="cat.slug">
-                    <label class="group flex items-center gap-3 cursor-pointer py-1.5 px-1 -mx-1 hover:bg-canvas transition-colors duration-200">
-                      <span class="relative flex items-center justify-center shrink-0 w-4 h-4">
-                        <input
-                          type="checkbox"
-                          class="peer appearance-none w-4 h-4 border border-outline bg-canvas checked:bg-primary checked:border-primary transition-colors duration-200 cursor-pointer rounded-[2px]"
-                          :checked="selectedCategories.includes(cat.slug)"
-                          @change="toggle(selectedCategories, cat.slug)"
-                        >
-                        <i class="fa absolute text-canvas text-[12px] font-bold opacity-0 peer-checked:opacity-100 pointer-events-none fa-check"></i>
-                      </span>
-                      <span class="text-[15px] text-text-secondary group-hover:text-text-main transition-colors duration-200 font-medium flex-grow leading-tight">{{ cat.name }}</span>
-                      <span v-if="cat.products_count" class="font-mono text-[12px] text-text-muted font-bold tabular-nums">{{ String(cat.products_count).padStart(2, '0') }}</span>
-                    </label>
-                  </li>
-                </ul>
-                <div v-if="categoriesError" class="mt-2 text-[11px] text-text-muted">
-                  {{ categoriesError }} <button class="underline hover:text-text-main" @click="loadCategories">{{ t('common.retry') }}</button>
-                </div>
-              </div>
-
-              <!-- Application -->
-              <div v-if="!(applicationsError && !applications.length)">
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="font-mono text-[13px] font-bold text-primary tracking-[0.2em]">03</span>
-                  <span class="text-[13px] font-bold text-text-main uppercase tracking-[0.2em]">{{ t('products.applicationFilter') }}</span>
-                </div>
-                <ul class="space-y-0.5 max-h-48 overflow-y-auto custom-scrollbar pr-2">
-                  <li v-for="app in applications" :key="app.slug">
-                    <label class="group flex items-center gap-3 cursor-pointer py-1.5 px-1 -mx-1 hover:bg-canvas transition-colors duration-200">
-                      <span class="relative flex items-center justify-center shrink-0 w-4 h-4">
-                        <input
-                          type="checkbox"
-                          class="peer appearance-none w-4 h-4 border border-outline bg-canvas checked:bg-primary checked:border-primary transition-colors duration-200 cursor-pointer rounded-[2px]"
-                          :checked="selectedApplications.includes(app.slug)"
-                          @change="toggle(selectedApplications, app.slug)"
-                        >
-                        <i class="fa absolute text-canvas text-[12px] font-bold opacity-0 peer-checked:opacity-100 pointer-events-none fa-check"></i>
-                      </span>
-                      <span class="text-[15px] text-text-secondary group-hover:text-text-main transition-colors duration-200 font-medium leading-tight">{{ app.name }}</span>
-                    </label>
-                  </li>
-                </ul>
-                <div v-if="applicationsError" class="mt-2 text-[11px] text-text-muted">
-                  {{ applicationsError }} <button class="underline hover:text-text-main" @click="loadApplications">{{ t('common.retry') }}</button>
-                </div>
-              </div>
-
-              <!-- Strength -->
-              <div>
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="font-mono text-[13px] font-bold text-primary tracking-[0.2em]">04</span>
-                  <span class="text-[13px] font-bold text-text-main uppercase tracking-[0.2em]">{{ t('products.strengthFilter') }}</span>
-                </div>
-                <ul class="space-y-0.5">
-                  <li v-for="s in strengthBuckets" :key="s.label">
-                    <label class="group flex items-center gap-3 cursor-pointer py-1.5 px-1 -mx-1 hover:bg-canvas transition-colors duration-200">
-                      <span class="relative flex items-center justify-center shrink-0 w-4 h-4">
-                        <input
-                          type="radio"
-                          name="strength-bucket"
-                          class="peer appearance-none w-4 h-4 border border-outline bg-canvas checked:bg-primary checked:border-primary transition-colors duration-200 cursor-pointer rounded-full"
-                          :checked="selectedStrength === s.label"
-                          @change="selectedStrength = s.label"
-                        >
-                        <span class="absolute w-1.5 h-1.5 rounded-full bg-canvas opacity-0 peer-checked:opacity-100 pointer-events-none"></span>
-                      </span>
-                      <span class="font-mono text-[12px] font-bold text-primary tracking-[0.15em] w-5">{{ s.code }}</span>
-                      <span class="text-[15px] text-text-secondary group-hover:text-text-main transition-colors duration-200 font-medium leading-tight flex-grow">{{ s.label }}</span>
-                    </label>
-                  </li>
-                </ul>
-              </div>
+            <div class="p-5 max-h-[65vh] overflow-y-auto custom-scrollbar">
+              <ProductFilterPanel
+                v-model:search-query="searchQuery"
+                v-model:selected-categories="selectedCategories"
+                v-model:selected-applications="selectedApplications"
+                v-model:selected-strength="selectedStrength"
+                :categories="categories"
+                :applications="applications"
+                :strength-buckets="strengthBuckets"
+                :categories-error="categoriesError"
+                :applications-error="applicationsError"
+                @retry-categories="loadCategories"
+                @retry-applications="loadApplications"
+              />
             </div>
 
             <!-- Actions -->
             <div class="p-5 border-t border-outline-variant space-y-2 bg-surface-1">
-              <button class="w-full btn-primary py-3 text-[11px] font-bold uppercase tracking-[0.2em] rounded-none" @click="currentPage = 1">
+              <button class="w-full btn-primary py-3 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 rounded-none" @click="currentPage = 1">
                 {{ t('products.apply') }}
               </button>
               <button
@@ -318,14 +278,14 @@ const bentoCol = (i: number) => {
         <!-- ═══ MAIN GRID ═══ -->
         <section id="products-main-section" class="col-span-12 lg:col-span-9 scroll-mt-32">
           <!-- Toolbar -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-text-main gap-4 reveal">
+          <div class="flex items-center justify-between mb-5 md:mb-8 pb-3 md:pb-4 border-b border-text-main gap-3 md:gap-4 reveal">
             <div class="text-[13px] text-text-secondary font-medium">
               <span>Tìm thấy </span>
-              <strong class="text-text-main font-bold">{{ filteredProducts.length }}</strong>
+              <strong class="text-text-main font-bold tabular-nums">{{ filteredProducts.length }}</strong>
               <span> sản phẩm</span>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-              <div class="flex items-center border border-outline-variant bg-canvas">
+            <div class="flex items-center gap-2 md:gap-3">
+              <div class="hidden sm:flex items-center border border-outline-variant bg-canvas">
                 <button
                   class="px-3 py-2 transition-colors duration-200"
                   :class="viewMode === 'grid' ? 'bg-primary text-white' : 'text-text-muted hover:text-text-main'"
@@ -343,7 +303,7 @@ const bentoCol = (i: number) => {
                   <i class="fa text-[16px] fa-list"></i>
                 </button>
               </div>
-              <select v-model="sortBy" class="bg-canvas border border-outline-variant px-3 py-2 text-[11px] font-bold text-text-main uppercase tracking-[0.15em] focus:outline-none focus:border-text-main cursor-pointer rounded-none">
+              <select v-model="sortBy" class="h-11 md:h-auto bg-surface-1 md:bg-canvas border border-outline-variant rounded-xl md:rounded-none px-3 text-[12px] md:text-[11px] font-bold text-text-main uppercase tracking-[0.08em] md:tracking-[0.15em] focus:outline-none focus:border-text-main cursor-pointer">
                 <option value="name">A–Z</option>
                 <option value="code">{{ t('products.sortCode') }}</option>
               </select>
@@ -381,8 +341,8 @@ const bentoCol = (i: number) => {
           </div>
 
           <!-- Loading skeleton -->
-          <div v-if="productsLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-            <div v-for="i in 6" :key="i" class="h-80 bg-canvas animate-shimmer border border-outline-variant rounded-xl"></div>
+          <div v-if="productsLoading" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+            <div v-for="i in 6" :key="i" class="h-40 sm:h-80 bg-canvas animate-shimmer border border-outline-variant rounded-2xl md:rounded-xl"></div>
           </div>
 
           <!-- Error -->
@@ -391,7 +351,7 @@ const bentoCol = (i: number) => {
           </div>
 
           <!-- ═══ BENTO GRID ═══ -->
-          <div v-else-if="filteredProducts.length && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 stagger-grid">
+          <div v-else-if="filteredProducts.length && viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 stagger-grid">
             <div v-for="(p, i) in paginatedProducts" :key="p.slug" class="reveal" :class="[`reveal-delay-${(i%3)+1}`]">
               <ProductCard :product="p" variant="catalog" class="h-full" />
             </div>
@@ -453,6 +413,82 @@ const bentoCol = (i: number) => {
       </div>
     </main>
 
+    <!-- ═══ MOBILE FILTER BOTTOM SHEET ═══ -->
+    <Teleport to="body">
+      <Transition name="filter-sheet">
+        <div v-if="mobileFiltersOpen" class="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" :aria-label="t('products.filter')" @click.self="mobileFiltersOpen = false">
+          <div class="absolute inset-0 bg-text-main/45 backdrop-blur-[2px]" @click="mobileFiltersOpen = false"></div>
+          <div class="absolute left-0 right-0 bottom-0 bg-surface-1 rounded-t-3xl shadow-[0_-16px_48px_rgba(26,26,26,0.18)] flex flex-col max-h-[90dvh]">
+            <!-- Drag indicator -->
+            <div class="pt-2.5 pb-1 flex justify-center shrink-0">
+              <span class="w-10 h-1.5 rounded-full bg-outline-variant"></span>
+            </div>
+            <!-- Header -->
+            <div class="px-5 pb-3 flex items-center justify-between shrink-0">
+              <div>
+                <span class="font-mono text-[10px] font-bold text-primary tracking-[0.2em] block">/FILTER</span>
+                <span class="text-[15px] font-bold text-text-main uppercase tracking-[0.12em]">{{ t('products.filter') }}</span>
+              </div>
+              <button class="w-11 h-11 -mr-1 rounded-full bg-surface-vlm text-text-main flex items-center justify-center active:scale-95 transition-transform" :aria-label="t('common.close')" @click="mobileFiltersOpen = false">
+                <i class="fa text-[17px] fa-xmark"></i>
+              </button>
+            </div>
+            <!-- Scrollable body -->
+            <div class="flex-1 overflow-y-auto px-5 pt-2 pb-4 overscroll-contain">
+              <ProductFilterPanel
+                v-model:search-query="searchQuery"
+                v-model:selected-categories="selectedCategories"
+                v-model:selected-applications="selectedApplications"
+                v-model:selected-strength="selectedStrength"
+                :categories="categories"
+                :applications="applications"
+                :strength-buckets="strengthBuckets"
+                :categories-error="categoriesError"
+                :applications-error="applicationsError"
+                @retry-categories="loadCategories"
+                @retry-applications="loadApplications"
+              />
+            </div>
+            <!-- Sticky footer actions -->
+            <div class="shrink-0 border-t border-outline-variant bg-surface-1 px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] flex gap-3">
+              <button
+                v-if="activeFilterCount > 0"
+                class="shrink-0 w-[38%] bg-canvas text-text-main border border-outline-variant py-3.5 text-[12px] font-bold uppercase tracking-[0.15em] rounded-xl"
+                @click="clearFilters"
+              >
+                {{ t('products.clear') }}
+              </button>
+              <button
+                class="flex-1 btn-primary py-3.5 text-[12px] font-bold uppercase tracking-[0.15em] rounded-xl active:scale-[0.98] transition-transform"
+                @click="mobileFiltersOpen = false"
+              >
+                {{ t('products.apply') }} ({{ filteredProducts.length }})
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <CTABanner />
   </div>
 </template>
+
+<style scoped>
+.filter-sheet-enter-active,
+.filter-sheet-leave-active {
+  transition: opacity 0.28s ease;
+}
+.filter-sheet-enter-active > div:last-child,
+.filter-sheet-leave-active > div:last-child {
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.filter-sheet-enter-from,
+.filter-sheet-leave-to {
+  opacity: 0;
+}
+.filter-sheet-enter-from > div:last-child,
+.filter-sheet-leave-to > div:last-child {
+  transform: translateY(100%);
+}
+</style>

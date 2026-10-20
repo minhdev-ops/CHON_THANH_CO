@@ -79,30 +79,37 @@ test('Menu mobile mở và đóng được', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await openPage(page, '/')
 
-  const toggle = page.locator('nav button[aria-expanded]').filter({ visible: true }).first()
+  // Hamburger trên app bar mobile (tab bar dưới cũng là <nav> nên phải chỉ đích danh)
+  const toggle = page.locator('header button[aria-controls="mobile-nav-panel"]')
   await expect(toggle).toBeVisible()
   await toggle.click()
   await page.waitForTimeout(500)
   await expect(toggle).toHaveAttribute('aria-expanded', 'true')
-  const duAn = page.locator('nav').getByText('Dự án', { exact: true }).filter({ visible: true })
-  await expect(duAn.first()).toBeVisible()
-  await toggle.click()
+
+  const panel = page.locator('#mobile-nav-panel')
+  await expect(panel).toBeVisible()
+  // Drawer chỉ chứa các mục bổ sung cho tab bar dưới (không lặp lại tab bar)
+  await expect(panel.getByRole('link', { name: 'Hồ sơ năng lực' })).toBeVisible()
+  await expect(panel.getByRole('link', { name: 'Chứng chỉ' })).toBeVisible()
+
+  // Panel che mất hamburger nên đóng bằng cách chạm vùng nền (scrim)
+  await page.getByTestId('mobile-nav-overlay').click({ position: { x: 10, y: 400 } })
   await page.waitForTimeout(500)
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
-  await expect(duAn.first()).toBeHidden()
+  await expect(panel).toBeHidden()
 })
 
-test('Mobile menu: mở dropdown Giới thiệu và điều hướng', async ({ page }) => {
+test('Mobile menu: điều hướng tới Hồ sơ năng lực', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await openPage(page, '/')
 
-  await page.locator('nav button[aria-expanded]').filter({ visible: true }).first().click()
+  const panel = page.locator('#mobile-nav-panel')
+  await page.locator('header button[aria-controls="mobile-nav-panel"]').click()
   await page.waitForTimeout(500)
+  await expect(panel).toBeVisible()
 
-  const aboutBtn = page.locator('nav button').getByText('Giới thiệu', { exact: true }).first()
-  await aboutBtn.click()
-  await page.waitForTimeout(500)
-  const capability = page.getByRole('link', { name: 'Hồ sơ năng lực' }).filter({ visible: true }).first()
+  // Drawer liệt kê sẵn nhóm "Về Chơn Thành" (không còn accordion trùng tab bar)
+  const capability = panel.getByRole('link', { name: 'Hồ sơ năng lực' })
   await expect(capability).toBeVisible()
   await capability.click()
   await expect(page).toHaveURL(/about\/capability/, { timeout: 8000 })
@@ -111,13 +118,20 @@ test('Mobile menu: mở dropdown Giới thiệu và điều hướng', async ({ 
 test('Chuyển ngôn ngữ sang tiếng Anh trên trang chủ', async ({ page }) => {
   await openPage(page, '/')
 
-  const enBtn = page.locator('nav button[aria-pressed]').filter({ hasText: 'EN' }).first()
-  await expect(enBtn).toBeVisible()
-  await enBtn.click()
+  // Bộ chọn ngôn ngữ thực tế của site là dropdown trong thanh thông tin trên cùng
+  // (nút có icon quả địa cầu).
+  const langBtn = page.locator('header button:has(i.fa-globe)').first()
+  await expect(langBtn).toBeVisible()
+  await expect(langBtn).toContainText('Tiếng Việt')
+  await langBtn.click()
+  await page.waitForTimeout(300)
+
+  await page.locator('header button').filter({ hasText: 'English' }).first().click()
   await page.waitForTimeout(800)
-  await expect(enBtn).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.locator('nav button[aria-pressed]').filter({ hasText: 'VI' }).first()).toHaveAttribute('aria-pressed', 'false')
-  await expect(page.locator('nav').getByText('About', { exact: true }).first()).toBeVisible()
+
+  await expect(langBtn).toContainText('English')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  await expect(page.locator('header nav, header').getByText('About', { exact: true }).first()).toBeVisible()
 })
 
 test('Bộ lọc sản phẩm theo query param category', async ({ page }) => {

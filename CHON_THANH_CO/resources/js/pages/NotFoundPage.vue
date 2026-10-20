@@ -29,7 +29,7 @@ import { buildContactLink } from '../utils/contactLink'
       <div class="flex flex-wrap justify-center gap-4 mb-12">
         <router-link to="/" class="btn bg-primary text-[#2A2420] hover:bg-primary-dark hover:text-white rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold shadow-[0_4px_20px_rgba(184,155,136,0.3)] transition-all duration-300 hover:shadow-lg">
           <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform fa-house"></i>
-          {{ t('nf.backHome') }}
+          {{ t('nf.home') }}
         </router-link>
         <router-link to="/products" class="btn border border-outline-variant text-text-main hover:border-primary hover:text-primary rounded-full inline-flex items-center gap-2 group py-3.5 px-8 text-[15px] font-bold transition-all duration-300">
           <i class="fa text-[18px] group-hover:-translate-y-0.5 transition-transform fa-boxes"></i>

@@ -32,6 +32,13 @@ const aboutSubLinks = [
   { labelKey: 'nav.certification', to: '/about/certification' },
 ]
 
+// Drawer mobile chỉ chứa các mục KHÔNG có trên thanh điều hướng dưới,
+// tránh hai menu lặp lại y hệt nhau.
+const resourceLinks = [
+  { labelKey: 'nav.certificates', to: '/certificates' },
+  { labelKey: 'nav.faq',          to: '/faq' },
+]
+
 const navItems: NavItem[] = [
   { type: 'link',                        labelKey: 'nav.home',         to: '/' },
   { type: 'dropdown', name: 'about',    labelKey: 'nav.about',        to: '/about' },
@@ -58,6 +65,7 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   document.removeEventListener('click', onDocClick)
+  document.documentElement.classList.remove('mobile-menu-open')
 })
 watch(() => route.path, () => { closeDropdown(); isMobileOpen.value = false; langOpen.value = false })
 
@@ -69,6 +77,7 @@ const closeDropdown       = () => { openDropdown.value = null }
 const toggleMobileSection = (name: string) => {
   mobileSection.value = mobileSection.value === name ? null : name
 }
+const isMobileLinkActive = (path: string) => route.path === path
 
 // Navigate then close menu — ensures router-link fires before DOM removal
 const navigateAndClose = (to?: string) => {
@@ -83,6 +92,7 @@ const navigateAndClose = (to?: string) => {
 // Lock body scroll when mobile menu is open
 watch(isMobileOpen, (open) => {
   document.body.style.overflow = open ? 'hidden' : ''
+  document.documentElement.classList.toggle('mobile-menu-open', open)
 })
 </script>
 
@@ -158,8 +168,8 @@ watch(isMobileOpen, (open) => {
       class="w-full transition-all duration-300"
       :class="[
         isScrolled
-          ? 'bg-[#B89B88]/95 backdrop-blur-xl shadow-lg py-2 lg:py-2'
-          : 'bg-[#B89B88] py-3 lg:py-6'
+          ? 'bg-[#B89B88]/95 backdrop-blur-xl shadow-lg py-1.5 md:py-2'
+          : 'bg-[#B89B88] py-1.5 md:py-3 lg:py-6'
       ]"
     >
       <div class="max-w-[1600px] mx-auto px-4 md:px-[var(--spacing-margin-desktop)] flex justify-between items-center h-full">
@@ -167,7 +177,7 @@ watch(isMobileOpen, (open) => {
         <!-- Logo -->
         <div class="flex shrink-0 justify-start items-center">
           <router-link to="/" class="flex items-center group" aria-label="CHƠN THÀNH Geosynthetics">
-            <img src="/images/logo.svg" alt="Logo" class="h-[48px] lg:h-[110px] w-auto object-contain drop-shadow-md">
+            <img src="/images/logo.svg" alt="Logo" class="h-10 md:h-[48px] lg:h-[110px] w-auto object-contain drop-shadow-md">
           </router-link>
         </div>
 
@@ -255,6 +265,8 @@ watch(isMobileOpen, (open) => {
             class="lg:hidden relative w-11 h-11 flex items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm border border-white/25 active:bg-white/25 transition-all duration-200"
             @click="isMobileOpen = !isMobileOpen"
             :aria-label="isMobileOpen ? 'Đóng menu' : 'Mở menu'"
+            aria-controls="mobile-nav-panel"
+            :aria-expanded="isMobileOpen"
           >
             <div class="flex flex-col items-center justify-center w-5 h-5 gap-[5px]">
               <span
@@ -279,6 +291,7 @@ watch(isMobileOpen, (open) => {
     <transition name="mobile-overlay">
       <div
         v-if="isMobileOpen"
+        data-testid="mobile-nav-overlay"
         class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
         @click="isMobileOpen = false"
       ></div>
@@ -288,10 +301,11 @@ watch(isMobileOpen, (open) => {
     <transition name="mobile-menu">
       <div
         v-if="isMobileOpen"
-        class="lg:hidden fixed top-0 right-0 z-50 w-[min(88vw,380px)] h-full bg-white shadow-[-8px_0_40px_rgba(0,0,0,0.15)] overflow-y-auto overscroll-contain flex flex-col"
+        id="mobile-nav-panel"
+        class="lg:hidden fixed top-0 right-0 z-50 w-[min(92vw,380px)] h-[100dvh] max-h-[100dvh] bg-white shadow-[-8px_0_40px_rgba(0,0,0,0.15)] overflow-y-auto overscroll-contain flex flex-col"
       >
         <!-- Mobile menu header -->
-        <div class="flex items-center justify-between px-5 py-4 border-b border-[#E4D8D0]/60 bg-gradient-to-r from-[#F7F3F0] to-white shrink-0">
+        <div class="flex items-center justify-between px-5 pt-[calc(0.875rem+env(safe-area-inset-top,0px))] pb-3.5 border-b border-[#E4D8D0]/60 bg-gradient-to-r from-[#F7F3F0] to-white shrink-0">
           <a href="/" class="flex items-center gap-3" @click.prevent="navigateAndClose('/')">
             <img src="/images/logo.svg" alt="Logo" class="h-10 w-auto object-contain">
             <div>
@@ -300,7 +314,7 @@ watch(isMobileOpen, (open) => {
             </div>
           </a>
           <button
-            class="w-10 h-10 flex items-center justify-center rounded-xl bg-[#4A403B]/5 text-[#4A403B] active:bg-[#4A403B]/10 transition-colors duration-200"
+            class="w-11 h-11 flex items-center justify-center rounded-xl bg-[#4A403B]/5 text-[#4A403B] active:bg-[#4A403B]/10 transition-colors duration-200"
             @click="isMobileOpen = false"
             aria-label="Đóng menu"
           >
@@ -308,100 +322,81 @@ watch(isMobileOpen, (open) => {
           </button>
         </div>
 
-        <!-- Mobile menu links -->
+        <!-- Mobile menu content: chỉ những mục chưa có ở tab bar dưới -->
         <div class="flex-1 overflow-y-auto px-4 py-4">
-          <div class="flex flex-col gap-1">
-            <template v-for="(item, idx) in navItems" :key="item.type === 'link' ? item.to : item.name">
-              <!-- Simple link -->
-              <a
-                v-if="item.type === 'link'"
-                :href="item.to"
-                class="group relative px-4 py-3.5 rounded-xl text-[15px] font-bold min-h-[48px] flex items-center transition-all duration-200 cursor-pointer"
-                :class="isActive(item.to)
-                  ? 'bg-[#B89B88]/10 text-[#B89B88]'
-                  : 'text-[#4A403B] active:bg-[#F7F3F0]'"
-                @click.prevent="navigateAndClose(item.to)"
-              >
-                <span
-                  class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 rounded-full bg-[#B89B88] transition-all duration-300"
-                  :class="isActive(item.to) ? 'h-5' : 'group-hover:h-3'"
-                ></span>
-                {{ t(item.labelKey) }}
-                <i v-if="isActive(item.to)" class="fa ml-auto text-[18px] text-[#B89B88] fa-check"></i>
-              </a>
-
-              <!-- Dropdown -->
-              <div v-else>
-                <button
-                  class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-[15px] font-bold min-h-[48px] transition-all duration-200"
-                  :class="mobileSection === item.name
-                    ? 'bg-[#B89B88]/10 text-[#B89B88]'
-                    : 'text-[#4A403B] active:bg-[#F7F3F0]'"
-                  @click="toggleMobileSection(item.name)"
-                >
-                  <span>{{ t(item.labelKey) }}</span>
-                  <i
-                    class="fa text-[20px] transition-transform duration-300 fa-chevron-down"
-                    :class="mobileSection === item.name ? 'rotate-180 text-[#B89B88]' : 'text-[#9B8B82]'"
-                  ></i>
-                </button>
-
-                <!-- Dropdown content -->
-                <transition name="accordion">
-                  <div v-if="mobileSection === item.name" class="overflow-hidden">
-                    <div class="pl-6 pr-2 py-1.5 flex flex-col gap-0.5">
-                      <template v-if="item.name === 'about'">
-                        <a
-                          v-for="link in aboutSubLinks" :key="link.to" :href="link.to"
-                          class="text-[14px] font-medium py-2.5 px-3 rounded-lg min-h-[42px] flex items-center transition-all duration-200 cursor-pointer"
-                          :class="isActive(link.to) ? 'text-[#B89B88] bg-[#B89B88]/5 font-bold' : 'text-[#6B5D55] active:text-[#B89B88] active:bg-[#F7F3F0]'"
-                          @click.prevent="navigateAndClose(link.to)"
-                        >{{ t(link.labelKey) }}</a>
-                      </template>
-                      <template v-else>
-                        <a
-                          href="/products"
-                          class="text-[14px] font-bold py-2.5 px-3 rounded-lg min-h-[42px] flex items-center transition-all duration-200 cursor-pointer"
-                          :class="route.path === '/products' ? 'text-[#B89B88] bg-[#B89B88]/5' : 'text-[#4A403B] active:text-[#B89B88] active:bg-[#F7F3F0]'"
-                          @click.prevent="navigateAndClose('/products')"
-                        >{{ t('nav.allProducts') }}</a>
-                        <a
-                          v-for="cat in categories" :key="cat.slug"
-                          :href="`/products?category=${cat.slug}`"
-                          class="text-[13px] font-medium py-2.5 px-3 rounded-lg min-h-[40px] flex items-center transition-all duration-200 cursor-pointer"
-                          :class="route.query.category === cat.slug ? 'text-[#B89B88] bg-[#B89B88]/5 font-bold' : 'text-[#6B5D55] active:text-[#B89B88] active:bg-[#F7F3F0]'"
-                          @click.prevent="navigateAndClose(`/products?category=${cat.slug}`)"
-                        >{{ cat.name }}</a>
-                      </template>
-                    </div>
-                  </div>
-                </transition>
-              </div>
-            </template>
+          <p class="px-3 mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#9B8B82]">Về Chơn Thành</p>
+          <div class="flex flex-col gap-0.5">
+            <a
+              v-for="link in aboutSubLinks" :key="link.to" :href="link.to"
+              class="px-3 py-3 rounded-xl text-[15px] font-bold min-h-[48px] flex items-center gap-2 transition-all duration-200 cursor-pointer"
+              :class="isMobileLinkActive(link.to)
+                ? 'bg-[#B89B88]/10 text-[#B89B88]'
+                : 'text-[#4A403B] active:bg-[#F7F3F0]'"
+              @click.prevent="navigateAndClose(link.to)"
+            >
+              {{ t(link.labelKey) }}
+              <i v-if="isMobileLinkActive(link.to)" class="fa ml-auto text-[16px] text-[#B89B88] fa-check"></i>
+            </a>
           </div>
+
+          <p class="px-3 mt-5 mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#9B8B82]">Tài liệu &amp; hỗ trợ</p>
+          <div class="flex flex-col gap-0.5">
+            <a
+              v-for="link in resourceLinks" :key="link.to" :href="link.to"
+              class="px-3 py-3 rounded-xl text-[15px] font-bold min-h-[48px] flex items-center gap-2 transition-all duration-200 cursor-pointer"
+              :class="isMobileLinkActive(link.to)
+                ? 'bg-[#B89B88]/10 text-[#B89B88]'
+                : 'text-[#4A403B] active:bg-[#F7F3F0]'"
+              @click.prevent="navigateAndClose(link.to)"
+            >
+              {{ t(link.labelKey) }}
+              <i v-if="isMobileLinkActive(link.to)" class="fa ml-auto text-[16px] text-[#B89B88] fa-check"></i>
+            </a>
+          </div>
+
+          <p class="px-3 mt-5 mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#9B8B82]">Danh mục sản phẩm</p>
+          <button
+            type="button"
+            class="w-full flex items-center justify-between px-3 py-3 rounded-xl text-[15px] font-bold min-h-[48px] transition-all duration-200"
+            :class="mobileSection === 'products'
+              ? 'bg-[#B89B88]/10 text-[#B89B88]'
+              : 'text-[#4A403B] active:bg-[#F7F3F0]'"
+            :aria-expanded="mobileSection === 'products'"
+            aria-controls="mobile-category-list"
+            @click="toggleMobileSection('products')"
+          >
+            <span>{{ t('nav.allProducts') }}</span>
+            <span class="flex items-center gap-2 text-[12px] font-semibold text-[#9B8B82]">
+              {{ categories.length }}
+              <i
+                class="fa text-[18px] transition-transform duration-300 fa-chevron-down"
+                :class="mobileSection === 'products' ? 'rotate-180' : ''"
+              ></i>
+            </span>
+          </button>
+
+          <transition name="accordion">
+            <div v-if="mobileSection === 'products'" id="mobile-category-list" class="overflow-hidden">
+              <div class="pl-3 pr-1 py-1 flex flex-col gap-0.5">
+                <a
+                  href="/products"
+                  class="text-[14px] font-bold py-2.5 px-3 rounded-lg min-h-[44px] flex items-center transition-all duration-200 cursor-pointer text-[#4A403B] active:text-[#B89B88] active:bg-[#F7F3F0]"
+                  @click.prevent="navigateAndClose('/products')"
+                >{{ t('nav.allProducts') }}</a>
+                <a
+                  v-for="cat in categories" :key="cat.slug"
+                  :href="`/products?category=${cat.slug}`"
+                  class="text-[14px] font-medium py-2.5 px-3 rounded-lg min-h-[44px] flex items-center transition-all duration-200 cursor-pointer"
+                  :class="route.query.category === cat.slug ? 'text-[#B89B88] bg-[#B89B88]/5 font-bold' : 'text-[#6B5D55] active:text-[#B89B88] active:bg-[#F7F3F0]'"
+                  @click.prevent="navigateAndClose(`/products?category=${cat.slug}`)"
+                >{{ cat.name }}</a>
+              </div>
+            </div>
+          </transition>
         </div>
 
-        <!-- ═══ Mobile menu CTA ═══ -->
-        <div class="px-4 py-4 border-t border-[#E4D8D0]/60 bg-gradient-to-b from-white to-[#F7F3F0]/50 shrink-0 space-y-2.5">
-          <a
-            :href="hotlineHref"
-            class="w-full text-center py-3.5 bg-[#D84315] text-white rounded-xl font-bold text-[15px] min-h-[50px] flex items-center justify-center shadow-lg shadow-[#D84315]/20 active:scale-[0.98] transition-all duration-200 gap-2.5 hover:bg-[#C63A10]"
-          >
-            <i class="fa text-[20px] fa-phone"></i>
-            <span>{{ hotline }}</span>
-          </a>
-          <a
-            href="/contact"
-            class="w-full text-center py-3.5 bg-[#B89B88] text-white rounded-xl font-bold text-[15px] min-h-[50px] flex items-center justify-center shadow-lg shadow-[#B89B88]/20 active:scale-[0.98] transition-all duration-200 gap-2.5 hover:bg-[#A58370] cursor-pointer"
-            @click.prevent="navigateAndClose('/contact')"
-          >
-            <i class="fa text-[20px] fa-envelope"></i>
-            <span>{{ t('product.quote') }}</span>
-          </a>
-        </div>
-
-        <!-- ═══ Mobile menu contact info ═══ -->
-        <div class="px-5 py-3.5 bg-[#F7F3F0]/80 border-t border-[#E4D8D0]/60 shrink-0">
+        <!-- ═══ Mobile menu contact info (kênh liên lạc nhanh đã có ở tab bar) ═══ -->
+        <div class="px-5 pt-3.5 pb-[calc(0.875rem+env(safe-area-inset-bottom,0px))] bg-[#F7F3F0]/80 border-t border-[#E4D8D0]/60 shrink-0">
           <div class="flex flex-col gap-2 text-[12px] text-[#6B5D55]">
             <div class="flex items-start gap-2">
               <i class="fa text-[15px] text-[#B89B88] mt-0.5 fa-location-dot"></i>
@@ -411,6 +406,10 @@ watch(isMobileOpen, (open) => {
               <i class="fa text-[15px] text-[#B89B88] fa-clock"></i>
               <span>{{ settings?.['contact.working_hours'] || 'T2–T6: 8:30 AM – 5:30 PM' }}</span>
             </div>
+            <a :href="`mailto:${email}`" class="flex items-center gap-2 break-all active:text-[#B89B88]">
+              <i class="fa text-[15px] text-[#B89B88] fa-envelope"></i>
+              <span>{{ email }}</span>
+            </a>
           </div>
         </div>
       </div>

@@ -99,6 +99,11 @@ const router = createRouter({
       component: () => import('../pages/TermsOfServicePage.vue'),
       meta: { titleKey: 'meta.terms', descKey: 'meta.desc.terms' },
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../pages/NotFoundPage.vue'),
+    },
   ],
 })
 
