@@ -1168,18 +1168,16 @@
     }
 
     /* ── Reduced Motion ─────────────────────────────────── */
+    /* Hiệu ứng nhận diện (rung chuông hotline, lắc số, icon nhún/float)
+       LUÔN chạy kể cả khi OS báo reduce — theo yêu cầu chủ site.
+       Chỉ giảm các chuyển động lớn/nền để giữ accessibility. */
     @media (prefers-reduced-motion: reduce) {
 
-        .animate-hotline-ring,
-        .animate-hotline-nudge,
         .animate-ken-burns,
         .animate-marquee,
-        .animate-float,
-        .animate-float-slow,
         .animate-pulse-glow,
         .animate-pulse-slow,
         .animate-glitch,
-        .animate-ring,
         .animate-shimmer {
             animation: none;
         }
