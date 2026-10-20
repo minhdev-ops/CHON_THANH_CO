@@ -63,17 +63,48 @@ const goToPage = (page: number | string) => {
     class="flex flex-col sm:flex-row items-center justify-between gap-4 py-8 border-t border-outline-variant/60"
   >
     <!-- Result counter info -->
-    <div v-if="itemRange" class="text-[13px] text-text-secondary font-medium order-2 sm:order-1">
+    <div v-if="itemRange" class="hidden md:block text-[13px] text-text-secondary font-medium order-2 sm:order-1">
       <span>Hiển thị </span>
       <span class="font-bold text-text-main tabular-nums">{{ itemRange.from }}–{{ itemRange.to }}</span>
       <span> trên </span>
       <span class="font-bold text-text-main tabular-nums">{{ itemRange.total }}</span>
-      <span> {{ itemName }}</span>
+      <span>&nbsp;{{ itemName }}</span>
     </div>
-    <div v-else class="order-2 sm:order-1"></div>
+    <div v-else class="hidden md:block order-2 sm:order-1"></div>
 
-    <!-- Page navigation controls -->
-    <div v-if="totalPages > 1" class="flex items-center gap-1.5 sm:gap-2 order-1 sm:order-2">
+    <!-- Mobile: compact pager (44px touch targets) -->
+    <div v-if="totalPages > 1" class="flex md:hidden w-full items-center justify-between gap-3">
+      <span class="text-[12px] text-text-secondary font-medium tabular-nums">
+        <template v-if="itemRange">{{ itemRange.from }}–{{ itemRange.to }} / {{ itemRange.total }}</template>
+        <template v-else>Trang {{ currentPage }} / {{ totalPages }}</template>
+      </span>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="w-11 h-11 rounded-xl border border-outline-variant flex items-center justify-center text-text-main active:scale-95 active:bg-surface-vlm transition-all disabled:opacity-40 disabled:active:scale-100"
+          :disabled="currentPage <= 1"
+          aria-label="Trang trước"
+          @click="goToPage(currentPage - 1)"
+        >
+          <i class="fa text-[15px] fa-chevron-left"></i>
+        </button>
+        <span class="min-w-[64px] text-center text-[13px] font-bold text-text-main tabular-nums">
+          {{ currentPage }} / {{ totalPages }}
+        </span>
+        <button
+          type="button"
+          class="w-11 h-11 rounded-xl border border-outline-variant flex items-center justify-center text-text-main active:scale-95 active:bg-surface-vlm transition-all disabled:opacity-40 disabled:active:scale-100"
+          :disabled="currentPage >= totalPages"
+          aria-label="Trang sau"
+          @click="goToPage(currentPage + 1)"
+        >
+          <i class="fa text-[15px] fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Page navigation controls (desktop) -->
+    <div v-if="totalPages > 1" class="hidden md:flex items-center gap-1.5 sm:gap-2 order-1 sm:order-2">
       <!-- Previous button -->
       <button
         type="button"
