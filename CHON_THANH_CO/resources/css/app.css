@@ -1167,44 +1167,9 @@
         }
     }
 
-    /* ── Reduced Motion ─────────────────────────────────── */
-    /* Hiệu ứng nhận diện (rung chuông hotline, lắc số, icon nhún/float)
-       LUÔN chạy kể cả khi OS báo reduce — theo yêu cầu chủ site.
-       Chỉ giảm các chuyển động lớn/nền để giữ accessibility. */
-    @media (prefers-reduced-motion: reduce) {
-
-        .animate-ken-burns,
-        .animate-marquee,
-        .animate-pulse-glow,
-        .animate-pulse-slow,
-        .animate-glitch,
-        .animate-shimmer {
-            animation: none;
-        }
-
-        .reveal,
-        .reveal-left,
-        .reveal-right,
-        .reveal-scale,
-        .reveal-up-scale,
-        .reveal-fade,
-        .reveal-blur,
-        .reveal-rotate {
-            opacity: 1;
-            transform: none;
-            transition: none;
-        }
-
-        .js-ready .stagger-grid>* {
-            opacity: 1;
-            transform: none;
-            transition: none;
-        }
-
-        .widget-btn {
-            animation: none !important;
-        }
-    }
+    /* Lưu ý: KHÔNG gate hiệu ứng theo prefers-reduced-motion.
+       Chủ site yêu cầu mọi máy (Windows/macOS/Linux) hiển thị hiệu ứng
+       giống nhau, không phụ thuộc thiết lập Animation effects của OS. */
 
     /* ═══════════════════════════════════════════════════════
        CARD EFFECTS & ANIMATIONS (Premium)

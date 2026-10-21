@@ -176,15 +176,7 @@ const variantStyles: Record<string, { bg: string; shadow: string; hoverShadow: s
   outline-offset: 4px;
 }
 
-/* Reduced motion: giữ hiệu ứng pulse/rung nhận diện (theo yêu cầu chủ site),
-   chỉ tắt animation vào của nút để tránh chuyển động thừa */
-@media (prefers-reduced-motion: reduce) {
-  .widget-btn {
-    animation: none !important;
-    opacity: 1;
-    transform: none;
-  }
-}
+/* Lưu ý: không tắt animation theo prefers-reduced-motion (đồng bộ mọi OS). */
 
 /* Hotline priority - stronger pulse */
 .widget-btn:first-child .animate-pulse-ring {
