@@ -99,15 +99,8 @@ const entered = ref(false)
 let observer: IntersectionObserver | null = null
 let rafId: number | null = null
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
 const startCountUp = () => {
   if (phase.value !== 'idle') return
-  if (prefersReducedMotion()) {
-    phase.value = 'done'
-    return
-  }
   const numeric = cells.value.some((c) => c.kind === 'NUMERIC')
   if (!numeric) {
     phase.value = 'done'
